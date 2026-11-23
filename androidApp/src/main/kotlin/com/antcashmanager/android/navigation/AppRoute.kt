@@ -26,8 +26,6 @@ sealed class AppRoute(
         object Categories : BottomRoute("categories")
 
         object Settings : BottomRoute("settings")
-
-        object Tutorial : BottomRoute("tutorial")
     }
 
     // Transaction routes
@@ -77,13 +75,6 @@ sealed class AppRoute(
         route: String,
     ) : AppRoute(route) {
         object Home : HomeRoute("home")
-    }
-
-    // Tutorial routes
-    sealed class TutorialRoute(
-        route: String,
-    ) : AppRoute(route) {
-        object Tutorial : TutorialRoute("tutorial")
     }
 
     // Receipt Scan routes

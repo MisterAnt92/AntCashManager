@@ -501,10 +501,6 @@
     <string name="settings_show_tutorial_subtitle">初期チュートリア���をもう一度見ます</string>
     <string name="tutorial_welcome_title">AntCashManagerへようこそ！ 🐜</string>
     <string name="tutorial_welcome_desc">小さな蟻があなたのお金の管理をどのようにお手伝いするか、ツアーで見に行きましょう。</string>
-    <string name="tutorial_welcome_point_track">数秒で収支を記録できます。</string>
-    <string name="tutorial_welcome_point_insights">残高とトレンドが一目でわかります。</string>
-    <string name="tutorial_welcome_point_categories">スマートなカテゴリで支出を整理できます。</string>
-    <string name="tutorial_welcome_point_customize">言語、テーマ、書式をカスタマイズできます。</string>
     <string name="tutorial_dashboard_title">ダッシュボード</string>
     <string name="tutorial_dashboard_desc">ここでは、合計残高、月間収支を一目で確認できます。</string>
     <string name="tutorial_transactions_title">取引</string>

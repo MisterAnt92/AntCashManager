@@ -504,10 +504,6 @@
     <string name="settings_show_tutorial_subtitle">Переглянути початкове навчання заново</string>
     <string name="tutorial_welcome_title">Ласкаво просимо до AntCashManager! 🐜</string>
     <string name="tutorial_welcome_desc">Зробимо коротку екскурсію та подивимося, як наша мураха допоможе вам керувати грошима.</string>
-    <string name="tutorial_welcome_point_track">Відстежуйте доходи та видатки за секунди.</string>
-    <string name="tutorial_welcome_point_insights">Слідкуйте за балансом та трендами одним поглядом.</string>
-    <string name="tutorial_welcome_point_categories">Організовуйте витрати за допомогою розумних категорій.</string>
-    <string name="tutorial_welcome_point_customize">Налаштовуйте мову, тему та формати.</string>
     <string name="tutorial_dashboard_title">Панель керування</string>
     <string name="tutorial_dashboard_desc">Тут ви бачите свій загаль��ий баланс, місячні доходи та видатки.</string>
     <string name="tutorial_transactions_title">Транзакції</string>

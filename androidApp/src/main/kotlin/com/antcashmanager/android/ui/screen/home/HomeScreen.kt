@@ -27,7 +27,6 @@ import com.antcashmanager.android.ui.components.animation.AntEasterEggAnimation
 import com.antcashmanager.android.ui.components.layout.FoldableAwareLayout
 import com.antcashmanager.android.ui.components.layout.LocalDisplayFeatures
 import com.antcashmanager.android.ui.components.layout.rememberAdaptiveLayoutInfo
-import com.antcashmanager.android.ui.components.overlay.TutorialOverlay
 import com.antcashmanager.android.ui.components.state.AntErrorState
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.components.transaction.TransactionDetailsPane
@@ -95,12 +94,6 @@ internal fun HomeContent(
                 onOrderClick = { onEvent(HomeEvent.StartTopCardsReorderEvent) },
             ),
         )
-    }
-
-    // Tutorial full-screen (non durante il caricamento iniziale, per evitare flickering)
-    if (!state.isTutorialCompleted && !state.isLoading) {
-        TutorialOverlay(onDismiss = { onEvent(HomeEvent.SetIsTutorialCompletedEvent(true)) })
-        return
     }
 
     // Error state overlay (FASE 5: Error Feedback UX)

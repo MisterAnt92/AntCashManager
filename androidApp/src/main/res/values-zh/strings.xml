@@ -498,10 +498,6 @@
     <string name="settings_show_tutorial_subtitle">重新观看应用初始教程</string>
     <string name="tutorial_welcome_title">欢迎使用 AntCashManager！🐜</string>
     <string name="tutorial_welcome_desc">让我们快速浏览一下，看看我们的小蚂蚁如何帮助您理财。</string>
-    <string name="tutorial_welcome_point_track">在几秒钟内追踪收入和支出。</string>
-    <string name="tutorial_welcome_point_insights">一目了然地查看余额和趋势。</string>
-    <string name="tutorial_welcome_point_categories">使用智能分类整理支出。</string>
-    <string name="tutorial_welcome_point_customize">自定义语言、主题和格式。</string>
     <string name="tutorial_dashboard_title">仪表板</string>
     <string name="tutorial_dashboard_desc">在这里，您可以一目了然地查看总余额、每月收入和支出。</string>
     <string name="tutorial_transactions_title">交易</string>

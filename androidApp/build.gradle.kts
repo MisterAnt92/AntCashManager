@@ -210,6 +210,8 @@ dependencies {
     // Foldable device support
     implementation(libs.androidx.window)
     implementation(libs.androidx.window.core)
+    // In-context tutorial reveal overlay
+    implementation(libs.reveal.core)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 

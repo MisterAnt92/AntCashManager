@@ -84,7 +84,15 @@ import com.antcashmanager.android.ui.screen.settings.view.SettingsScreen
 import com.antcashmanager.android.ui.screen.splash.SplashScreen
 import com.antcashmanager.android.ui.screen.transactions.addImport.AddTransactionScreen
 import com.antcashmanager.android.ui.screen.transactions.view.TransactionsScreen
-import com.antcashmanager.android.ui.screen.tutorial.TutorialScreen
+import com.antcashmanager.android.ui.components.overlay.TutorialTooltipContent
+import com.antcashmanager.android.ui.screen.tutorial.TutorialEvent
+import com.antcashmanager.android.ui.screen.tutorial.TutorialKey
+import com.antcashmanager.android.ui.screen.tutorial.TutorialViewModel
+import com.antcashmanager.android.ui.screen.tutorial.stepKeyFor
+import com.svenjacobs.reveal.Reveal
+import com.svenjacobs.reveal.RevealState
+import com.svenjacobs.reveal.rememberRevealState
+import com.svenjacobs.reveal.revealable
 import com.antcashmanager.android.util.AppExitManager.safeFinish
 import com.antcashmanager.android.util.LocalAmountsMasked
 import com.antcashmanager.android.util.LocalCurrencyFormat
@@ -115,6 +123,8 @@ fun AntCashManagerNavHost() {
     val activeProfile = profilesResult.getOrNull()?.firstOrNull { it.id == activeProfileId }
 
     val navController = rememberNavController()
+    val tutorialViewModel: TutorialViewModel = koinViewModel()
+    val tutorialState by tutorialViewModel.state.collectAsStateWithLifecycle()
     val showCharts = navSettings.showCharts
     val isTutorialCompleted = navSettings.isTutorialCompleted
     val maskAmounts = navSettings.maskAmounts
@@ -163,7 +173,6 @@ fun AntCashManagerNavHost() {
                     if (adaptiveLayoutInfo.preferRailNavigation) {
                         add(BottomNavItem.Categories)
                         add(BottomNavItem.Settings)
-                        add(BottomNavItem.Tutorial)
                     }
                 }
 
@@ -175,7 +184,6 @@ fun AntCashManagerNavHost() {
                     add(BottomNavItem.Transactions)
                     add(BottomNavItem.Categories)
                     add(BottomNavItem.Settings)
-                    add(BottomNavItem.Tutorial)
                 }
 
             val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -199,8 +207,6 @@ fun AntCashManagerNavHost() {
                 currentDestination?.route?.let { currentRoute ->
                     visibleNavItems.any { item -> item.route == currentRoute }
                 } == true
-
-            val isOnTutorial = currentDestination?.route == AppRoute.BottomRoute.Tutorial.route
 
             val isOnSubScreen =
                 currentDestination?.route?.let {
@@ -240,22 +246,71 @@ fun AntCashManagerNavHost() {
                 }
             }
 
+            val revealState = rememberRevealState()
+
+            // Track previous value to distinguish first-launch (null→false) from replay (true→false)
+            var prevTutorialCompleted by remember { mutableStateOf<Boolean?>(null) }
+            LaunchedEffect(isTutorialCompleted) {
+                when {
+                    isTutorialCompleted == false && prevTutorialCompleted == null -> {
+                        // First launch or upgrade: apply upgrade safeguard in TutorialViewModel
+                        tutorialViewModel.emitEvent(TutorialEvent.StartTutorial)
+                    }
+                    isTutorialCompleted == false && prevTutorialCompleted == true -> {
+                        // Manual replay from Settings: bypass safeguard, navigate to Home first
+                        navController.navigateToHome()
+                        tutorialViewModel.emitEvent(TutorialEvent.ForceStartTutorial)
+                    }
+                }
+                prevTutorialCompleted = isTutorialCompleted
+            }
+
+            // Drive reveal spotlight based on tutorial step
+            LaunchedEffect(tutorialState.currentStep, tutorialState.isActive) {
+                val key = stepKeyFor(tutorialState.currentStep)
+                if (tutorialState.isActive && key != null) {
+                    revealState.reveal(key)
+                } else {
+                    revealState.hide()
+                }
+            }
+
+            // Intercept back press during tutorial
+            BackHandler(enabled = tutorialState.isActive) {
+                tutorialViewModel.emitEvent(TutorialEvent.PreviousStep)
+            }
+
+            Reveal(
+                revealState = revealState,
+                onRevealableClick = {},
+                onOverlayClick = {},
+                overlayContent = { key ->
+                    TutorialTooltipContent(
+                        key = key as? TutorialKey,
+                        state = tutorialState,
+                        onEvent = tutorialViewModel::emitEvent,
+                    )
+                },
+            ) {
+            // Invisible anchor for the WELCOME step (no real element to highlight)
+            Box(
+                modifier = Modifier
+                    .size(0.dp)
+                    .revealable(TutorialKey.WELCOME, state = revealState),
+            )
             Box(modifier = Modifier.fillMaxSize()) {
                 AntScreenScaffold(
                     showTopBar = false,
                     bottomBar = {
-                        // Bottom bar non visibile su Categories, Settings e Tutorial
-                        val isOnCategoriesSettingsOrTutorial =
+                        val isOnCategoriesOrSettings =
                             currentDestination?.route?.let { currentRoute ->
                                 currentRoute == AppRoute.BottomRoute.Categories.route ||
-                                    AppRoute.isSettingsRoute(currentRoute) ||
-                                    currentRoute == AppRoute.BottomRoute.Tutorial.route
+                                    AppRoute.isSettingsRoute(currentRoute)
                             } == true
 
-                        if (isTutorialCompleted == true &&
-                            !adaptiveLayoutInfo.preferRailNavigation &&
+                        if (!adaptiveLayoutInfo.preferRailNavigation &&
                             !isSidebarOpen &&
-                            !isOnCategoriesSettingsOrTutorial &&
+                            !isOnCategoriesOrSettings &&
                             !isOnSubScreen
                         ) {
                             Surface(
@@ -317,6 +372,7 @@ fun AntCashManagerNavHost() {
                             LocalScreenHeaderConfigCallback provides { config ->
                                 screenHeaderConfig = config
                             },
+                            LocalRevealState provides revealState,
                         ) {
                             NavHost(
                                 navController = navController,
@@ -389,11 +445,6 @@ fun AntCashManagerNavHost() {
                                     }
                                 }
 
-                                composable(AppRoute.BottomRoute.Tutorial.route) {
-                                    TutorialScreen(
-                                        navController = navController,
-                                    )
-                                }
                                 composable(
                                     route = AppRoute.TransactionRoute.Add.route + "?transactionId={transactionId}",
                                     arguments =
@@ -427,11 +478,11 @@ fun AntCashManagerNavHost() {
                             modifier =
                                 Modifier
                                     .fillMaxSize()
-                                    .padding(if (isOnTutorial) PaddingValues() else innerPadding),
+                                    .padding(innerPadding),
                         ) {
                             // Top bar placeholder – SEMPRE a Column[0], può essere vuoto
                             Box(modifier = Modifier.fillMaxWidth()) {
-                                if (isTutorialCompleted == true && !isOnTutorial && !isOnSubScreen) {
+                                if (!isOnSubScreen) {
                                     Row(
                                         modifier =
                                             Modifier
@@ -542,7 +593,7 @@ fun AntCashManagerNavHost() {
                             ) {
                                 // Rail placeholder – SEMPRE a Row[0], può essere vuoto
                                 Box {
-                                    if (isTutorialCompleted == true && !isOnTutorial && !isOnSubScreen) {
+                                    if (!isOnSubScreen) {
                                         Surface(
                                             tonalElevation = 4.dp,
                                             shadowElevation = 6.dp,
@@ -567,6 +618,7 @@ fun AntCashManagerNavHost() {
                                                 containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
                                             ) {
                                                 visibleNavItems.forEach { item ->
+                                                    val tutorialKey = navItemToTutorialKey(item)
                                                     NavigationRailItem(
                                                         selected =
                                                             currentDestination?.hierarchy?.any {
@@ -580,6 +632,7 @@ fun AntCashManagerNavHost() {
                                                             analyticsManager.logEvent("sidebar_navigation_clicked", params)
                                                             navController.navigateToBottomTab(item.route)
                                                         },
+                                                        modifier = if (tutorialKey != null) Modifier.revealable(tutorialKey, state = revealState) else Modifier,
                                                         icon = {
                                                             Icon(
                                                                 imageVector = item.icon,
@@ -615,14 +668,14 @@ fun AntCashManagerNavHost() {
                                 modifier =
                                     Modifier
                                         .fillMaxSize()
-                                        .padding(if (isOnTutorial) PaddingValues() else innerPadding),
+                                        .padding(innerPadding),
                             ) {
                                 Column(
                                     modifier = Modifier.fillMaxSize(),
                                 ) {
                                     // Top bar placeholder – SEMPRE a Column[0], può essere vuoto
                                     Box(modifier = Modifier.fillMaxWidth()) {
-                                        if (isTutorialCompleted == true && !isOnTutorial && !isOnSubScreen) {
+                                        if (!isOnSubScreen) {
                                             Row(
                                                 modifier =
                                                     Modifier
@@ -852,11 +905,23 @@ fun AntCashManagerNavHost() {
                 )
             }
         }
+        } // end Reveal
     } else {
         // Mostra il splash screen mentre i dati critici vengono caricati
         SplashScreen()
     }
 }
+
+/** Provides the tutorial [RevealState] to child composables without prop drilling. */
+val LocalRevealState = androidx.compose.runtime.compositionLocalOf<RevealState?> { null }
+
+private fun navItemToTutorialKey(item: BottomNavItem): TutorialKey? =
+    when (item) {
+        BottomNavItem.Charts -> TutorialKey.CHARTS_NAV
+        BottomNavItem.Categories -> TutorialKey.CATEGORIES_NAV
+        BottomNavItem.Settings -> TutorialKey.SETTINGS_NAV
+        else -> null
+    }
 
 private tailrec fun Context.findActivity(): Activity? =
     when (this) {

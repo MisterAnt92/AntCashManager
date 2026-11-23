@@ -501,10 +501,6 @@
     <string name="settings_show_tutorial_subtitle">초기 앱 튜토리얼 다시 보기</string>
     <string name="tutorial_welcome_title">AntCashManager에 오신 것을 환영합니다! 🐜</string>
     <string name="tutorial_welcome_desc">작은 개미가 여러분의 돈 관리를 어떻게 돕는지 투어를 통해 확인해 보세요.</string>
-    <string name="tutorial_welcome_point_track">수입과 지출을 몇 초 만에 기록하세요.</string>
-    <string name="tutorial_welcome_point_insights">잔액과 추세를 한눈에 확인하세요.</string>
-    <string name="tutorial_welcome_point_categories">스마트 카테고리로 지출을 정리하세요.</string>
-    <string name="tutorial_welcome_point_customize">언어, 테마, 형식을 사용자 정의하세요.</string>
     <string name="tutorial_dashboard_title">대시보드</string>
     <string name="tutorial_dashboard_desc">여기에서 총 잔액, 월간 수입 및 ��출을 한눈에 볼 수 있습니다.</string>
     <string name="tutorial_transactions_title">거래 내역</string>

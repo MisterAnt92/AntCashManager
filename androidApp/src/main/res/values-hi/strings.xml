@@ -498,10 +498,6 @@
     <string name="settings_show_tutorial_subtitle">प्रारंभिक ऐप ट्यूटोरियल को फिर से देखें</string>
     <string name="tutorial_welcome_title">AntCashManager में आपका स्वागत है! 🐜</string>
     <string name="tutorial_welcome_desc">आइए यह देखने के लिए एक त्वरित दौरा करें कि हमारी नन्ही चींटी आपके पैसे का प्रबंधन करने में आपकी कैसे मदद करती है।</string>
-    <string name="tutorial_welcome_point_track">सेकंड में आय और खर्च ट्रैक करें।</string>
-    <string name="tutorial_welcome_point_insights">एक नज़र में शेष और ट्रेंड देखें।</string>
-    <string name="tutorial_welcome_point_categories">स्मार्ट श्रेणियों के साथ खर्च व्यवस्थित करें।</string>
-    <string name="tutorial_welcome_point_customize">भाषा, थीम और प्रारूप कस्टमाइज़ करें।</string>
     <string name="tutorial_dashboard_title">डैशबोर्ड</string>
     <string name="tutorial_dashboard_desc">यहाँ आप एक नज़र में अपना कुल शेष, मासिक आय और खर्च देख सकते हैं।</string>
     <string name="tutorial_transactions_title">लेनदेन</string>

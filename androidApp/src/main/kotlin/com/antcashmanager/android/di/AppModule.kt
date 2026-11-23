@@ -24,6 +24,7 @@ import com.antcashmanager.android.ui.screen.settings.dataManagement.SettingsData
 import com.antcashmanager.android.ui.screen.settings.displaySettings.DisplayViewModel
 import com.antcashmanager.android.ui.screen.transactions.TransactionsViewModel
 import com.antcashmanager.android.ui.screen.transactions.addImport.AddTransactionViewModel
+import com.antcashmanager.android.ui.screen.tutorial.TutorialViewModel
 import com.antcashmanager.android.ui.screen.transactions.addImport.manager.SuggestionsManager
 import com.antcashmanager.android.ui.screen.transactions.addImport.manager.TransactionLoadManager
 import com.antcashmanager.android.ui.screen.transactions.addImport.manager.TransactionSubmitManager
@@ -501,6 +502,13 @@ val presentationModule =
         }
         viewModelOf(::TransactionDetailsViewModel)
         viewModelOf(::ThemeViewModel)
+        viewModel {
+            TutorialViewModel(
+                setTutorialCompletedUseCase = get(),
+                getTransactionsUseCase = get(),
+                analyticsManager = get(),
+            )
+        }
         viewModel { NavSettingsViewModel(settingsRepository = get()) }
         viewModel {
             ProfilesViewModel(

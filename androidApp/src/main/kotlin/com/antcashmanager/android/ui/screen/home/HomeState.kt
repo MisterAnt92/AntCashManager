@@ -40,7 +40,6 @@ data class HomeState(
     val showQuickInsightsCard: Boolean = true,
     val reduceMotion: Boolean = false,
     val transactionDisplayType: TransactionDisplayType = TransactionDisplayType.TREND,
-    val isTutorialCompleted: Boolean = false,
     val mealVoucherSummary: MealVoucherSummary? = null,
     // Error handling (FASE 5: Error Feedback UX)
     val errorState: ErrorState = ErrorState(),

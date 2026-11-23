@@ -253,7 +253,6 @@ class HomeViewModel(
             settingsRepository.getShowQuickInsightsCard(),
             settingsRepository.getReduceMotion(),
             settingsRepository.getTransactionDisplayType(),
-            settingsRepository.getIsTutorialCompleted(),
             _editingTopCardsOrder,
             settingsRepository.getMealVoucherValue(),
         ) { args: Array<Any?> ->
@@ -273,15 +272,9 @@ class HomeViewModel(
             val showQuickInsightsCard = (args[9] as? Boolean) ?: true
             val reduceMotion = (args[10] as? Boolean) ?: false
             val transactionDisplayType = (args[11] as? TransactionDisplayType) ?: TransactionDisplayType.TREND
-            val isTutorialCompleted = (args[12] as? Boolean) ?: false
-
-            // If the user already has transactions the tutorial must not appear,
-            // regardless of the stored flag (handles device-store migration for existing users).
-            val effectiveTutorialCompleted = isTutorialCompleted || transactions.isNotEmpty()
-
             @Suppress("UNCHECKED_CAST")
-            val editingTopCardsOrder = args[13] as? List<HomeTopCardType>
-            val mealVoucherValue = (args[14] as? Double) ?: DisplayConstant.DEFAULT_MEAL_VOUCHER_VALUE
+            val editingTopCardsOrder = args[12] as? List<HomeTopCardType>
+            val mealVoucherValue = (args[13] as? Double) ?: DisplayConstant.DEFAULT_MEAL_VOUCHER_VALUE
 
             // Enrich transactions with category icon and color from cache
             val enrichedFiltered =
@@ -396,7 +389,6 @@ class HomeViewModel(
                 showQuickInsightsCard = showQuickInsightsCard,
                 reduceMotion = reduceMotion,
                 transactionDisplayType = transactionDisplayType,
-                isTutorialCompleted = effectiveTutorialCompleted,
                 mealVoucherSummary = mealVoucherSummary,
                 errorState = ErrorState(),
             )
@@ -414,14 +406,6 @@ class HomeViewModel(
 
     init {
         observeSavedDateFilter()
-        // One-shot: mark tutorial completed the first time the user has transactions.
-        // Extracted from combine lambda to avoid multiple launches per emission.
-        viewModelScope.launch {
-            state
-                .filter { !it.isTutorialCompleted && it.recentTransactions.isNotEmpty() }
-                .take(1)
-                .collect { settingsRepository.setIsTutorialCompleted(true) }
-        }
         logDebug("HomeViewModel initialized")
     }
 
@@ -435,7 +419,6 @@ class HomeViewModel(
             HomeEvent.DismissTransactionDetailsEvent -> _selectedTransactionState.value = null
             is HomeEvent.UpdateSearchQueryEvent -> updateSearchQuery(event.query)
             HomeEvent.ToggleSearchExpandedEvent -> toggleSearchExpanded()
-            is HomeEvent.SetIsTutorialCompletedEvent -> setIsTutorialCompleted(event.completed)
             HomeEvent.StartTopCardsReorderEvent -> _editingTopCardsOrder.value = state.value.visibleTopCards
             is HomeEvent.MoveTopCardEvent -> moveTopCard(event.index, event.up)
             HomeEvent.CancelTopCardsReorderEvent -> _editingTopCardsOrder.value = null
@@ -514,12 +497,6 @@ class HomeViewModel(
                 // per tornare ai dati completi filtrati solo per data
                 searchQuery = if (it.isSearchExpanded) "" else it.searchQuery,
             )
-        }
-    }
-
-    private fun setIsTutorialCompleted(completed: Boolean) {
-        viewModelScope.launch {
-            settingsRepository.setIsTutorialCompleted(completed)
         }
     }
 

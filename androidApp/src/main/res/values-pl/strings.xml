@@ -502,10 +502,6 @@
     <string name="settings_show_tutorial_subtitle">Obejrzyj ponownie początkowy samouczek aplikacji</string>
     <string name="tutorial_welcome_title">Witaj w AntCashManager! 🐜</string>
     <string name="tutorial_welcome_desc">Zróbmy krótki spacer, aby zobaczyć, jak nasza mała mrówka pomaga Ci zarządzać pieniędzmi.</string>
-    <string name="tutorial_welcome_point_track">Śledź przychody i wydatki w kilka sekund.</string>
-    <string name="tutorial_welcome_point_insights">Sprawdzaj salda i trendy jednym rzutem oka.</string>
-    <string name="tutorial_welcome_point_categories">Organizuj wydatki dzięki inteligentnym kategoriom.</string>
-    <string name="tutorial_welcome_point_customize">Dostosuj język, motyw i formaty.</string>
     <string name="tutorial_dashboard_title">Pulpit</string>
     <string name="tutorial_dashboard_desc">Tutaj możesz zobaczyć swoje całkowite saldo oraz miesięczne przychody i wydatki.</string>
     <string name="tutorial_transactions_title">Transakcje</string>

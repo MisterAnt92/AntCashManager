@@ -167,18 +167,6 @@ fun NavController.navigateToDataManagement() {
 }
 
 /**
- * Type-safe navigation to Tutorial screen.
- *
- * **Uso:**
- * ```kotlin
- * navController.navigateToTutorial()
- * ```
- */
-fun NavController.navigateToTutorial() {
-    navigateToBottomTab(AppRoute.BottomRoute.Tutorial.route)
-}
-
-/**
  * Type-safe navigation to Receipt Scan screen.
  *
  * **Uso:**

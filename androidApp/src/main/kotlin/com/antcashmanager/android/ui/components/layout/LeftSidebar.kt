@@ -274,7 +274,7 @@ private fun ProfileSidebarHeader(
  */
 
 /**
- * Voce di menu della sidebar con pill highlight animata.
+ * Voce di menu della sidebar con trattino verticale sinistro e formichina come indicatori di selezione.
  */
 @Composable
 private fun SidebarMenuItem(
@@ -282,12 +282,10 @@ private fun SidebarMenuItem(
     isSelected: Boolean,
     onClick: () -> Unit,
 ) {
-    val backgroundColor = animateColorAsState(
-        targetValue = if (isSelected) MaterialTheme.colorScheme.primaryContainer
-        else Color.Transparent,
-        label = "menuItemBgColor",
+    val barColor = animateColorAsState(
+        targetValue = if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent,
+        label = "menuItemBarColor",
     )
-
     val contentColor = animateColorAsState(
         targetValue = if (isSelected) MaterialTheme.colorScheme.primary
         else MaterialTheme.colorScheme.onSurface,
@@ -297,34 +295,48 @@ private fun SidebarMenuItem(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 8.dp)
             .height(52.dp)
-            .clip(RoundedCornerShape(12.dp))
-            .background(color = backgroundColor.value)
             .clickable(
                 enabled = true,
                 onClick = onClick,
                 interactionSource = remember { MutableInteractionSource() },
             )
-            .padding(horizontal = 14.dp),
-        horizontalArrangement = Arrangement.spacedBy(14.dp),
+            .padding(end = 14.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
+        // Trattino verticale sinistro
+        Box(
+            modifier = Modifier
+                .width(4.dp)
+                .height(24.dp)
+                .background(
+                    color = barColor.value,
+                    shape = RoundedCornerShape(topEnd = 4.dp, bottomEnd = 4.dp),
+                ),
+        )
+        Spacer(modifier = Modifier.width(14.dp))
         Icon(
             imageVector = item.icon,
             contentDescription = stringResource(item.titleResId),
             modifier = Modifier.size(22.dp),
             tint = contentColor.value,
         )
+        Spacer(modifier = Modifier.width(14.dp))
         AppText(
             text = stringResource(item.titleResId),
             style = MaterialTheme.typography.bodyMedium,
             fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
             color = contentColor.value,
         )
-        // Ant mascot indicator (preserved, hidden):
-        // if (isSelected) { Spacer(Modifier.weight(1f))
-        //   Icon(painter=painterResource(R.drawable.ic_ant_mascot), Modifier.size(20.dp)) }
+        Spacer(modifier = Modifier.weight(1f))
+        if (isSelected) {
+            Icon(
+                painter = painterResource(R.drawable.ic_ant_mascot),
+                contentDescription = null,
+                modifier = Modifier.size(20.dp),
+                tint = contentColor.value,
+            )
+        }
     }
 }
 

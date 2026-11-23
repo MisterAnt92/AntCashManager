@@ -52,17 +52,15 @@ class RouteDetectionTest {
 
     @Test
     fun bottomBar_shouldBeHidden_whenIsOnSubScreenIsTrue() {
-        val isTutorialCompleted = true
         val preferRailNavigation = false // phone
         val isSidebarOpen = false
-        val isOnCategoriesSettingsOrTutorial = false
+        val isOnCategoriesOrSettings = false
         val isOnSubScreen = AppRoute.isSubScreen("add_transaction")
 
         val shouldShowBottomBar =
-            isTutorialCompleted &&
-                !preferRailNavigation &&
+            !preferRailNavigation &&
                 !isSidebarOpen &&
-                !isOnCategoriesSettingsOrTutorial &&
+                !isOnCategoriesOrSettings &&
                 !isOnSubScreen
 
         assertFalse(
@@ -73,17 +71,15 @@ class RouteDetectionTest {
 
     @Test
     fun bottomBar_shouldBeVisible_whenOnMainScreenAndNotInSubScreen() {
-        val isTutorialCompleted = true
         val preferRailNavigation = false // phone
         val isSidebarOpen = false
-        val isOnCategoriesSettingsOrTutorial = false
+        val isOnCategoriesOrSettings = false
         val isOnSubScreen = AppRoute.isSubScreen("home")
 
         val shouldShowBottomBar =
-            isTutorialCompleted &&
-                !preferRailNavigation &&
+            !preferRailNavigation &&
                 !isSidebarOpen &&
-                !isOnCategoriesSettingsOrTutorial &&
+                !isOnCategoriesOrSettings &&
                 !isOnSubScreen
 
         assertTrue(
@@ -94,22 +90,17 @@ class RouteDetectionTest {
 
     @Test
     fun bottomBar_shouldBeHidden_whenOnSettingsScreen() {
-        val isTutorialCompleted = true
         val preferRailNavigation = false // phone
         val isSidebarOpen = false
-        val isOnSettingsScreen = AppRoute.isSettingsRoute("display")
-        val isOnTutorial = false
-        val isOnCategoriesSettingsOrTutorial =
+        val isOnCategoriesOrSettings =
             "display" == AppRoute.BottomRoute.Categories.route ||
-                AppRoute.isSettingsRoute("display") ||
-                "display" == AppRoute.BottomRoute.Tutorial.route
+                AppRoute.isSettingsRoute("display")
         val isOnSubScreen = AppRoute.isSubScreen("display")
 
         val shouldShowBottomBar =
-            isTutorialCompleted &&
-                !preferRailNavigation &&
+            !preferRailNavigation &&
                 !isSidebarOpen &&
-                !isOnCategoriesSettingsOrTutorial &&
+                !isOnCategoriesOrSettings &&
                 !isOnSubScreen
 
         assertFalse(
@@ -122,10 +113,9 @@ class RouteDetectionTest {
 
     @Test
     fun topBar_shouldBeHidden_whenIsOnSubScreen() {
-        val isOnTutorial = false
         val isOnSubScreen = AppRoute.isSubScreen("receipt_scan")
 
-        val shouldShowTopBar = !isOnTutorial && !isOnSubScreen
+        val shouldShowTopBar = !isOnSubScreen
 
         assertFalse(
             "top bar should be hidden when on sub-screen",
@@ -135,26 +125,12 @@ class RouteDetectionTest {
 
     @Test
     fun topBar_shouldBeVisible_whenOnMainScreen() {
-        val isOnTutorial = false
         val isOnSubScreen = AppRoute.isSubScreen("home")
 
-        val shouldShowTopBar = !isOnTutorial && !isOnSubScreen
+        val shouldShowTopBar = !isOnSubScreen
 
         assertTrue(
             "top bar should be visible when on main screen",
-            shouldShowTopBar,
-        )
-    }
-
-    @Test
-    fun topBar_shouldBeHidden_whenOnTutorial() {
-        val isOnTutorial = true
-        val isOnSubScreen = false
-
-        val shouldShowTopBar = !isOnTutorial && !isOnSubScreen
-
-        assertFalse(
-            "top bar should be hidden when on tutorial",
             shouldShowTopBar,
         )
     }

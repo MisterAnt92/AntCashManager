@@ -41,6 +41,10 @@ import com.antcashmanager.android.ui.screen.home.HomeConstant
 import com.antcashmanager.android.ui.screen.home.HomeState
 import com.antcashmanager.android.ui.screen.home.event.HomeEvent
 import com.antcashmanager.android.ui.screen.home.model.HomeTopCardType
+import androidx.compose.foundation.layout.Box
+import com.antcashmanager.android.navigation.LocalRevealState
+import com.antcashmanager.android.ui.screen.tutorial.TutorialKey
+import com.svenjacobs.reveal.revealable
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 
@@ -61,6 +65,7 @@ fun HomeListPane(
     onTransactionClick: (TransactionUi) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val revealState = LocalRevealState.current
     val coroutineScope = rememberCoroutineScope()
     val showScrollToTop by remember {
         derivedStateOf { listState.firstVisibleItemIndex > HomeConstant.SCROLL_TO_TOP_ITEM_THRESHOLD }
@@ -115,8 +120,18 @@ fun HomeListPane(
                         onToDateEdit = onToDateEdit,
                     )
                 }
-                state.visibleTopCards.forEach { topCardType ->
-                    item(key = topCardType.storageKey) { TopCard(topCardType, state) }
+                state.visibleTopCards.forEachIndexed { index, topCardType ->
+                    item(key = topCardType.storageKey) {
+                        Box(
+                            modifier = if (index == 0 && revealState != null) {
+                                Modifier.revealable(TutorialKey.BALANCE_CARD, state = revealState)
+                            } else {
+                                Modifier
+                            },
+                        ) {
+                            TopCard(topCardType, state)
+                        }
+                    }
                 }
             }
 
@@ -126,7 +141,13 @@ fun HomeListPane(
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onBackground,
-                    modifier = Modifier.testTag(RECENT_COUNT_TAG),
+                    modifier = if (revealState != null) {
+                        Modifier
+                            .testTag(RECENT_COUNT_TAG)
+                            .revealable(TutorialKey.TRANSACTIONS, state = revealState)
+                    } else {
+                        Modifier.testTag(RECENT_COUNT_TAG)
+                    },
                 )
             }
 

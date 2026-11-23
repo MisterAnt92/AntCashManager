@@ -502,10 +502,6 @@
     <string name="settings_show_tutorial_subtitle">Просмотреть начальное обучение заново</string>
     <string name="tutorial_welcome_title">Добро пожаловать в AntCashManager! 🐜</string>
     <string name="tutorial_welcome_desc">Давайте совершим короткую экскурсию и посмотрим, как наш муравей поможет вам управлять деньгами.</string>
-    <string name="tutorial_welcome_point_track">Отслеживайте доходы и расходы за секунды.</string>
-    <string name="tutorial_welcome_point_insights">Следите за балансом и трендами одним взглядом.</string>
-    <string name="tutorial_welcome_point_categories">Организуйте расходы с помощью умных категорий.</string>
-    <string name="tutorial_welcome_point_customize">Настройте язык, тему и форматы.</string>
     <string name="tutorial_dashboard_title">Панель управления</string>
     <string name="tutorial_dashboard_desc">Здесь вы видите общий баланс, доходы и расходы за месяц.</string>
     <string name="tutorial_transactions_title">Транзакции</string>

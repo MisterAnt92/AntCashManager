@@ -498,10 +498,6 @@
     <string name="settings_show_tutorial_subtitle">重新觀看應用程式初始���程</string>
     <string name="tutorial_welcome_title">歡迎使用 AntCashManager！🐜</string>
     <string name="tutorial_welcome_desc">讓我們快速瀏覽一下，看看我們的小螞蟻如何幫助您理財。</string>
-    <string name="tutorial_welcome_point_track">在幾秒鐘內追蹤收入和支出。</string>
-    <string name="tutorial_welcome_point_insights">一目了然地查看餘額和趨勢。</string>
-    <string name="tutorial_welcome_point_categories">使用智慧分類整理支出。</string>
-    <string name="tutorial_welcome_point_customize">自訂語言、佈景主題和格式。</string>
     <string name="tutorial_dashboard_title">儀表板</string>
     <string name="tutorial_dashboard_desc">在這裡，您可以一目了然地查看總餘額、每月收入和支出。</string>
     <string name="tutorial_transactions_title">交易</string>
