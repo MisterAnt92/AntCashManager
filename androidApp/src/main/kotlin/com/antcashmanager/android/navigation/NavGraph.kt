@@ -270,6 +270,7 @@ fun AntCashManagerNavHost() {
                     isTutorialCompleted == false && prevTutorialCompleted == true -> {
                         // Manual replay from Settings: bypass safeguard, navigate to Home first
                         navController.navigateToHome()
+                        kotlinx.coroutines.delay(300L)
                         tutorialViewModel.emitEvent(TutorialEvent.ForceStartTutorial)
                     }
                 }
@@ -277,19 +278,29 @@ fun AntCashManagerNavHost() {
             }
 
             // Drive reveal spotlight based on tutorial step.
-            // Retries with 50 ms back-off because a revealable key may not yet be registered
-            // when the composable hosting it hasn't been laid out (e.g. HomeListPane lazy items).
+            // Retries with 50 ms back-off (up to 1 s) because a revealable key may not yet be
+            // registered when the composable hosting it hasn't been laid out.
+            // If the key is still missing after all retries (e.g. CHARTS_NAV when charts are off,
+            // or CATEGORIES_NAV on phones where it's not in the bottom bar), auto-skip that step.
             LaunchedEffect(tutorialState.currentStep, tutorialState.isActive) {
-                val key = stepKeyFor(tutorialState.currentStep)
+                val key = stepKeyFor(tutorialState.currentStep, adaptiveLayoutInfo.preferRailNavigation)
                 if (tutorialState.isActive && key != null) {
                     var attempts = 0
-                    while (attempts < 10) {
+                    while (attempts < 20) {
                         try {
                             revealState.reveal(key)
                             break
                         } catch (_: IllegalArgumentException) {
                             attempts++
                             kotlinx.coroutines.delay(50L)
+                        }
+                    }
+                    if (attempts >= 20) {
+                        // Key not registered — skip this step gracefully
+                        if (tutorialState.isFinishing) {
+                            tutorialViewModel.emitEvent(TutorialEvent.CompleteTutorial)
+                        } else {
+                            tutorialViewModel.emitEvent(TutorialEvent.NextStep)
                         }
                     }
                 } else {
@@ -719,7 +730,8 @@ fun AntCashManagerNavHost() {
                                                             analyticsManager.logEvent("sidebar_toggled", params)
                                                             isSidebarOpen = !isSidebarOpen
                                                         },
-                                                        modifier = Modifier.size(48.dp),
+                                                        modifier = Modifier.size(48.dp)
+                                                            .revealable(TutorialKey.SIDEBAR_TOGGLE, state = revealState),
                                                     ) {
                                                         Icon(
                                                             imageVector = Icons.Default.Menu,

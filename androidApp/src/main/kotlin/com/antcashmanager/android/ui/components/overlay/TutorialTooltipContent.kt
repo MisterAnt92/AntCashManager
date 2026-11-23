@@ -57,6 +57,7 @@ fun TutorialTooltipContent(
             TutorialKey.CHARTS_NAV        -> R.string.tutorial_charts_title
             TutorialKey.TRANSACTIONS_NAV  -> R.string.tutorial_add_transaction_title
             TutorialKey.CATEGORIES_NAV    -> R.string.tutorial_categories_title
+            TutorialKey.SIDEBAR_TOGGLE    -> R.string.tutorial_sidebar_title
             null                          -> R.string.tutorial_finish_title
         }
     }
@@ -69,6 +70,7 @@ fun TutorialTooltipContent(
             TutorialKey.CHARTS_NAV        -> R.string.tutorial_charts_desc
             TutorialKey.TRANSACTIONS_NAV  -> R.string.tutorial_add_transaction_desc
             TutorialKey.CATEGORIES_NAV    -> R.string.tutorial_categories_desc
+            TutorialKey.SIDEBAR_TOGGLE    -> R.string.tutorial_sidebar_desc
             null                          -> R.string.tutorial_finish_desc
         }
     }

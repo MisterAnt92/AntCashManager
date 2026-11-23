@@ -72,9 +72,12 @@ fun HomeListPane(
     }
 
     Scaffold(
-        modifier = modifier
-            .fillMaxSize()
-            .testTag(HOME_SCREEN_TAG),
+        modifier = if (revealState != null) {
+            modifier.fillMaxSize().testTag(HOME_SCREEN_TAG)
+                .revealable(TutorialKey.HOME_TRANSACTIONS, state = revealState)
+        } else {
+            modifier.fillMaxSize().testTag(HOME_SCREEN_TAG)
+        },
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         floatingActionButton = {
             AnimatedVisibility(
@@ -133,13 +136,7 @@ fun HomeListPane(
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onBackground,
-                    modifier = if (revealState != null) {
-                        Modifier
-                            .testTag(RECENT_COUNT_TAG)
-                            .revealable(TutorialKey.HOME_TRANSACTIONS, state = revealState)
-                    } else {
-                        Modifier.testTag(RECENT_COUNT_TAG)
-                    },
+                    modifier = Modifier.testTag(RECENT_COUNT_TAG),
                 )
             }
 
