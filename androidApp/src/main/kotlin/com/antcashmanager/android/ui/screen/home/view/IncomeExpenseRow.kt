@@ -29,16 +29,26 @@ import com.antcashmanager.android.ui.components.layout.SpacingSize
 import com.antcashmanager.android.ui.components.layout.VerticalSpacer
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.components.text.CompactMoneyText
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.automirrored.filled.TrendingFlat
+import androidx.compose.material3.Text
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.sp
+import com.antcashmanager.android.ui.screen.charts.TrendDirection
 import com.antcashmanager.android.ui.screen.home.HomeConstant
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.ui.theme.ExpenseRed
 import com.antcashmanager.android.ui.theme.IncomeGreen
+import kotlin.math.abs
 
 @Composable
 fun IncomeExpenseRow(
     totalIncome: Double,
     totalExpense: Double,
     modifier: Modifier = Modifier,
+    incomeDeltaPercent: Double? = null,
+    expenseDeltaPercent: Double? = null,
 ) {
     FadeInOnAppear(durationMillis = HomeConstant.ROW_FADE_IN_MS) {
         Row(
@@ -91,6 +101,10 @@ fun IncomeExpenseRow(
                         fontSize = 18,
                         fontWeight = FontWeight.Bold,
                     )
+                    if (incomeDeltaPercent != null) {
+                        VerticalSpacer(SpacingSize.XXXS)
+                        TrendBadge(deltaPercent = incomeDeltaPercent, baseColor = IncomeGreen)
+                    }
                 }
             }
 
@@ -140,9 +154,55 @@ fun IncomeExpenseRow(
                         fontSize = 18,
                         fontWeight = FontWeight.Bold,
                     )
+                    if (expenseDeltaPercent != null) {
+                        VerticalSpacer(SpacingSize.XXXS)
+                        TrendBadge(deltaPercent = expenseDeltaPercent, baseColor = ExpenseRed)
+                    }
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun TrendBadge(
+    deltaPercent: Double,
+    baseColor: Color,
+) {
+    val trend = when {
+        deltaPercent > 5.0  -> TrendDirection.UP
+        deltaPercent < -5.0 -> TrendDirection.DOWN
+        else                -> TrendDirection.NEUTRAL
+    }
+    val icon = when (trend) {
+        TrendDirection.UP      -> Icons.AutoMirrored.Filled.TrendingUp
+        TrendDirection.DOWN    -> Icons.AutoMirrored.Filled.TrendingDown
+        TrendDirection.NEUTRAL -> Icons.AutoMirrored.Filled.TrendingFlat
+    }
+    val sign = if (deltaPercent >= 0) "+" else ""
+    Row(
+        modifier = Modifier
+            .background(
+                color = baseColor.copy(alpha = 0.12f),
+                shape = RoundedCornerShape(12.dp),
+            )
+            .padding(horizontal = 6.dp, vertical = 2.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center,
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = baseColor,
+            modifier = Modifier.size(12.dp),
+        )
+        Spacer(modifier = Modifier.width(2.dp))
+        Text(
+            text = "$sign${"%.0f".format(abs(deltaPercent))}%",
+            color = baseColor,
+            fontSize = 10.sp,
+            fontWeight = FontWeight.SemiBold,
+        )
     }
 }
 

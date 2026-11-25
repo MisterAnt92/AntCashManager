@@ -41,6 +41,7 @@ import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.util.LocalAmountsMasked
 import com.antcashmanager.android.util.LocalCurrencyFormat
 import com.antcashmanager.android.util.formatAmount
+import com.antcashmanager.android.ui.screen.charts.TrendDirection
 import com.antcashmanager.android.util.translateCategory
 
 /**
@@ -55,14 +56,6 @@ data class ChartDetailsData(
     val transactionCount: Int = 0,
     val trend: TrendDirection = TrendDirection.NEUTRAL,
 )
-
-enum class TrendDirection(
-    val symbol: String,
-) {
-    UP("↑"),
-    DOWN("↓"),
-    NEUTRAL("→"),
-}
 
 /**
  * Bottom sheet showing detailed breakdown for a selected chart category.

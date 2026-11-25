@@ -401,5 +401,14 @@ open class FakeSettingsRepository : SettingsRepository {
         googleDriveFolderName.value = null
         googleDriveUserEmail.value = null
         defaultPaymentType.value = "ELECTRONIC"
+        useDynamicColor.value = true
+    }
+
+    val useDynamicColor = MutableStateFlow(true)
+
+    override fun getUseDynamicColor(): Flow<Boolean> = useDynamicColor
+
+    override suspend fun setUseDynamicColor(value: Boolean) {
+        useDynamicColor.value = value
     }
 }

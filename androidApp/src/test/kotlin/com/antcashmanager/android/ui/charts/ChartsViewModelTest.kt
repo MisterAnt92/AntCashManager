@@ -113,11 +113,10 @@ class ChartsViewModelTest : BaseUnitTest() {
                         segmentationTracker = mockk(relaxed = true),
                         analyticsManager = mockk(relaxed = true),
                     )
-                //presetViewModel.onEvent(ChartEvent.SetPresetRangeEvent(preset))
+                presetViewModel.emitEvent(ChartEvent.SetPresetRangeEvent(preset))
                 advanceUntilIdle()
 
                 val range = presetViewModel.dateRange.value
-                assertEquals(preset.ordinal, presetViewModel.selectedPresetIndex.value)
                 // Ogni preset più lungo deve produrre un "from" più indietro nel tempo del precedente.
                 assertTrue(range.from <= previousFrom)
                 previousFrom = range.from

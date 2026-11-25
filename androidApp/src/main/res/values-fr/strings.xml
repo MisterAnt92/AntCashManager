@@ -445,7 +445,7 @@
     <string name="settings_mask_amounts_preview">Aperçu : %s</string>
     <string name="settings_use_dynamic_color">Couleurs dynamiques</string>
     <string name="settings_use_dynamic_color_subtitle_enabled">Utilisation de la palette système (Material You)</string>
-    <string name="settings_use_dynamic_color_subtitle_disabled">Utilisation de la palette de l'application</string>
+    <string name="settings_use_dynamic_color_subtitle_disabled">Utilisation de la palette de l\'application</string>
     <string name="settings_transaction_icon_display_trend">Flèches de Tendance</string>
     <string name="settings_transaction_icon_display_category">Catégorie</string>
     <string name="settings_transaction_icon_display_none">Aucun</string>
@@ -576,6 +576,8 @@
     <!-- Chart Cards - New Visualizations -->
     <string name="chart_spending_forecast_title">Prévision de Dépenses</string>
     <string name="chart_avg_monthly">Moyenne Mensuelle</string>
+    <string name="chart_projected_month_end">Projected month end</string>
+    <string name="home_vs_previous_period">vs. previous period</string>
     <string name="chart_period">Période</string>
     <string name="chart_last_3_months">3 derniers mois</string>
     <string name="chart_quick_stats_title">Statistiques Rapides</string>

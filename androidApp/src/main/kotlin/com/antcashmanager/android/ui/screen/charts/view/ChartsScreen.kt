@@ -78,6 +78,7 @@ import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.charts.ChartData
 import com.antcashmanager.android.ui.screen.charts.ChartEvent
 import com.antcashmanager.android.ui.screen.charts.ChartsConstant
+import com.antcashmanager.android.ui.screen.charts.TrendDirection
 import com.antcashmanager.android.ui.screen.charts.ChartsViewModel
 import com.antcashmanager.android.ui.screen.charts.MonthlyAmount
 import com.antcashmanager.android.ui.screen.charts.RangePreset

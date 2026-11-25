@@ -11,7 +11,6 @@ import com.antcashmanager.android.analytics.tracker.PerformanceTracker
 import com.antcashmanager.android.analytics.tracker.SegmentationTracker
 import com.antcashmanager.android.ui.base.AndroidBaseViewModel
 import com.antcashmanager.android.ui.screen.charts.view.ChartDetailsData
-import com.antcashmanager.android.ui.screen.charts.view.TrendDirection
 import com.antcashmanager.android.util.withCorrectAmounts
 import com.antcashmanager.domain.model.SavedDateFilter
 import com.antcashmanager.domain.model.Transaction
@@ -29,6 +28,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
@@ -92,9 +92,14 @@ class ChartsViewModel(
             range to localeTag
         }
             .flatMapLatest { (range, localeTag) ->
-                getTransactionsByDateRangeUseCase(range).map { result ->
-                    // Apply amount correction for EXPENSE transactions
-                    buildChartData(result.getOrElse { emptyList() }.withCorrectAmounts(), localeTag)
+                val prevRange = previousPeriodRange(range)
+                combine(
+                    getTransactionsByDateRangeUseCase(range),
+                    getTransactionsByDateRangeUseCase(prevRange),
+                ) { currentResult, prevResult ->
+                    val current  = currentResult.getOrElse { emptyList() }.withCorrectAmounts()
+                    val previous = prevResult.getOrElse { emptyList() }.withCorrectAmounts()
+                    buildChartData(current, previous, localeTag)
                 }
             }.stateIn(
                 scope = viewModelScope,
@@ -309,7 +314,16 @@ class ChartsViewModel(
         return DateRange(from.timeInMillis, now.timeInMillis)
     }
 
-    private fun buildChartData(transactions: List<Transaction>, localeTag: String = java.util.Locale.getDefault().toLanguageTag()): ChartData {
+    private fun previousPeriodRange(range: DateRange): DateRange {
+        val duration = range.to - range.from
+        return DateRange(from = maxOf(0L, range.from - duration), to = range.from - 1L)
+    }
+
+    private fun buildChartData(
+        transactions: List<Transaction>,
+        previousTransactions: List<Transaction> = emptyList(),
+        localeTag: String = java.util.Locale.getDefault().toLanguageTag(),
+    ): ChartData {
         val startTime = System.currentTimeMillis()
         logDebug("Building chart data from ${transactions.size} transactions")
 
@@ -469,6 +483,13 @@ class ChartsViewModel(
             }
         }
 
+        val prevIncome = previousTransactions
+            .filter { it.type == TransactionType.INCOME }
+            .sumOf { it.amount }
+        val prevExpense = previousTransactions
+            .filter { it.type == TransactionType.EXPENSE }
+            .sumOf { abs(it.amount) }
+
         return ChartData(
             incomeByCategory = incomeByCategory,
             expenseByCategory = expenseByCategory,
@@ -481,6 +502,8 @@ class ChartsViewModel(
             paymentTypeBreakdown = paymentTypeBreakdown,
             dailyTimeline = dailyTimeline,
             expenseByWeekday = expenseByWeekday,
+            previousPeriodIncome = prevIncome,
+            previousPeriodExpense = prevExpense,
         )
     }
 
@@ -522,7 +545,7 @@ class ChartsViewModel(
                 percentage = percentage,
                 colorHex = colorHex,
                 transactionCount = transactionCount,
-                trend = TrendDirection.NEUTRAL, // Can be enhanced with trend analysis
+                trend = if (isExpense) chartData.value.expenseTrend else chartData.value.incomeTrend,
             )
 
         _selectedChartDetails.value = details

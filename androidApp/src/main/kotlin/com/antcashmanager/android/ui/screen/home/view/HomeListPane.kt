@@ -191,7 +191,12 @@ private fun TopCard(
             )
 
         HomeTopCardType.INCOME_EXPENSE ->
-            IncomeExpenseRow(totalIncome = state.totalIncome, totalExpense = abs(state.totalExpense))
+            IncomeExpenseRow(
+                totalIncome = state.totalIncome,
+                totalExpense = abs(state.totalExpense),
+                incomeDeltaPercent = state.incomeDeltaPercent,
+                expenseDeltaPercent = state.expenseDeltaPercent,
+            )
 
         HomeTopCardType.QUICK_INSIGHTS ->
             QuickInsightsCard(

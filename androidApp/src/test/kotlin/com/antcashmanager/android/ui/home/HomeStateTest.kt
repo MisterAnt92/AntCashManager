@@ -1,7 +1,9 @@
 package com.antcashmanager.android.ui.home
 
+import com.antcashmanager.android.ui.screen.charts.TrendDirection
 import com.antcashmanager.android.ui.screen.home.HomeState
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.util.Calendar
@@ -70,5 +72,55 @@ class HomeStateTest {
     @Test
     fun presets_shouldIncludeMultiYearRangesAndAllTime() {
         assertEquals(9, HomeState.PRESETS.size)
+    }
+
+    // --- Period comparison ---
+
+    @Test
+    fun incomeDeltaPercent_shouldReturnNull_whenPreviousPeriodIncomeIsZero() {
+        val state = HomeState(totalIncome = 100.0, previousPeriodIncome = 0.0)
+        assertNull(state.incomeDeltaPercent)
+    }
+
+    @Test
+    fun incomeDeltaPercent_shouldReturnCorrectDelta_whenPreviousIsNonZero() {
+        val state = HomeState(totalIncome = 110.0, previousPeriodIncome = 100.0)
+        assertEquals(10.0, state.incomeDeltaPercent!!, 0.001)
+    }
+
+    @Test
+    fun expenseDeltaPercent_shouldReturnNull_whenPreviousPeriodExpenseIsZero() {
+        val state = HomeState(totalExpense = 50.0, previousPeriodExpense = 0.0)
+        assertNull(state.expenseDeltaPercent)
+    }
+
+    @Test
+    fun expenseDeltaPercent_shouldReturnCorrectDelta_whenPreviousIsNonZero() {
+        val state = HomeState(totalExpense = 80.0, previousPeriodExpense = 100.0)
+        assertEquals(-20.0, state.expenseDeltaPercent!!, 0.001)
+    }
+
+    @Test
+    fun incomeTrend_shouldBeUp_whenDeltaAboveThreshold() {
+        val state = HomeState(totalIncome = 110.0, previousPeriodIncome = 100.0) // +10%
+        assertEquals(TrendDirection.UP, state.incomeTrend)
+    }
+
+    @Test
+    fun incomeTrend_shouldBeDown_whenDeltaBelowNegativeThreshold() {
+        val state = HomeState(totalIncome = 85.0, previousPeriodIncome = 100.0) // -15%
+        assertEquals(TrendDirection.DOWN, state.incomeTrend)
+    }
+
+    @Test
+    fun incomeTrend_shouldBeNeutral_whenDeltaWithinThreshold() {
+        val state = HomeState(totalIncome = 102.0, previousPeriodIncome = 100.0) // +2%
+        assertEquals(TrendDirection.NEUTRAL, state.incomeTrend)
+    }
+
+    @Test
+    fun incomeTrend_shouldBeNeutral_whenPreviousIsZero() {
+        val state = HomeState(totalIncome = 100.0, previousPeriodIncome = 0.0)
+        assertEquals(TrendDirection.NEUTRAL, state.incomeTrend)
     }
 }

@@ -9,6 +9,7 @@ import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.usecase.category.DeleteCategoryUseCase
 import com.antcashmanager.domain.usecase.category.GetCategoriesUseCase
 import com.antcashmanager.domain.usecase.category.InsertCategoryUseCase
+import com.antcashmanager.domain.usecase.category.RestoreDefaultCategoriesUseCase
 import com.antcashmanager.domain.usecase.category.UpdateCategoryUseCase
 import com.antcashmanager.domain.usecase.transaction.SyncTransactionCategoriesUseCase
 import io.mockk.coEvery
@@ -30,6 +31,7 @@ class CategoriesViewModelTest : BaseUnitTest() {
     private lateinit var updateCategoryUseCase: UpdateCategoryUseCase
     private lateinit var deleteCategoryUseCase: DeleteCategoryUseCase
     private lateinit var syncTransactionCategoriesUseCase: SyncTransactionCategoriesUseCase
+    private lateinit var restoreDefaultCategoriesUseCase: RestoreDefaultCategoriesUseCase
     private lateinit var analyticsManager: AnalyticsManager
 
     @Before
@@ -39,6 +41,7 @@ class CategoriesViewModelTest : BaseUnitTest() {
         updateCategoryUseCase = mockk()
         deleteCategoryUseCase = mockk()
         syncTransactionCategoriesUseCase = mockk()
+        restoreDefaultCategoriesUseCase = mockk(relaxed = true)
         analyticsManager = mockk(relaxed = true)
 
         every { getCategoriesUseCase() } returns flowOf(Result.success(emptyList()))
@@ -238,7 +241,6 @@ class CategoriesViewModelTest : BaseUnitTest() {
             assertEquals(listOf("Gym"), viewModel.state.value.customExpenseCategories.map { it.name })
             assertEquals(listOf("Salary"), viewModel.state.value.defaultIncomeCategories.map { it.name })
             assertEquals(listOf("Refund"), viewModel.state.value.customIncomeCategories.map { it.name })
-            assertEquals(listOf("Gym"), viewModel.state.value.hiddenExpenseCategories.map { it.name })
         }
 
     @Test
@@ -376,15 +378,10 @@ class CategoriesViewModelTest : BaseUnitTest() {
                 viewModel.state.value.expenseCategories
                     .map { it.name },
             )
-            assertEquals(
-                listOf("Hidden"),
-                viewModel.state.value.hiddenExpenseCategories
-                    .map { it.name },
-            )
         }
 
     @Test
-    fun state_shouldPartitionIncomeAndExpenseHiddenCategories_correctly() =
+    fun state_shouldExcludeHiddenCategoriesFromVisibleLists() =
         runViewModelTest {
             val categories =
                 listOf(
@@ -410,14 +407,8 @@ class CategoriesViewModelTest : BaseUnitTest() {
 
             advanceUntilIdle()
 
-            assertEquals(
-                listOf("Hidden Expense"),
-                viewModel.state.value.hiddenExpenseCategories.map { it.name },
-            )
-            assertEquals(
-                listOf("Hidden Income"),
-                viewModel.state.value.hiddenIncomeCategories.map { it.name },
-            )
+            assertTrue(viewModel.state.value.expenseCategories.isEmpty())
+            assertTrue(viewModel.state.value.incomeCategories.isEmpty())
         }
 
     @Test
@@ -589,6 +580,7 @@ class CategoriesViewModelTest : BaseUnitTest() {
             updateCategoryUseCase = updateCategoryUseCase,
             deleteCategoryUseCase = deleteCategoryUseCase,
             syncTransactionCategoriesUseCase = syncTransactionCategoriesUseCase,
+            restoreDefaultCategoriesUseCase = restoreDefaultCategoriesUseCase,
             analyticsManager = analyticsManager,
         )
 }

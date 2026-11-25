@@ -9,6 +9,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -25,6 +26,9 @@ import com.antcashmanager.android.ui.screen.charts.ChartData
 import com.antcashmanager.android.util.LocalCurrencyFormat
 import com.antcashmanager.android.util.formatAmount
 import com.antcashmanager.android.util.translateWeekday
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 @Composable
 internal fun SpendingForecastCard(
@@ -43,6 +47,17 @@ internal fun SpendingForecastCard(
 
     val format = LocalCurrencyFormat.current
 
+    val projectedMonthEnd: Double? = remember(chartData.dailyTimeline) {
+        val currentYearMonth = SimpleDateFormat("yyyy-MM", Locale.US).format(Calendar.getInstance().time)
+        val currentMonthEntries = chartData.dailyTimeline.filter { it.dateLabel.startsWith(currentYearMonth) }
+        val daysElapsed = currentMonthEntries.size
+        if (daysElapsed >= 3) {
+            val currentMonthSpend = currentMonthEntries.sumOf { it.expense }
+            val daysInMonth = Calendar.getInstance().getActualMaximum(Calendar.DAY_OF_MONTH)
+            currentMonthSpend / daysElapsed * daysInMonth
+        } else null
+    }
+
     Card(
         modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiaryContainer),
@@ -57,6 +72,13 @@ internal fun SpendingForecastCard(
             Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
                 AppText(text = stringResource(id = R.string.chart_avg_monthly))
                 AppText(text = formatAmount(averageMonthlyExpense, format))
+            }
+            if (projectedMonthEnd != null) {
+                VerticalSpacer(SpacingSize.XXXS)
+                Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
+                    AppText(text = stringResource(id = R.string.chart_projected_month_end))
+                    AppText(text = formatAmount(projectedMonthEnd, format))
+                }
             }
         }
     }

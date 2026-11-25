@@ -297,6 +297,23 @@ class HomeViewModel(
             val totalExpense = enrichedFiltered.calculateTotalExpense() // This will be negative
             val balance = enrichedFiltered.calculateBalance() // Sum of all amounts
 
+            // Calculate previous period for delta comparison
+            val from = if (filterState.selectedPresetIndex != SavedDateFilter.CUSTOM_PRESET_INDEX)
+                           HomeState.getDateFromForPreset(filterState.selectedPresetIndex)
+                       else filterState.dateRangeFrom
+            val to   = filterState.dateRangeTo
+            val duration = to - from
+            val prevFrom = maxOf(0L, from - duration)
+            val prevTo   = from - 1L
+            val previousFiltered = filterTransactionsUseCase(
+                FilterTransactionsUseCase.Params(
+                    transactions = transactions.withCorrectAmounts(),
+                    filterParams = TransactionFilterParams(dateFrom = prevFrom, dateTo = prevTo),
+                ),
+            ).getOrElse { emptyList() }
+            val previousPeriodIncome  = previousFiltered.calculateTotalIncome()
+            val previousPeriodExpense = previousFiltered.calculateTotalExpense()
+
             // Calculate balance by payment type (optimized with Map, excluding zeros)
             val balanceByPaymentType =
                 enrichedFiltered
@@ -391,6 +408,8 @@ class HomeViewModel(
                 transactionDisplayType = transactionDisplayType,
                 mealVoucherSummary = mealVoucherSummary,
                 errorState = ErrorState(),
+                previousPeriodIncome = previousPeriodIncome,
+                previousPeriodExpense = previousPeriodExpense,
             )
         }.stateIn(
             scope = viewModelScope,

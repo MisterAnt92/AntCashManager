@@ -574,6 +574,8 @@
     <!-- Chart Cards - New Visualizations -->
     <string name="chart_spending_forecast_title">Previsión de Gastos</string>
     <string name="chart_avg_monthly">Promedio Mensual</string>
+    <string name="chart_projected_month_end">Projected month end</string>
+    <string name="home_vs_previous_period">vs. previous period</string>
     <string name="chart_period">Período</string>
     <string name="chart_last_3_months">Últimos 3 meses</string>
     <string name="chart_quick_stats_title">Estadísticas Rápidas</string>

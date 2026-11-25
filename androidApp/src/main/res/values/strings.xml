@@ -653,6 +653,8 @@
     <!-- Chart Cards - New Visualizations -->
     <string name="chart_spending_forecast_title">Spending Forecast</string>
     <string name="chart_avg_monthly">Monthly Average</string>
+    <string name="chart_projected_month_end">Projected month end</string>
+    <string name="home_vs_previous_period">vs. previous period</string>
     <string name="chart_period">Period</string>
     <string name="chart_last_3_months">Last 3 months</string>
     <string name="chart_quick_stats_title">Quick Stats</string>

@@ -630,6 +630,8 @@
     <!-- Chart Cards - New Visualizations -->
     <string name="chart_spending_forecast_title">Прогноз расходов</string>
     <string name="chart_avg_monthly">Среднее за месяц</string>
+    <string name="chart_projected_month_end">Projected month end</string>
+    <string name="home_vs_previous_period">vs. previous period</string>
     <string name="chart_period">Период</string>
     <string name="chart_last_3_months">Последние 3 месяца</string>
     <string name="chart_quick_stats_title">Быстрая статистика</string>

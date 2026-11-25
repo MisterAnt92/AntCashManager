@@ -9,6 +9,8 @@ import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.model.TransactionType
+import com.antcashmanager.android.ui.screen.charts.TrendDirection
+import com.antcashmanager.android.ui.screen.charts.ChartsConstant.TREND_THRESHOLD_PERCENT
 import kotlin.math.abs
 import com.antcashmanager.android.ui.screen.common.DateRangePreset
 
@@ -43,6 +45,8 @@ data class HomeState(
     val mealVoucherSummary: MealVoucherSummary? = null,
     // Error handling (FASE 5: Error Feedback UX)
     val errorState: ErrorState = ErrorState(),
+    val previousPeriodIncome: Double = 0.0,
+    val previousPeriodExpense: Double = 0.0,
 ) : UIState() {
     /** Top cards actually rendered: Quick Insights is dropped when its setting is off, Meal Vouchers when no data. */
     val visibleTopCards: List<HomeTopCardType> =
@@ -68,6 +72,30 @@ data class HomeState(
 
     val biggestExpense: Transaction? =
         filteredTransactions.filter { it.type == TransactionType.EXPENSE }.maxByOrNull { abs(it.amount) }
+
+    val incomeDeltaPercent: Double?
+        get() = if (previousPeriodIncome == 0.0) null
+                else (totalIncome - previousPeriodIncome) / abs(previousPeriodIncome) * 100.0
+
+    val expenseDeltaPercent: Double?
+        get() = if (previousPeriodExpense == 0.0) null
+                else (totalExpense - previousPeriodExpense) / abs(previousPeriodExpense) * 100.0
+
+    val incomeTrend: TrendDirection
+        get() = when {
+            incomeDeltaPercent == null                        -> TrendDirection.NEUTRAL
+            incomeDeltaPercent!! > TREND_THRESHOLD_PERCENT   -> TrendDirection.UP
+            incomeDeltaPercent!! < -TREND_THRESHOLD_PERCENT  -> TrendDirection.DOWN
+            else                                             -> TrendDirection.NEUTRAL
+        }
+
+    val expenseTrend: TrendDirection
+        get() = when {
+            expenseDeltaPercent == null                        -> TrendDirection.NEUTRAL
+            expenseDeltaPercent!! > TREND_THRESHOLD_PERCENT   -> TrendDirection.UP
+            expenseDeltaPercent!! < -TREND_THRESHOLD_PERCENT  -> TrendDirection.DOWN
+            else                                              -> TrendDirection.NEUTRAL
+        }
 
     /** Payment-type balances in enum order, zero entries already removed. */
     val balanceByPaymentTypeOrdered: List<Pair<PaymentType, Double>> =
