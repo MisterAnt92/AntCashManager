@@ -171,7 +171,7 @@ private fun CategoryBreakdownContent(
                 TextStyle(
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
-                    color = ColorProvider(palette.primaryText),
+                    color = palette.primaryText.toColorProvider(),
                 ),
         )
         Spacer(modifier = GlanceModifier.height(8.dp))
@@ -179,7 +179,7 @@ private fun CategoryBreakdownContent(
         if (income.isEmpty() && expenses.isEmpty()) {
             Text(
                 text = context.getString(R.string.empty_state_no_transactions),
-                style = TextStyle(fontSize = 12.sp, color = ColorProvider(palette.secondaryText)),
+                style = TextStyle(fontSize = 12.sp, color = palette.secondaryText.toColorProvider()),
             )
         } else {
             if (expenses.isNotEmpty()) {
@@ -220,7 +220,7 @@ private fun CategorySection(
                 TextStyle(
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Medium,
-                    color = ColorProvider(palette.secondaryText),
+                    color = palette.secondaryText.toColorProvider(),
                 ),
         )
         categories.forEach { categoryTotal ->
@@ -252,7 +252,7 @@ private fun CategoryBar(
                 text = name,
                 maxLines = 1,
                 modifier = GlanceModifier.defaultWeight(),
-                style = TextStyle(fontSize = 12.sp, color = ColorProvider(palette.primaryText)),
+                style = TextStyle(fontSize = 12.sp, color = palette.primaryText.toColorProvider()),
             )
             Text(
                 text = amountLabel,
@@ -261,7 +261,7 @@ private fun CategoryBar(
                     TextStyle(
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Medium,
-                        color = ColorProvider(palette.primaryText),
+                        color = palette.primaryText.toColorProvider(),
                     ),
             )
         }
