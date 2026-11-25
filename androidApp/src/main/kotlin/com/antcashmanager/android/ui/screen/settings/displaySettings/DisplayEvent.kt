@@ -82,4 +82,8 @@ sealed class DisplayEvent : UIEvent() {
     ) : DisplayEvent()
 
     data object RetryLastOperationEvent : DisplayEvent()
+
+    data class SetUseDynamicColorEvent(
+        val value: Boolean,
+    ) : DisplayEvent()
 }

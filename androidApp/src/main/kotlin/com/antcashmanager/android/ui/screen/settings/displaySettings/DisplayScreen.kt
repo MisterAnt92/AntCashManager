@@ -1,5 +1,6 @@
 package com.antcashmanager.android.ui.screen.settings.displaySettings
 
+import android.os.Build
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -124,6 +125,7 @@ fun DisplayScreen(navController: NavController) {
     val chartsZoomEnabled by viewModel.chartsZoomEnabled.collectAsStateWithLifecycle()
     val widgetBackgroundColor by viewModel.widgetBackgroundColor.collectAsStateWithLifecycle()
     val widgetOpacity by viewModel.widgetOpacity.collectAsStateWithLifecycle()
+    val useDynamicColor by viewModel.useDynamicColor.collectAsStateWithLifecycle()
 
     DisplayContent(
         currencySymbol = currencySymbol,
@@ -162,6 +164,8 @@ fun DisplayScreen(navController: NavController) {
         onWidgetBackgroundColorSelected = { viewModel.emitEvent(DisplayEvent.SetWidgetBackgroundColorEvent(it)) },
         widgetOpacity = widgetOpacity,
         onWidgetOpacityChanged = { viewModel.emitEvent(DisplayEvent.SetWidgetOpacityEvent(it)) },
+        useDynamicColor = useDynamicColor,
+        onUseDynamicColorChanged = { viewModel.emitEvent(DisplayEvent.SetUseDynamicColorEvent(it)) },
         onResetAllPreferences = { viewModel.resetAllPreferences() },
         onNavigateBack = { navController.popBackStack() },
     )
@@ -213,6 +217,8 @@ internal fun DisplayContent(
     onWidgetBackgroundColorSelected: (Long) -> Unit,
     widgetOpacity: Int,
     onWidgetOpacityChanged: (Int) -> Unit,
+    useDynamicColor: Boolean = true,
+    onUseDynamicColorChanged: (Boolean) -> Unit = {},
     onResetAllPreferences: () -> Unit,
     onNavigateBack: () -> Unit,
 ) {
@@ -356,6 +362,8 @@ internal fun DisplayContent(
                         onShowTransactionNotesChanged = handleShowTransactionNotesChanged,
                         maskAmounts = maskAmounts,
                         onMaskAmountsChanged = handleMaskAmountsChanged,
+                        useDynamicColor = useDynamicColor,
+                        onUseDynamicColorChanged = onUseDynamicColorChanged,
                         onShowResetPreferencesDialog = { showResetPreferencesDialog = true },
                     )
                 }
@@ -447,6 +455,8 @@ internal fun DisplayContent(
                         onShowTransactionNotesChanged = handleShowTransactionNotesChanged,
                         maskAmounts = maskAmounts,
                         onMaskAmountsChanged = handleMaskAmountsChanged,
+                        useDynamicColor = useDynamicColor,
+                        onUseDynamicColorChanged = onUseDynamicColorChanged,
                         onShowResetPreferencesDialog = { showResetPreferencesDialog = true },
                     )
                     WidgetsDisplaySection(
@@ -1266,6 +1276,8 @@ private fun OtherSection(
     onShowTransactionNotesChanged: (Boolean) -> Unit,
     maskAmounts: Boolean,
     onMaskAmountsChanged: (Boolean) -> Unit,
+    useDynamicColor: Boolean = true,
+    onUseDynamicColorChanged: (Boolean) -> Unit = {},
     onShowResetPreferencesDialog: () -> Unit,
 ) {
     AppCardSectionHeader(title = stringResource(R.string.settings_section_other))
@@ -1309,6 +1321,25 @@ private fun OtherSection(
             },
             onClick = { onMaskAmountsChanged(!maskAmounts) },
         )
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            AppCard(
+                title = stringResource(R.string.settings_use_dynamic_color),
+                subtitle = if (useDynamicColor) {
+                    stringResource(R.string.settings_use_dynamic_color_subtitle_enabled)
+                } else {
+                    stringResource(R.string.settings_use_dynamic_color_subtitle_disabled)
+                },
+                leadingIcon = Icons.Default.Palette,
+                trailingContent = {
+                    Switch(
+                        checked = useDynamicColor,
+                        onCheckedChange = onUseDynamicColorChanged,
+                    )
+                },
+                onClick = { onUseDynamicColorChanged(!useDynamicColor) },
+            )
+        }
 
         VerticalSpacer(SpacingSize.SM)
         AppDivider()

@@ -35,4 +35,6 @@ data class DisplayState(
     // ── Widget Settings ──
     val widgetBackgroundColor: Long = DisplayConstant.DEFAULT_WIDGET_BACKGROUND_COLOR,
     val widgetOpacity: Int = DisplayConstant.DEFAULT_WIDGET_OPACITY,
+    // ── Tema ──
+    val useDynamicColor: Boolean = DisplayConstant.DEFAULT_USE_DYNAMIC_COLOR,
 ) : UIState()

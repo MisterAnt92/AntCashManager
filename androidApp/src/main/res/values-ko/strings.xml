@@ -490,6 +490,9 @@
     <string name="settings_mask_amounts_subtitle_enabled">숫자가 별표로 마스킹됨</string>
     <string name="settings_mask_amounts_subtitle_disabled">숫자가 정상적으로 표시됨</string>
     <string name="settings_mask_amounts_preview">미리보기: %s</string>
+    <string name="settings_use_dynamic_color">다이나믹 컬러</string>
+    <string name="settings_use_dynamic_color_subtitle_enabled">시스템 색상 팔레트 사용 (Material You)</string>
+    <string name="settings_use_dynamic_color_subtitle_disabled">앱 색상 팔레트 사용</string>
     <string name="settings_transaction_icon_display_trend">추세 화살표</string>
     <string name="settings_transaction_icon_display_category">카테고리</string>
     <string name="settings_transaction_icon_display_none">없음</string>

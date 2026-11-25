@@ -495,6 +495,9 @@
     <string name="settings_mask_amounts_subtitle_enabled">Le cifre sono mascherate con asterischi</string>
     <string name="settings_mask_amounts_subtitle_disabled">Le cifre sono visibili normalmente</string>
     <string name="settings_mask_amounts_preview">Anteprima: %s</string>
+    <string name="settings_use_dynamic_color">Colori dinamici</string>
+    <string name="settings_use_dynamic_color_subtitle_enabled">Usando la palette del sistema (Material You)</string>
+    <string name="settings_use_dynamic_color_subtitle_disabled">Usando la palette dell'app</string>
     <string name="settings_transaction_icon_display_trend">Frecce Andamento</string>
     <string name="settings_transaction_icon_display_category">Categoria</string>
     <string name="settings_transaction_icon_display_none">Nessuna</string>

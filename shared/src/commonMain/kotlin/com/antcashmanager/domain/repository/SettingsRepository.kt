@@ -242,4 +242,10 @@ public interface SettingsRepository {
     public fun getHomeTopCardsOrder(): Flow<String>
 
     public suspend fun setHomeTopCardsOrder(order: String): Unit
+
+    // ── Tema: colori dinamici (Material You) ──
+
+    public fun getUseDynamicColor(): Flow<Boolean>
+
+    public suspend fun setUseDynamicColor(value: Boolean): Unit
 }

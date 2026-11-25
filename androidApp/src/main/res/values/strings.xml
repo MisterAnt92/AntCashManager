@@ -514,6 +514,9 @@
     <string name="settings_mask_amounts_subtitle_enabled">Digits are masked with asterisks</string>
     <string name="settings_mask_amounts_subtitle_disabled">Digits are shown normally</string>
     <string name="settings_mask_amounts_preview">Preview: %s</string>
+    <string name="settings_use_dynamic_color">Dynamic colors</string>
+    <string name="settings_use_dynamic_color_subtitle_enabled">Using system color palette (Material You)</string>
+    <string name="settings_use_dynamic_color_subtitle_disabled">Using app color palette</string>
     <string name="settings_transaction_icon_display_trend">Trend Arrows</string>
     <string name="settings_transaction_icon_display_category">Category</string>
     <string name="settings_transaction_icon_display_none">None</string>

@@ -487,6 +487,9 @@
     <string name="settings_mask_amounts_subtitle_enabled">数字被星号遮盖</string>
     <string name="settings_mask_amounts_subtitle_disabled">数字正常显示</string>
     <string name="settings_mask_amounts_preview">预览：%s</string>
+    <string name="settings_use_dynamic_color">动态颜色</string>
+    <string name="settings_use_dynamic_color_subtitle_enabled">使用系统颜色 (Material You)</string>
+    <string name="settings_use_dynamic_color_subtitle_disabled">使用应用颜色</string>
     <string name="settings_transaction_icon_display_trend">趋势箭头</string>
     <string name="settings_transaction_icon_display_category">分类</string>
     <string name="settings_transaction_icon_display_none">无</string>

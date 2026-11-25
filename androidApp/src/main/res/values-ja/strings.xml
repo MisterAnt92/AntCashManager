@@ -490,6 +490,9 @@
     <string name="settings_mask_amounts_subtitle_enabled">数字をアスタリスクでマスクします</string>
     <string name="settings_mask_amounts_subtitle_disabled">数字を通常通り表示します</string>
     <string name="settings_mask_amounts_preview">プレビュー: %s</string>
+    <string name="settings_use_dynamic_color">ダイナミックカラー</string>
+    <string name="settings_use_dynamic_color_subtitle_enabled">システムカラーパレットを使用 (Material You)</string>
+    <string name="settings_use_dynamic_color_subtitle_disabled">アプリのカラーパレットを使用</string>
     <string name="settings_transaction_icon_display_trend">トレンド矢印</string>
     <string name="settings_transaction_icon_display_category">カテゴリ</string>
     <string name="settings_transaction_icon_display_none">なし</string>

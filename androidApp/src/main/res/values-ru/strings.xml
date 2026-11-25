@@ -491,6 +491,9 @@
     <string name="settings_mask_amounts_subtitle_enabled">Цифры скрыты звездочками</string>
     <string name="settings_mask_amounts_subtitle_disabled">Цифры отображаются нормально</string>
     <string name="settings_mask_amounts_preview">Предпросмотр: %s</string>
+    <string name="settings_use_dynamic_color">Динамические цвета</string>
+    <string name="settings_use_dynamic_color_subtitle_enabled">Используется системная палитра (Material You)</string>
+    <string name="settings_use_dynamic_color_subtitle_disabled">Используется палитра приложения</string>
     <string name="settings_transaction_icon_display_trend">Стрелки тренда</string>
     <string name="settings_transaction_icon_display_category">Категория</string>
     <string name="settings_transaction_icon_display_none">Нет</string>

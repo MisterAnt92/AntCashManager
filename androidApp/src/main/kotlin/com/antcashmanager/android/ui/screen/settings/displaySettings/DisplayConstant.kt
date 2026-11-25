@@ -26,6 +26,7 @@ object DisplayConstant {
     val DEFAULT_TRANSACTION_DISPLAY_TYPE: TransactionDisplayType = TransactionDisplayType.TREND
     const val DEFAULT_WIDGET_BACKGROUND_COLOR = 0xFFFFFFFFL
     const val DEFAULT_WIDGET_OPACITY = 100
+    const val DEFAULT_USE_DYNAMIC_COLOR = true
 
     val WIDGET_BACKGROUND_COLOR_PRESETS: List<Long> =
         listOf(0xFFFFFFFFL, 0xFF212121L) + categoryColors

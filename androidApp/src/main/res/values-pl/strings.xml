@@ -491,6 +491,9 @@
     <string name="settings_mask_amounts_subtitle_enabled">Cyfry są zastąpione gwiazdkami</string>
     <string name="settings_mask_amounts_subtitle_disabled">Cyfry są pokazywane normalnie</string>
     <string name="settings_mask_amounts_preview">Podgląd: %s</string>
+    <string name="settings_use_dynamic_color">Dynamiczne kolory</string>
+    <string name="settings_use_dynamic_color_subtitle_enabled">Używanie palety systemowej (Material You)</string>
+    <string name="settings_use_dynamic_color_subtitle_disabled">Używanie palety aplikacji</string>
     <string name="settings_transaction_icon_display_trend">Strzałki trendu</string>
     <string name="settings_transaction_icon_display_category">Kategoria</string>
     <string name="settings_transaction_icon_display_none">Brak</string>

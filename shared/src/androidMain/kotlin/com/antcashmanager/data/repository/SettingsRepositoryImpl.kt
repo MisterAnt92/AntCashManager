@@ -100,6 +100,7 @@ public class SettingsRepositoryImpl(
 
     // ── Device-global preference keys ─────────────────────────────────────────
 
+    private val useDynamicColorKey = booleanPreferencesKey("use_dynamic_color")
     private val analyticsConsentKey = booleanPreferencesKey("analytics_consent")
     private val dataEncryptionEnabledKey = booleanPreferencesKey("data_encryption_enabled")
     private val lastBackupTimestampKey = longPreferencesKey("last_backup_timestamp")
@@ -520,6 +521,13 @@ public class SettingsRepositoryImpl(
 
     override suspend fun setWidgetOpacity(opacity: Int) {
         deviceStore.edit { it[widgetOpacityKey] = opacity }
+    }
+
+    override fun getUseDynamicColor(): Flow<Boolean> =
+        activeProfileStore.flatMapLatest { it.data.map { p -> p[useDynamicColorKey] ?: true } }
+
+    override suspend fun setUseDynamicColor(value: Boolean) {
+        profileStore(pid).edit { it[useDynamicColorKey] = value }
     }
 
     override fun getAutoBackupDestination(): Flow<BackupDestination> =

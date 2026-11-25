@@ -487,6 +487,9 @@
     <string name="settings_mask_amounts_subtitle_enabled">अंकों को तारांकन चिह्नों से ढका गया है</string>
     <string name="settings_mask_amounts_subtitle_disabled">अंक सामान्य रूप से दिखाए गए हैं</string>
     <string name="settings_mask_amounts_preview">पूर्वावलोकन: %s</string>
+    <string name="settings_use_dynamic_color">डायनामिक रंग</string>
+    <string name="settings_use_dynamic_color_subtitle_enabled">सिस्टम रंग पैलेट का उपयोग (Material You)</string>
+    <string name="settings_use_dynamic_color_subtitle_disabled">ऐप रंग पैलेट का उपयोग</string>
     <string name="settings_transaction_icon_display_trend">ट्रेंड तीर</string>
     <string name="settings_transaction_icon_display_category">श्रेणी</string>
     <string name="settings_transaction_icon_display_none">कोई नहीं</string>
