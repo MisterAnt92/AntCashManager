@@ -128,6 +128,16 @@ fun HomeListPane(
                         TopCard(topCardType, state)
                     }
                 }
+                val savingsRate = state.savingsRate
+                if (savingsRate != null) {
+                    item(key = "savings_rate_card") {
+                        SavingsRateCard(
+                            savingsAmount = state.savingsAmount,
+                            savingsRate = savingsRate,
+                            savingsGoalRate = state.savingsGoalRate,
+                        )
+                    }
+                }
             }
 
             item {
@@ -196,6 +206,8 @@ private fun TopCard(
                 totalExpense = abs(state.totalExpense),
                 incomeDeltaPercent = state.incomeDeltaPercent,
                 expenseDeltaPercent = state.expenseDeltaPercent,
+                incomeAbsoluteDelta = state.incomeAbsoluteDelta,
+                expenseAbsoluteDelta = state.expenseAbsoluteDelta,
             )
 
         HomeTopCardType.QUICK_INSIGHTS ->

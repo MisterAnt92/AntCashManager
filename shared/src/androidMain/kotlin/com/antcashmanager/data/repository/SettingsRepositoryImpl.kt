@@ -5,6 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.doublePreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
@@ -101,6 +102,7 @@ public class SettingsRepositoryImpl(
     // ── Device-global preference keys ─────────────────────────────────────────
 
     private val useDynamicColorKey = booleanPreferencesKey("use_dynamic_color")
+    private val savingsGoalRateKey = floatPreferencesKey("savings_goal_rate")
     private val analyticsConsentKey = booleanPreferencesKey("analytics_consent")
     private val dataEncryptionEnabledKey = booleanPreferencesKey("data_encryption_enabled")
     private val lastBackupTimestampKey = longPreferencesKey("last_backup_timestamp")
@@ -528,6 +530,13 @@ public class SettingsRepositoryImpl(
 
     override suspend fun setUseDynamicColor(value: Boolean) {
         profileStore(pid).edit { it[useDynamicColorKey] = value }
+    }
+
+    override fun getSavingsGoalRate(): Flow<Float> =
+        activeProfileStore.flatMapLatest { it.data.map { p -> p[savingsGoalRateKey] ?: 20f } }
+
+    override suspend fun setSavingsGoalRate(rate: Float) {
+        profileStore(pid).edit { it[savingsGoalRateKey] = rate }
     }
 
     override fun getAutoBackupDestination(): Flow<BackupDestination> =

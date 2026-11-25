@@ -248,4 +248,8 @@ public interface SettingsRepository {
     public fun getUseDynamicColor(): Flow<Boolean>
 
     public suspend fun setUseDynamicColor(value: Boolean): Unit
+
+    public fun getSavingsGoalRate(): Flow<Float>
+
+    public suspend fun setSavingsGoalRate(rate: Float): Unit
 }

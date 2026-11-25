@@ -631,6 +631,9 @@
     <string name="chart_avg_monthly">월평균</string>
     <string name="chart_projected_month_end">Projected month end</string>
     <string name="home_vs_previous_period">vs. previous period</string>
+    <string name="home_savings_rate">저축률</string>
+    <string name="home_savings_goal">목표</string>
+    <string name="home_savings_amount">이 기간의 저축</string>
     <string name="chart_period">기간</string>
     <string name="chart_last_3_months">최근 3개월</string>
     <string name="chart_quick_stats_title">빠른 통계</string>

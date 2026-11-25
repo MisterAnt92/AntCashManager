@@ -255,6 +255,7 @@ class HomeViewModel(
             settingsRepository.getTransactionDisplayType(),
             _editingTopCardsOrder,
             settingsRepository.getMealVoucherValue(),
+            settingsRepository.getSavingsGoalRate(),
         ) { args: Array<Any?> ->
             @Suppress("UNCHECKED_CAST")
             val transactions = (args[0] as? List<Transaction>) ?: emptyList()
@@ -275,6 +276,7 @@ class HomeViewModel(
             @Suppress("UNCHECKED_CAST")
             val editingTopCardsOrder = args[12] as? List<HomeTopCardType>
             val mealVoucherValue = (args[13] as? Double) ?: DisplayConstant.DEFAULT_MEAL_VOUCHER_VALUE
+            val savingsGoalRate = (args[14] as? Float) ?: 20f
 
             // Enrich transactions with category icon and color from cache
             val enrichedFiltered =
@@ -410,6 +412,7 @@ class HomeViewModel(
                 errorState = ErrorState(),
                 previousPeriodIncome = previousPeriodIncome,
                 previousPeriodExpense = previousPeriodExpense,
+                savingsGoalRate = savingsGoalRate,
             )
         }.stateIn(
             scope = viewModelScope,

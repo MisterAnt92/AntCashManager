@@ -18,6 +18,9 @@ Single source of rules for AI coding agents. Specialized agents in `.github/agen
 3. **Implement one file at a time.** After each file: check imports and `package` match the directory.
 4. **Verify light** — re-read only the edited region, not the whole file. Compile **once per logical group** with `compileFullDebugKotlin`, not after every edit.
 5. **Confirm** — summarize what changed and stop; wait before the next step of a multi-step task.
+   For feature UI: launch the app, verify the golden path visually, confirm edge cases.
+   Then update `docs/APP_SPEC.md`: mark `[DONE]`, bump the version header.
+   If you added UI components: update the inventory in `.github/agents/agent-compose-ui.agent.md`.
 
 ## 3. Token discipline
 

@@ -1,27 +1,36 @@
 package com.antcashmanager.android.ui.screen.home.view
 
 import android.content.res.Configuration
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.TrendingDown
+import androidx.compose.material.icons.automirrored.filled.TrendingFlat
 import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.animation.AnimatedCard
 import com.antcashmanager.android.ui.components.animation.FadeInOnAppear
@@ -29,12 +38,7 @@ import com.antcashmanager.android.ui.components.layout.SpacingSize
 import com.antcashmanager.android.ui.components.layout.VerticalSpacer
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.components.text.CompactMoneyText
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.automirrored.filled.TrendingFlat
-import androidx.compose.material3.Text
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.sp
+import com.antcashmanager.android.ui.components.text.MoneyText
 import com.antcashmanager.android.ui.screen.charts.TrendDirection
 import com.antcashmanager.android.ui.screen.home.HomeConstant
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
@@ -49,6 +53,8 @@ fun IncomeExpenseRow(
     modifier: Modifier = Modifier,
     incomeDeltaPercent: Double? = null,
     expenseDeltaPercent: Double? = null,
+    incomeAbsoluteDelta: Double? = null,
+    expenseAbsoluteDelta: Double? = null,
 ) {
     FadeInOnAppear(durationMillis = HomeConstant.ROW_FADE_IN_MS) {
         Row(
@@ -103,7 +109,11 @@ fun IncomeExpenseRow(
                     )
                     if (incomeDeltaPercent != null) {
                         VerticalSpacer(SpacingSize.XXXS)
-                        TrendBadge(deltaPercent = incomeDeltaPercent, baseColor = IncomeGreen)
+                        TrendBadge(
+                            deltaPercent = incomeDeltaPercent,
+                            absoluteDelta = incomeAbsoluteDelta,
+                            baseColor = IncomeGreen,
+                        )
                     }
                 }
             }
@@ -156,7 +166,11 @@ fun IncomeExpenseRow(
                     )
                     if (expenseDeltaPercent != null) {
                         VerticalSpacer(SpacingSize.XXXS)
-                        TrendBadge(deltaPercent = expenseDeltaPercent, baseColor = ExpenseRed)
+                        TrendBadge(
+                            deltaPercent = expenseDeltaPercent,
+                            absoluteDelta = expenseAbsoluteDelta,
+                            baseColor = ExpenseRed,
+                        )
                     }
                 }
             }
@@ -168,6 +182,7 @@ fun IncomeExpenseRow(
 private fun TrendBadge(
     deltaPercent: Double,
     baseColor: Color,
+    absoluteDelta: Double? = null,
 ) {
     val trend = when {
         deltaPercent > 5.0  -> TrendDirection.UP
@@ -180,29 +195,46 @@ private fun TrendBadge(
         TrendDirection.NEUTRAL -> Icons.AutoMirrored.Filled.TrendingFlat
     }
     val sign = if (deltaPercent >= 0) "+" else ""
-    Row(
+    val trendLabel = when (trend) {
+        TrendDirection.UP      -> "increased"
+        TrendDirection.DOWN    -> "decreased"
+        TrendDirection.NEUTRAL -> "stable"
+    }
+    val description = "$sign${"%.0f".format(abs(deltaPercent))}% $trendLabel"
+    Column(
         modifier = Modifier
-            .background(
-                color = baseColor.copy(alpha = 0.12f),
-                shape = RoundedCornerShape(12.dp),
-            )
-            .padding(horizontal = 6.dp, vertical = 2.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center,
+            .animateContentSize()
+            .background(color = baseColor.copy(alpha = 0.12f), shape = RoundedCornerShape(12.dp))
+            .padding(horizontal = 6.dp, vertical = 2.dp)
+            .semantics { contentDescription = description },
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = null,
-            tint = baseColor,
-            modifier = Modifier.size(12.dp),
-        )
-        Spacer(modifier = Modifier.width(2.dp))
-        Text(
-            text = "$sign${"%.0f".format(abs(deltaPercent))}%",
-            color = baseColor,
-            fontSize = 10.sp,
-            fontWeight = FontWeight.SemiBold,
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = baseColor,
+                modifier = Modifier.size(12.dp),
+            )
+            Spacer(modifier = Modifier.width(2.dp))
+            Text(
+                text = "$sign${"%.0f".format(abs(deltaPercent))}%",
+                color = baseColor,
+                fontSize = 10.sp,
+                fontWeight = FontWeight.SemiBold,
+            )
+        }
+        if (absoluteDelta != null) {
+            MoneyText(
+                amount = abs(absoluteDelta),
+                fontSize = 9,
+                fontWeight = FontWeight.Medium,
+                color = baseColor,
+            )
+        }
     }
 }
 

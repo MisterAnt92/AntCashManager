@@ -47,6 +47,7 @@ data class HomeState(
     val errorState: ErrorState = ErrorState(),
     val previousPeriodIncome: Double = 0.0,
     val previousPeriodExpense: Double = 0.0,
+    val savingsGoalRate: Float = 20f,
 ) : UIState() {
     /** Top cards actually rendered: Quick Insights is dropped when its setting is off, Meal Vouchers when no data. */
     val visibleTopCards: List<HomeTopCardType> =
@@ -80,6 +81,17 @@ data class HomeState(
     val expenseDeltaPercent: Double?
         get() = if (previousPeriodExpense == 0.0) null
                 else (totalExpense - previousPeriodExpense) / abs(previousPeriodExpense) * 100.0
+
+    val incomeAbsoluteDelta: Double?
+        get() = if (previousPeriodIncome == 0.0) null else totalIncome - previousPeriodIncome
+
+    val expenseAbsoluteDelta: Double?
+        get() = if (previousPeriodExpense == 0.0) null else totalExpense - previousPeriodExpense
+
+    val savingsAmount: Double get() = totalIncome - abs(totalExpense)
+
+    val savingsRate: Double?
+        get() = if (totalIncome == 0.0) null else savingsAmount / totalIncome * 100.0
 
     val incomeTrend: TrendDirection
         get() = when {

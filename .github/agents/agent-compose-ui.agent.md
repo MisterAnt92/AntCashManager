@@ -51,6 +51,17 @@ internal fun HomeContent(state: HomeState, onEvent: (HomeEvent) -> Unit, onAddTr
 | Layout | `FoldableAwareLayout`, `rememberAdaptiveLayoutInfo()`, `VerticalSpacer`, `HorizontalSpacer`, `AppDivider`, `NavigationRailTablet`, `LeftSidebar` |
 | Motion | `FadeInOnAppear`, `SlideInOnAppear`, `PulsingElement`, `BouncingElement` (respect `LocalReduceMotion`) |
 
+### Screen-specific composables (non in `ui/components/`, ma riusabili come pattern)
+
+| Composable | File | Note |
+|---|---|---|
+| `IncomeExpenseRow` | `home/view/IncomeExpenseRow.kt` | Carte income/expense con `TrendBadge` opzionale (`incomeDeltaPercent`, `expenseDeltaPercent: Double?`) |
+| `TrendBadge` | `home/view/IncomeExpenseRow.kt` | Chip colorato con icona freccia e delta% — `private`, usato dentro `IncomeExpenseRow` |
+| `SpendingForecastCard` | `charts/view/ChartCards.kt` | Media 3 mesi + proiezione fine mese (attiva dal giorno 3 del mese) |
+| `QuickStatsCard` | `charts/view/ChartCards.kt` | Statistiche giornaliere (max, avg, giorni tracciati) |
+| `ChartsDetailsBottomSheet` | `charts/view/ChartsDetailsBottomSheet.kt` | Bottom sheet con breakdown categoria + `TrendDirection` reale |
+| `SavingsRateCard` | `home/view/SavingsRateCard.kt` | Risparmio del periodo + tasso% + barra progresso vs goal. Visibile quando `totalIncome > 0`. Params: `savingsAmount`, `savingsRate`, `savingsGoalRate` |
+
 Regenerate: `grep -rhoE "^(internal )?fun [A-Z]\w+\(" androidApp/src/main/kotlin/com/antcashmanager/android/ui/components | sort -u`
 
 ## Theme & spacing
