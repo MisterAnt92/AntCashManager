@@ -10,14 +10,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material.icons.filled.Wallet
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -34,8 +37,11 @@ import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
 import com.antcashmanager.android.ui.components.layout.SpacingSize
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
+import com.antcashmanager.android.ui.theme.ExpenseRed
+import com.antcashmanager.android.ui.theme.IncomeGreen
 import com.antcashmanager.android.util.translateCategory
 import com.antcashmanager.domain.model.Category
+import com.antcashmanager.domain.model.CategoryBudget
 
 @Composable
 fun CategoryItem(
@@ -43,6 +49,9 @@ fun CategoryItem(
     onDelete: () -> Unit,
     onToggleHidden: () -> Unit,
     onClick: (() -> Unit)? = null,
+    budget: CategoryBudget? = null,
+    spentAmount: Double = 0.0,
+    onSetBudget: (() -> Unit)? = null,
 ) {
     val icon = categoryIconMap[category.icon]
     val translatedName = translateCategory(category.name)
@@ -98,7 +107,7 @@ fun CategoryItem(
                     }
                 }
                 HorizontalSpacer(SpacingSize.MD)
-                Column {
+                Column(modifier = Modifier.weight(1f)) {
                     AppText(
                         text = translatedName,
                         style = MaterialTheme.typography.titleMedium,
@@ -110,6 +119,35 @@ fun CategoryItem(
                             color = MaterialTheme.colorScheme.primary,
                         )
                     }
+                    if (budget != null) {
+                        val progress = (spentAmount / budget.monthlyLimit).coerceIn(0.0, 1.0).toFloat()
+                        val exceeded = spentAmount > budget.monthlyLimit
+                        val barColor = if (exceeded) ExpenseRed else IncomeGreen
+                        AppText(
+                            text = stringResource(
+                                R.string.categories_budget_progress,
+                                "%.2f".format(spentAmount),
+                                "%.2f".format(budget.monthlyLimit),
+                            ),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = barColor,
+                        )
+                        LinearProgressIndicator(
+                            progress = { progress },
+                            modifier = Modifier.fillMaxWidth(),
+                            color = barColor,
+                            trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                        )
+                    }
+                }
+            }
+            if (onSetBudget != null) {
+                IconButton(onClick = onSetBudget) {
+                    Icon(
+                        imageVector = Icons.Default.Wallet,
+                        contentDescription = stringResource(R.string.categories_budget_set),
+                        tint = if (budget != null) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
                 }
             }
             if (!category.isDefault) {

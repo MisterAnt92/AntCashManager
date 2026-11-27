@@ -3,6 +3,7 @@ package com.antcashmanager.android.ui.screen.categories
 import com.antcashmanager.architecture.ErrorState
 import com.antcashmanager.architecture.UIState
 import com.antcashmanager.domain.model.Category
+import com.antcashmanager.domain.model.CategoryBudget
 
 /**
  * Stato UI per la schermata delle categorie.
@@ -25,4 +26,10 @@ data class CategoriesState(
     val customIncomeCategories: List<Category> = emptyList(),
     val selectedTabIndex: Int = 0,
     val errorState: ErrorState = ErrorState(),
+    /** Budget keyed by categoryId. */
+    val budgets: Map<Long, CategoryBudget> = emptyMap(),
+    /** Category id currently being edited in BudgetEditDialog, null = dialog closed. */
+    val editingBudgetCategoryId: Long? = null,
+    /** Absolute expense total (positive) per category for the current period. */
+    val categoryExpenseTotals: Map<Long, Double> = emptyMap(),
 ) : UIState()

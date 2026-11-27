@@ -27,6 +27,7 @@ public object DatabaseProvider {
                     Migration_12_13(),
                     Migration_13_14(),
                     Migration_14_15(),
+                    Migration_15_16(),
                 ).addCallback(object : androidx.room.RoomDatabase.Callback() {
                     override fun onCreate(db: SupportSQLiteDatabase) {
                         ensureDefaultProfileAndCleanOrphans(db)

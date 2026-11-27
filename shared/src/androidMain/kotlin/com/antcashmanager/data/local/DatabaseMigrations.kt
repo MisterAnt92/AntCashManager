@@ -291,3 +291,13 @@ public class Migration_14_15 : Migration(14, 15) {
         ensureDefaultProfileAndCleanOrphans(db)
     }
 }
+
+public class Migration_15_16 : Migration(15, 16) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL(
+            "CREATE TABLE IF NOT EXISTS `category_budgets` " +
+                "(`categoryId` INTEGER NOT NULL, `monthlyLimit` REAL NOT NULL, " +
+                "PRIMARY KEY(`categoryId`))",
+        )
+    }
+}

@@ -3,16 +3,18 @@ package com.antcashmanager.data.local
 import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import com.antcashmanager.data.local.dao.CategoryBudgetDao
 import com.antcashmanager.data.local.dao.CategoryDao
 import com.antcashmanager.data.local.dao.ProfileDao
 import com.antcashmanager.data.local.dao.TransactionDao
+import com.antcashmanager.data.local.entity.CategoryBudgetEntity
 import com.antcashmanager.data.local.entity.CategoryEntity
 import com.antcashmanager.data.local.entity.ProfileEntity
 import com.antcashmanager.data.local.entity.TransactionEntity
 
 @Database(
-    entities = [TransactionEntity::class, CategoryEntity::class, ProfileEntity::class],
-    version = 15,
+    entities = [TransactionEntity::class, CategoryEntity::class, ProfileEntity::class, CategoryBudgetEntity::class],
+    version = 16,
     exportSchema = true,
     autoMigrations = [
         AutoMigration(from = 1, to = 2),
@@ -33,4 +35,6 @@ public abstract class AppDatabase : RoomDatabase() {
     public abstract fun categoryDao(): CategoryDao
 
     public abstract fun profileDao(): ProfileDao
+
+    public abstract fun categoryBudgetDao(): CategoryBudgetDao
 }

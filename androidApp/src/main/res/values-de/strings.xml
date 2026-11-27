@@ -77,6 +77,10 @@
     <string name="categories_icon_label">Symbol</string>
     <string name="categories_hide">Kategorie ausblenden</string>
     <string name="categories_show">Kategorie einblenden</string>
+    <string name="categories_budget_set">Budget festlegen</string>
+    <string name="categories_budget_monthly">Monatslimit</string>
+    <string name="categories_budget_exceeded">Budget überschritten</string>
+    <string name="categories_budget_progress">%1$s von %2$s</string>
     <string name="categories_hidden_section_title">Ausgeblendete Kategorien (%d)</string>
     <string name="categories_reorder">Kategorien neu anordnen</string>
 

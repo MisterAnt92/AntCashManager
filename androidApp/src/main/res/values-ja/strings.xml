@@ -73,6 +73,10 @@
     <string name="categories_icon_label">アイコン</string>
     <string name="categories_hide">カテゴリを非表示</string>
     <string name="categories_show">カテゴリを表示</string>
+    <string name="categories_budget_set">予算を設定</string>
+    <string name="categories_budget_monthly">月間上限</string>
+    <string name="categories_budget_exceeded">予算超過</string>
+    <string name="categories_budget_progress">%2$s 中 %1$s</string>
     <string name="categories_hidden_section_title">非表示のカテゴリ (%d)</string>
     <string name="categories_reorder">カテゴリの順序変更</string>
     <string name="categories_selection_hint">カテゴリをタップして選択（アプリでは自動的に進みます）</string>

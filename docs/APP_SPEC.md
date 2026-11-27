@@ -1,7 +1,7 @@
 # AntCashManager — App Spec
 
-## Versione corrente: v1.9.3  
-_Aggiornato: 2026-11-25_
+## Versione corrente: v1.9.4  
+_Aggiornato: 2026-11-27_
 
 ---
 
@@ -40,7 +40,7 @@ Seguire questo ciclo per ogni nuova feature:
 - `[DONE]` TrendBadge su IncomeExpenseRow (chip colorato con freccia + percentuale)
 - `[DONE]` TrendBadge enhancement: valore assoluto delta + animazione `animateContentSize` + contentDescription accessibilità
 - `[DONE]` Savings rate / obiettivi: SavingsRateCard + HomeState (savingsRate, savingsAmount, savingsGoalRate) + SettingsRepository.getSavingsGoalRate()
-- `[PLANNED]` Budget per categoria: Room entity, 3 UseCase, UI chip + progress bar su CategoriesScreen
+- `[DONE]` Budget per categoria: Room entity (v15→v16), CategoryBudgetRepository, 3 UseCase (Get/Set/Delete), UI wallet chip + LinearProgressIndicator su CategoryItem, BudgetEditDialog, 14 locale
 - `[PLANNED]` Analytics eventi trend/budget (whitelist in `AnalyticsConstants`)
 
 ---
@@ -62,7 +62,7 @@ Seguire questo ciclo per ogni nuova feature:
 - `[DONE]` Encryption AES-GCM per note/payee sensibili
 - `[DONE]` Encrypted search (load-decrypt-filter in-memory quando encryption ON)
 - `[DONE]` Database Room v9→v10 migration
-- `[PLANNED]` Database migration v10→v11 (category_budgets table)
+- `[DONE]` Database migration v15→v16 (category_budgets table)
 
 ---
 

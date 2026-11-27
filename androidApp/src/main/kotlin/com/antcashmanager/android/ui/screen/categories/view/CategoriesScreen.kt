@@ -462,6 +462,9 @@ internal fun CategoriesContent(
                                     }
                                 },
                                 onToggleHidden = { onSetCategoryHidden(category, !category.isHidden) },
+                                budget = state.budgets[category.id],
+                                spentAmount = state.categoryExpenseTotals[category.id] ?: 0.0,
+                                onSetBudget = { onEvent(CategoryEvent.OpenBudgetDialogEvent(category.id)) },
                             )
                         }
                         item(key = "custom_section_header", span = { GridItemSpan(maxLineSpan) }) {
@@ -484,6 +487,9 @@ internal fun CategoriesContent(
                                 },
                                 onDelete = { categoryToDelete = category },
                                 onToggleHidden = { onSetCategoryHidden(category, !category.isHidden) },
+                                budget = state.budgets[category.id],
+                                spentAmount = state.categoryExpenseTotals[category.id] ?: 0.0,
+                                onSetBudget = { onEvent(CategoryEvent.OpenBudgetDialogEvent(category.id)) },
                             )
                         }
                         item(span = { GridItemSpan(maxLineSpan) }) {
@@ -522,6 +528,9 @@ internal fun CategoriesContent(
                                     }
                                 },
                                 onToggleHidden = { onSetCategoryHidden(category, !category.isHidden) },
+                                budget = state.budgets[category.id],
+                                spentAmount = state.categoryExpenseTotals[category.id] ?: 0.0,
+                                onSetBudget = { onEvent(CategoryEvent.OpenBudgetDialogEvent(category.id)) },
                             )
                         }
                         item(key = "custom_section_header") {
@@ -544,6 +553,9 @@ internal fun CategoriesContent(
                                 },
                                 onDelete = { categoryToDelete = category },
                                 onToggleHidden = { onSetCategoryHidden(category, !category.isHidden) },
+                                budget = state.budgets[category.id],
+                                spentAmount = state.categoryExpenseTotals[category.id] ?: 0.0,
+                                onSetBudget = { onEvent(CategoryEvent.OpenBudgetDialogEvent(category.id)) },
                             )
                         }
                         item {
@@ -624,6 +636,25 @@ internal fun CategoriesContent(
                 showReorderDialog = false
             },
         )
+    }
+
+    // BudgetEditDialog — driven by state.editingBudgetCategoryId
+    val editingBudgetCategoryId = state.editingBudgetCategoryId
+    if (editingBudgetCategoryId != null) {
+        val budgetCategory = state.categories.find { it.id == editingBudgetCategoryId }
+        if (budgetCategory != null) {
+            BudgetEditDialog(
+                categoryName = translateCategory(budgetCategory.name),
+                existingBudget = state.budgets[editingBudgetCategoryId],
+                onConfirm = { limit ->
+                    onEvent(CategoryEvent.SetBudgetEvent(editingBudgetCategoryId, limit))
+                },
+                onDelete = if (state.budgets.containsKey(editingBudgetCategoryId)) {
+                    { onEvent(CategoryEvent.DeleteBudgetEvent(editingBudgetCategoryId)) }
+                } else null,
+                onDismiss = { onEvent(CategoryEvent.OpenBudgetDialogEvent(null)) },
+            )
+        }
     }
 
     categoryToDelete?.let { category ->

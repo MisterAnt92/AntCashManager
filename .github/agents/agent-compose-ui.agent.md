@@ -61,6 +61,7 @@ internal fun HomeContent(state: HomeState, onEvent: (HomeEvent) -> Unit, onAddTr
 | `QuickStatsCard` | `charts/view/ChartCards.kt` | Statistiche giornaliere (max, avg, giorni tracciati) |
 | `ChartsDetailsBottomSheet` | `charts/view/ChartsDetailsBottomSheet.kt` | Bottom sheet con breakdown categoria + `TrendDirection` reale |
 | `SavingsRateCard` | `home/view/SavingsRateCard.kt` | Risparmio del periodo + tasso% + barra progresso vs goal. Visibile quando `totalIncome > 0`. Params: `savingsAmount`, `savingsRate`, `savingsGoalRate` |
+| `BudgetEditDialog` | `categories/view/BudgetEditDialog.kt` | Dialog per impostare/aggiornare/eliminare il budget mensile di una categoria. Params: `categoryName`, `existingBudget`, `onConfirm`, `onDelete`, `onDismiss` |
 
 Regenerate: `grep -rhoE "^(internal )?fun [A-Z]\w+\(" androidApp/src/main/kotlin/com/antcashmanager/android/ui/components | sort -u`
 

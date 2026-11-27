@@ -90,6 +90,10 @@
     <string name="categories_icon_label">Icon</string>
     <string name="categories_hide">Hide category</string>
     <string name="categories_show">Show category</string>
+    <string name="categories_budget_set">Set budget</string>
+    <string name="categories_budget_monthly">Monthly limit</string>
+    <string name="categories_budget_exceeded">Budget exceeded</string>
+    <string name="categories_budget_progress">%1$s of %2$s</string>
     <string name="categories_hidden_section_title">Hidden categories (%d)</string>
     <string name="categories_reorder">Reorder categories</string>
     <string name="categories_selection_hint">Tap a category to select it (auto-advances in real app)</string>

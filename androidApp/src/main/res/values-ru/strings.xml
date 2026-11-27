@@ -73,6 +73,10 @@
     <string name="categories_icon_label">Значок</string>
     <string name="categories_hide">Скрыть кат��горию</string>
     <string name="categories_show">Показать категорию</string>
+    <string name="categories_budget_set">Установить бюджет</string>
+    <string name="categories_budget_monthly">Месячный лимит</string>
+    <string name="categories_budget_exceeded">Бюджет превышен</string>
+    <string name="categories_budget_progress">%1$s из %2$s</string>
     <string name="categories_hidden_section_title">Скрытые категории (%d)</string>
     <string name="categories_reorder">Изменить порядок категорий</string>
     <string name="categories_selection_hint">Нажмите на категорию, чтобы выбрать её (автоматически переходит далее в реальном приложении)</string>

@@ -116,6 +116,10 @@
     <string name="categories_icon_label">Icona</string>
     <string name="categories_hide">Nascondi categoria</string>
     <string name="categories_show">Mostra categoria</string>
+    <string name="categories_budget_set">Imposta budget</string>
+    <string name="categories_budget_monthly">Limite mensile</string>
+    <string name="categories_budget_exceeded">Budget superato</string>
+    <string name="categories_budget_progress">%1$s di %2$s</string>
     <string name="categories_hidden_section_title">Categorie nascoste (%d)</string>
     <string name="categories_reorder">Riordina categorie</string>
 

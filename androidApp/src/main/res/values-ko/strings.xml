@@ -73,6 +73,10 @@
     <string name="categories_icon_label">아이콘</string>
     <string name="categories_hide">카테고리 숨기기</string>
     <string name="categories_show">카테고리 표시</string>
+    <string name="categories_budget_set">예산 설정</string>
+    <string name="categories_budget_monthly">월간 한도</string>
+    <string name="categories_budget_exceeded">예산 초과</string>
+    <string name="categories_budget_progress">%2$s 중 %1$s</string>
     <string name="categories_hidden_section_title">숨겨진 카테고리 (%d)</string>
     <string name="categories_reorder">카테고리 순서 변경</string>
     <string name="categories_selection_hint">카테고리를 탭하여 선택 (실제 앱에서는 자동 진행됨)</string>

@@ -73,6 +73,10 @@
     <string name="categories_icon_label">图标</string>
     <string name="categories_hide">隐藏分类</string>
     <string name="categories_show">显示分类</string>
+    <string name="categories_budget_set">设置预算</string>
+    <string name="categories_budget_monthly">月度限额</string>
+    <string name="categories_budget_exceeded">预算超支</string>
+    <string name="categories_budget_progress">%1$s / %2$s</string>
     <string name="categories_hidden_section_title">隐藏分类 (%d)</string>
     <string name="categories_reorder">重新排序分类</string>
     <string name="categories_selection_hint">点击分类以选择（在真实应用中自动推进）</string>

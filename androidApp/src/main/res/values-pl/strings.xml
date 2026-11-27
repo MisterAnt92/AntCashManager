@@ -73,6 +73,10 @@
     <string name="categories_icon_label">Ikona</string>
     <string name="categories_hide">Ukryj kategorię</string>
     <string name="categories_show">Pokaż kategorię</string>
+    <string name="categories_budget_set">Ustaw budżet</string>
+    <string name="categories_budget_monthly">Limit miesięczny</string>
+    <string name="categories_budget_exceeded">Przekroczono budżet</string>
+    <string name="categories_budget_progress">%1$s z %2$s</string>
     <string name="categories_hidden_section_title">Ukryte kategorie (%d)</string>
     <string name="categories_reorder">Zmień kolejność kategorii</string>
     <string name="categories_selection_hint">Dotknij kategorii, aby ją wybrać (automatycznie przechodzi dalej w rzeczywistej aplikacji)</string>

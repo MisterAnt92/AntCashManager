@@ -72,6 +72,10 @@
     <string name="categories_icon_label">आइकन</string>
     <string name="categories_hide">श्रेणी छिपाएं</string>
     <string name="categories_show">श्रेणी दिखाएं</string>
+    <string name="categories_budget_set">बजट सेट करें</string>
+    <string name="categories_budget_monthly">मासिक सीमा</string>
+    <string name="categories_budget_exceeded">बजट पार हो गया</string>
+    <string name="categories_budget_progress">%1$s में से %2$s</string>
     <string name="categories_hidden_section_title">छिपी हुई श्रेणियां (%d)</string>
     <string name="categories_reorder">श्रेणियों को पुनर्व्यवस्थित करें</string>
     <string name="categories_selection_hint">चुनने के लिए श्रेणी पर टैप करें (वास्तविक ऐप में स्वतः आगे बढ़ता है)</string>

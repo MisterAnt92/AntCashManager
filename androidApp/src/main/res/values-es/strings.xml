@@ -65,6 +65,10 @@
     <string name="categories_icon_label">Icono</string>
     <string name="categories_hide">Ocultar categoría</string>
     <string name="categories_show">Mostrar categoría</string>
+    <string name="categories_budget_set">Establecer presupuesto</string>
+    <string name="categories_budget_monthly">Límite mensual</string>
+    <string name="categories_budget_exceeded">Presupuesto superado</string>
+    <string name="categories_budget_progress">%1$s de %2$s</string>
     <string name="categories_hidden_section_title">Categorías ocultas (%d)</string>
     <string name="categories_reorder">Reordenar categorías</string>
 

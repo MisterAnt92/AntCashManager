@@ -33,6 +33,7 @@ import com.antcashmanager.android.ui.widget.GlanceWidgetUpdateNotifier
 import com.antcashmanager.android.work.AutoBackupScheduler
 import com.antcashmanager.data.local.DatabaseProvider
 import com.antcashmanager.data.manager.ProfileManagerImpl
+import com.antcashmanager.data.repository.CategoryBudgetRepositoryImpl
 import com.antcashmanager.data.repository.CategoryRepositoryImpl
 import com.antcashmanager.data.repository.ProfileRepositoryImpl
 import com.antcashmanager.data.repository.SettingsRepositoryImpl
@@ -42,6 +43,7 @@ import com.antcashmanager.domain.manager.ProfileManager
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
 import com.antcashmanager.domain.model.TransactionDisplayType
+import com.antcashmanager.domain.repository.CategoryBudgetRepository
 import com.antcashmanager.domain.repository.CategoryRepository
 import com.antcashmanager.domain.repository.DebugDataRepository
 import com.antcashmanager.domain.repository.FeedbackRepository
@@ -53,9 +55,12 @@ import com.antcashmanager.domain.service.ReceiptOcrService
 import com.antcashmanager.domain.service.WidgetUpdateNotifier
 import com.antcashmanager.domain.usecase.SendFeedbackEmailUseCase
 import com.antcashmanager.domain.usecase.ShareTransactionUseCase
+import com.antcashmanager.domain.usecase.category.DeleteCategoryBudgetUseCase
 import com.antcashmanager.domain.usecase.category.DeleteCategoryUseCase
 import com.antcashmanager.domain.usecase.category.EnsureDefaultCategoriesUseCase
+import com.antcashmanager.domain.usecase.category.GetCategoryBudgetsUseCase
 import com.antcashmanager.domain.usecase.category.GetCategoriesUseCase
+import com.antcashmanager.domain.usecase.category.SetCategoryBudgetUseCase
 import com.antcashmanager.domain.usecase.category.InsertCategoryUseCase
 import com.antcashmanager.domain.usecase.category.RestoreDefaultCategoriesUseCase
 import com.antcashmanager.domain.usecase.category.UpdateCategoryUseCase
@@ -168,6 +173,9 @@ val dataModule =
                 profileManager = get(),
             )
         }
+        single<CategoryBudgetRepository> {
+            CategoryBudgetRepositoryImpl(dao = get<AppDatabase>().categoryBudgetDao())
+        }
         single { AnalyticsManager(androidApplication()) }
         single<FeedbackRepository> { AndroidFeedbackRepository(androidApplication()) }
         single<DebugDataRepository> {
@@ -225,6 +233,9 @@ val useCaseModule =
         factory { DeleteCategoryUseCase(categoryRepository = get()) }
         factory { EnsureDefaultCategoriesUseCase(categoryRepository = get()) }
         factory { RestoreDefaultCategoriesUseCase(categoryRepository = get()) }
+        factory { GetCategoryBudgetsUseCase(repository = get()) }
+        factory { SetCategoryBudgetUseCase(repository = get()) }
+        factory { DeleteCategoryBudgetUseCase(repository = get()) }
 
         // Profile use cases
         factory { GetProfilesUseCase(profileRepository = get()) }
@@ -391,6 +402,9 @@ val presentationModule =
                 restoreDefaultCategoriesUseCase = get(),
                 syncTransactionCategoriesUseCase = get(),
                 analyticsManager = get(),
+                getCategoryBudgetsUseCase = get(),
+                setCategoryBudgetUseCase = get(),
+                deleteCategoryBudgetUseCase = get(),
             )
         }
         viewModel {

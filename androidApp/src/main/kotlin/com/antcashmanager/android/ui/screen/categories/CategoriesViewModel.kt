@@ -7,10 +7,14 @@ import com.antcashmanager.android.analytics.AnalyticsConstants.Params
 import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.ui.base.AndroidBaseViewModel
 import com.antcashmanager.domain.model.Category
+import com.antcashmanager.domain.model.CategoryBudget
+import com.antcashmanager.domain.usecase.category.DeleteCategoryBudgetUseCase
 import com.antcashmanager.domain.usecase.category.DeleteCategoryUseCase
+import com.antcashmanager.domain.usecase.category.GetCategoryBudgetsUseCase
 import com.antcashmanager.domain.usecase.category.GetCategoriesUseCase
 import com.antcashmanager.domain.usecase.category.InsertCategoryUseCase
 import com.antcashmanager.domain.usecase.category.RestoreDefaultCategoriesUseCase
+import com.antcashmanager.domain.usecase.category.SetCategoryBudgetUseCase
 import com.antcashmanager.domain.usecase.category.UpdateCategoryUseCase
 import com.antcashmanager.domain.usecase.transaction.SyncTransactionCategoriesUseCase
 import kotlinx.coroutines.CancellationException
@@ -25,9 +29,23 @@ class CategoriesViewModel(
     private val restoreDefaultCategoriesUseCase: RestoreDefaultCategoriesUseCase,
     private val syncTransactionCategoriesUseCase: SyncTransactionCategoriesUseCase,
     private val analyticsManager: AnalyticsManager,
+    private val getCategoryBudgetsUseCase: GetCategoryBudgetsUseCase,
+    private val setCategoryBudgetUseCase: SetCategoryBudgetUseCase,
+    private val deleteCategoryBudgetUseCase: DeleteCategoryBudgetUseCase,
 ) : AndroidBaseViewModel<CategoryEvent, CategoriesState>(CategoriesState()) {
 
     init {
+        viewModelScope.launch {
+            getCategoryBudgetsUseCase().collect { result ->
+                result
+                    .onSuccess { budgets ->
+                        _state.update { it.copy(budgets = budgets.associateBy { b -> b.categoryId }) }
+                    }.onFailure { error ->
+                        if (error is CancellationException) throw error
+                        logError("Error loading budgets: ${error.message}", error)
+                    }
+            }
+        }
         viewModelScope.launch {
             getCategoriesUseCase().collect { result ->
                 result
@@ -75,6 +93,9 @@ class CategoriesViewModel(
             is CategoryEvent.LogItemClickedEvent -> logCategoryItemClicked(event.categoryName, event.index)
             is CategoryEvent.LogReorderOpenedEvent -> analyticsManager.logEvent(Events.CATEGORIES_REORDER_OPENED)
             is CategoryEvent.SelectTabEvent -> _state.update { it.copy(selectedTabIndex = event.index) }
+            is CategoryEvent.OpenBudgetDialogEvent -> _state.update { it.copy(editingBudgetCategoryId = event.categoryId) }
+            is CategoryEvent.SetBudgetEvent -> setBudget(event.categoryId, event.monthlyLimit)
+            is CategoryEvent.DeleteBudgetEvent -> deleteBudget(event.categoryId)
         }
     }
 
@@ -206,6 +227,26 @@ class CategoriesViewModel(
                         _state.update { it.copy(errorState = errorState) }
                     }
                 }
+            }
+        }
+    }
+
+    private fun setBudget(categoryId: Long, monthlyLimit: Double) {
+        if (monthlyLimit <= 0.0) return
+        logDebug("Setting budget for category $categoryId: $monthlyLimit")
+        viewModelScope.launch {
+            setCategoryBudgetUseCase(CategoryBudget(categoryId, monthlyLimit)).handleError { errorState ->
+                _state.update { it.copy(errorState = errorState) }
+            }
+            _state.update { it.copy(editingBudgetCategoryId = null) }
+        }
+    }
+
+    private fun deleteBudget(categoryId: Long) {
+        logDebug("Deleting budget for category $categoryId")
+        viewModelScope.launch {
+            deleteCategoryBudgetUseCase(categoryId).handleError { errorState ->
+                _state.update { it.copy(errorState = errorState) }
             }
         }
     }
