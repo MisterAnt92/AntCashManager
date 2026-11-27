@@ -726,4 +726,10 @@
     <string name="transaction_add_tag_description">新增標籤</string>
     <string name="transaction_remove_tag_description">刪除</string>
     <string name="categories_restore_defaults">還原預設類別</string>
+    <string name="empty_state_add_transaction_cta">新增交易</string>
+    <string name="empty_state_clear_filters_cta">清除篩選</string>
+    <string name="add_transaction_discard_dialog_title">放棄變更？</string>
+    <string name="add_transaction_discard_dialog_message">您有未儲存的變更。確定要放棄嗎？</string>
+    <string name="add_transaction_discard_dialog_confirm">放棄</string>
+    <string name="add_transaction_discard_dialog_cancel">繼續編輯</string>
 </resources>

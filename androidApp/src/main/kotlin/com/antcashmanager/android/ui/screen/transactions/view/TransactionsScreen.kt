@@ -62,6 +62,7 @@ import co.touchlab.kermit.Logger
 import com.antcashmanager.android.R
 import com.antcashmanager.android.navigation.AppRoute
 import com.antcashmanager.android.navigation.LocalScreenHeaderConfigCallback
+import com.antcashmanager.android.navigation.navigateToAddTransaction
 import com.antcashmanager.android.navigation.ScreenHeaderConfig
 import com.antcashmanager.android.ui.base.LocalMultiPaneCoordinator
 import com.antcashmanager.android.ui.components.animation.SkeletonLoader
@@ -311,6 +312,14 @@ internal fun TransactionsContent(params: TransactionsContentParams) {
                                     title = stringResource(R.string.empty_state_no_transactions),
                                     subtitle = stringResource(R.string.empty_state_no_transactions_subtitle),
                                     modifier = Modifier.fillMaxWidth(),
+                                    actionLabel = if (state.hasActiveFilters)
+                                        stringResource(R.string.empty_state_clear_filters_cta)
+                                    else
+                                        stringResource(R.string.empty_state_add_transaction_cta),
+                                    onAction = if (state.hasActiveFilters)
+                                        { { onEvent(TransactionsEvent.ClearAllFiltersEvent) } }
+                                    else
+                                        { { navController?.navigateToAddTransaction() } },
                                 )
                             }
                         }
@@ -531,6 +540,14 @@ internal fun TransactionsContent(params: TransactionsContentParams) {
                                     title = stringResource(R.string.empty_state_no_transactions),
                                     subtitle = stringResource(R.string.empty_state_no_transactions_subtitle),
                                     modifier = Modifier.fillMaxWidth(),
+                                    actionLabel = if (state.hasActiveFilters)
+                                        stringResource(R.string.empty_state_clear_filters_cta)
+                                    else
+                                        stringResource(R.string.empty_state_add_transaction_cta),
+                                    onAction = if (state.hasActiveFilters)
+                                        { { onEvent(TransactionsEvent.ClearAllFiltersEvent) } }
+                                    else
+                                        { { navController?.navigateToAddTransaction() } },
                                 )
                             }
                         }

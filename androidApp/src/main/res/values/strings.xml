@@ -740,4 +740,10 @@
     <string name="month_short_11">Nov</string>
     <string name="month_short_12">Dec</string>
     <string name="categories_restore_defaults">Restore default categories</string>
+    <string name="empty_state_add_transaction_cta">Add transaction</string>
+    <string name="empty_state_clear_filters_cta">Clear filters</string>
+    <string name="add_transaction_discard_dialog_title">Discard changes?</string>
+    <string name="add_transaction_discard_dialog_message">You have unsaved changes. Are you sure you want to discard them?</string>
+    <string name="add_transaction_discard_dialog_confirm">Discard</string>
+    <string name="add_transaction_discard_dialog_cancel">Keep editing</string>
 </resources>

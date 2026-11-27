@@ -739,4 +739,10 @@
     <string name="transaction_add_tag_description">Додати тег</string>
     <string name="transaction_remove_tag_description">Видалити</string>
     <string name="categories_restore_defaults">Відновити типові категорії</string>
+    <string name="empty_state_add_transaction_cta">Додати транзакцію</string>
+    <string name="empty_state_clear_filters_cta">Очистити фільтри</string>
+    <string name="add_transaction_discard_dialog_title">Відмінити зміни?</string>
+    <string name="add_transaction_discard_dialog_message">У вас є незбережені зміни. Ви впевнені, що хочете їх відмінити?</string>
+    <string name="add_transaction_discard_dialog_confirm">Відмінити</string>
+    <string name="add_transaction_discard_dialog_cancel">Продовжити редагування</string>
 </resources>

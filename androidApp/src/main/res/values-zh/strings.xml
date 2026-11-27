@@ -737,4 +737,10 @@
     <string name="transaction_add_tag_description">添加标签</string>
     <string name="transaction_remove_tag_description">删除</string>
     <string name="categories_restore_defaults">恢复默认分类</string>
+    <string name="empty_state_add_transaction_cta">添加交易</string>
+    <string name="empty_state_clear_filters_cta">清除筛选</string>
+    <string name="add_transaction_discard_dialog_title">放弃更改？</string>
+    <string name="add_transaction_discard_dialog_message">您有未保存的更改。确定要放弃吗？</string>
+    <string name="add_transaction_discard_dialog_confirm">放弃</string>
+    <string name="add_transaction_discard_dialog_cancel">继续编辑</string>
 </resources>

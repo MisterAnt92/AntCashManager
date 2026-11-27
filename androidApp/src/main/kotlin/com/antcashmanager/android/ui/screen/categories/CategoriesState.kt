@@ -17,6 +17,7 @@ import com.antcashmanager.domain.model.CategoryBudget
  * - viewModel: CategoriesViewModel (onEvent handler)
  */
 data class CategoriesState(
+    override val isLoading: Boolean = true,
     val categories: List<Category> = emptyList(),
     val expenseCategories: List<Category> = emptyList(),
     val incomeCategories: List<Category> = emptyList(),

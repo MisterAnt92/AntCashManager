@@ -355,6 +355,14 @@ internal fun CategoriesContent(
         )
     }
 
+    if (state.isLoading) {
+        CategoriesSkeletonLoader(
+            horizontalPadding = adaptiveLayoutInfo.horizontalPadding,
+            modifier = modifier,
+        )
+        return
+    }
+
     // Error state overlay (FASE 5: Error Feedback UX)
     if (state.errorState.isError) {
         AntErrorState(
@@ -429,6 +437,8 @@ internal fun CategoriesContent(
                         title = stringResource(R.string.categories_empty),
                         subtitle = stringResource(R.string.categories_empty_subtitle),
                         modifier = Modifier.fillMaxSize(),
+                        actionLabel = stringResource(R.string.categories_restore_defaults),
+                        onAction = { onEvent(CategoryEvent.RestoreDefaultCategoriesEvent) },
                     )
                 } else if (isGridLayout) {
                     // FASE 2: Tablet 3-column grid for expanded screens without fold

@@ -77,7 +77,7 @@ class CategoriesViewModel(
                             if (error is CancellationException) throw error
                             logError("Error loading budgets: ${error.message}", error)
                         }
-                    _state.value = updated
+                    _state.value = updated.copy(isLoading = false)
                 }
         }
     }

@@ -110,4 +110,9 @@ sealed class AddTransactionEvent : UIEvent() {
     data object DismissDeleteConfirmDialogEvent : AddTransactionEvent()
 
     data object ConfirmDeleteEvent : AddTransactionEvent()
+
+    // ── Dialog abbandono modifiche ──
+    data object ShowDiscardConfirmDialogEvent : AddTransactionEvent()
+
+    data object DismissDiscardConfirmDialogEvent : AddTransactionEvent()
 }

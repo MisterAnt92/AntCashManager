@@ -725,4 +725,10 @@
     <string name="transaction_add_tag_description">Tag hinzufügen</string>
     <string name="transaction_remove_tag_description">Entfernen</string>
     <string name="categories_restore_defaults">Standardkategorien wiederherstellen</string>
+    <string name="empty_state_add_transaction_cta">Transaktion hinzufügen</string>
+    <string name="empty_state_clear_filters_cta">Filter löschen</string>
+    <string name="add_transaction_discard_dialog_title">Änderungen verwerfen?</string>
+    <string name="add_transaction_discard_dialog_message">Sie haben ungespeicherte Änderungen. Möchten Sie diese verwerfen?</string>
+    <string name="add_transaction_discard_dialog_confirm">Verwerfen</string>
+    <string name="add_transaction_discard_dialog_cancel">Weiter bearbeiten</string>
 </resources>

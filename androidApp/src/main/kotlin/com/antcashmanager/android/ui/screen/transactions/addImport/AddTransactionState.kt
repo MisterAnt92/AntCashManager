@@ -59,11 +59,20 @@ data class AddTransactionState(
     val showDatePicker: Boolean = false,
     val showDeleteConfirmDialog: Boolean = false,
     val showPaymentTypeDialog: Boolean = false,
+    val showDiscardConfirmDialog: Boolean = false,
     // Meal vouchers available (calcolato dal ViewModel)
     val availableMealVouchers: Int = 0,
 ) : UIState() {
     val isMealVouchersPayment: Boolean
         get() = selectedPaymentType == PaymentType.MEAL_VOUCHERS
+
+    /** True when the user has touched any field in the DETAILS step. */
+    val hasUnsavedChanges: Boolean
+        get() = currentStep == AddTransactionStep.DETAILS && (
+            title.isNotBlank() || amount.isNotBlank() || notes.isNotBlank() ||
+                payee.isNotBlank() || location.isNotBlank() || tags.isNotBlank() ||
+                isRecurring || selectedPaymentType != PaymentType.ELECTRONIC
+            )
 
     val isFormValid: Boolean
         get() =

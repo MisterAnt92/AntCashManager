@@ -64,6 +64,7 @@ fun HomeListPane(
     onFromDateEdit: () -> Unit,
     onToDateEdit: () -> Unit,
     onTransactionClick: (TransactionUi) -> Unit,
+    onAddTransaction: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
 ) {
     val revealState = LocalRevealState.current
@@ -170,6 +171,8 @@ fun HomeListPane(
                         mascotRes = R.drawable.ic_piggy_bank,
                         title = stringResource(R.string.empty_state_no_transactions),
                         subtitle = stringResource(R.string.empty_state_no_transactions_subtitle),
+                        actionLabel = onAddTransaction?.let { stringResource(R.string.empty_state_add_transaction_cta) },
+                        onAction = onAddTransaction,
                     )
                 }
             } else {

@@ -736,4 +736,10 @@
     <string name="transaction_add_tag_description">タグを追加</string>
     <string name="transaction_remove_tag_description">削除</string>
     <string name="categories_restore_defaults">デフォルトカテゴリを復元</string>
+    <string name="empty_state_add_transaction_cta">取引を追加</string>
+    <string name="empty_state_clear_filters_cta">フィルターをクリア</string>
+    <string name="add_transaction_discard_dialog_title">変更を破棄しますか？</string>
+    <string name="add_transaction_discard_dialog_message">保存されていない変更があります。破棄してもよろしいですか？</string>
+    <string name="add_transaction_discard_dialog_confirm">破棄</string>
+    <string name="add_transaction_discard_dialog_cancel">編集を続ける</string>
 </resources>

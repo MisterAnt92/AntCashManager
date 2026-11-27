@@ -30,6 +30,7 @@ import com.antcashmanager.android.ui.components.layout.rememberAdaptiveLayoutInf
 import com.antcashmanager.android.ui.components.state.AntErrorState
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.components.transaction.TransactionDetailsPane
+import com.antcashmanager.android.navigation.navigateToAddTransaction
 import com.antcashmanager.android.ui.screen.home.event.HomeEvent
 import com.antcashmanager.android.ui.screen.home.transactionDetail.TransactionDetailsDialog
 
@@ -162,6 +163,7 @@ internal fun HomeContent(
                 )
                 onEvent(HomeEvent.ShowTransactionDetailsEvent(item.transaction))
             },
+            onAddTransaction = { navController.navigateToAddTransaction() },
             modifier = modifier,
         )
     }

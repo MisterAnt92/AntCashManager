@@ -20,9 +20,12 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -120,9 +123,18 @@ fun CategoryItem(
                         )
                     }
                     if (budget != null) {
-                        val progress = (spentAmount / budget.monthlyLimit).coerceIn(0.0, 1.0).toFloat()
-                        val exceeded = spentAmount > budget.monthlyLimit
-                        val barColor = if (exceeded) expenseColor() else incomeColor()
+                        val rawProgress = (spentAmount / budget.monthlyLimit).coerceIn(0.0, 1.0).toFloat()
+                        val animatedProgress by animateFloatAsState(
+                            targetValue = rawProgress,
+                            animationSpec = tween(durationMillis = 600),
+                            label = "budgetProgress",
+                        )
+                        val ratio = spentAmount / budget.monthlyLimit
+                        val barColor = when {
+                            ratio >= 1.0 -> expenseColor()
+                            ratio >= 0.8 -> MaterialTheme.colorScheme.tertiary
+                            else -> incomeColor()
+                        }
                         AppText(
                             text = stringResource(
                                 R.string.categories_budget_progress,
@@ -133,7 +145,7 @@ fun CategoryItem(
                             color = barColor,
                         )
                         LinearProgressIndicator(
-                            progress = { progress },
+                            progress = { animatedProgress },
                             modifier = Modifier.fillMaxWidth(),
                             color = barColor,
                             trackColor = MaterialTheme.colorScheme.surfaceVariant,
