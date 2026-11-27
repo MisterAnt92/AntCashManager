@@ -38,8 +38,8 @@ import com.antcashmanager.android.ui.mapper.toUi
 import com.antcashmanager.android.ui.screen.categories.view.categoryIconMap
 import com.antcashmanager.android.ui.screen.home.HomeConstant
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
-import com.antcashmanager.android.ui.theme.ExpenseRed
-import com.antcashmanager.android.ui.theme.IncomeGreen
+import com.antcashmanager.android.ui.theme.expenseColor
+import com.antcashmanager.android.ui.theme.incomeColor
 import com.antcashmanager.android.ui.theme.LocalAnnaTheme
 import com.antcashmanager.android.util.LocalAmountsMasked
 import com.antcashmanager.android.util.translateCategory
@@ -50,6 +50,7 @@ import com.antcashmanager.domain.model.TransactionType
 @Composable
 fun RecentTransactionItem(
     transaction: TransactionUi,
+    index: Int = 0,
     onClick: () -> Unit = {},
     modifier: Modifier = Modifier,
     displayType: TransactionDisplayType = TransactionDisplayType.TREND,
@@ -63,7 +64,7 @@ fun RecentTransactionItem(
         else -> MaterialTheme.colorScheme.errorContainer
     }
 
-    AnimatedListItem(index = transaction.id.toInt()) {
+    AnimatedListItem(index = index) {
         AnimatedCard(
             modifier =
                 modifier
@@ -87,7 +88,7 @@ fun RecentTransactionItem(
                                 Modifier
                                     .size(44.dp)
                                     .background(
-                                        (if (isIncome) IncomeGreen else ExpenseRed).copy(alpha = HomeConstant.ICON_BADGE_ALPHA),
+                                        (if (isIncome) incomeColor() else expenseColor()).copy(alpha = HomeConstant.ICON_BADGE_ALPHA),
                                         shape = RoundedCornerShape(HomeConstant.ICON_BADGE_CORNER_DP.dp),
                                     )
                                     .padding(8.dp),
@@ -96,7 +97,7 @@ fun RecentTransactionItem(
                             Icon(
                                 imageVector = if (isIncome) Icons.AutoMirrored.Filled.TrendingUp else Icons.AutoMirrored.Filled.TrendingDown,
                                 contentDescription = null,
-                                tint = if (isIncome) IncomeGreen else ExpenseRed,
+                                tint = if (isIncome) incomeColor() else expenseColor(),
                                 modifier = Modifier.size(20.dp),
                             )
                         }

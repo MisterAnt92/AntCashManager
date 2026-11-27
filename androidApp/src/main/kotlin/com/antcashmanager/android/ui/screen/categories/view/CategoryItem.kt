@@ -37,8 +37,8 @@ import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
 import com.antcashmanager.android.ui.components.layout.SpacingSize
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
-import com.antcashmanager.android.ui.theme.ExpenseRed
-import com.antcashmanager.android.ui.theme.IncomeGreen
+import com.antcashmanager.android.ui.theme.expenseColor
+import com.antcashmanager.android.ui.theme.incomeColor
 import com.antcashmanager.android.util.translateCategory
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.CategoryBudget
@@ -122,7 +122,7 @@ fun CategoryItem(
                     if (budget != null) {
                         val progress = (spentAmount / budget.monthlyLimit).coerceIn(0.0, 1.0).toFloat()
                         val exceeded = spentAmount > budget.monthlyLimit
-                        val barColor = if (exceeded) ExpenseRed else IncomeGreen
+                        val barColor = if (exceeded) expenseColor() else incomeColor()
                         AppText(
                             text = stringResource(
                                 R.string.categories_budget_progress,

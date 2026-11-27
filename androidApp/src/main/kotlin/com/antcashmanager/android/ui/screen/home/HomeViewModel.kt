@@ -238,72 +238,36 @@ class HomeViewModel(
     private var previousExpenseTotal = 0.0
     private var previousTopCategory: String? = null
 
-    // ── Combined UI State ──
-    override val state: StateFlow<HomeState> =
+    // ── M2: Enriched transactions — only recomputes when filtered list or categories change ──
+    private val enrichedFlow: StateFlow<List<Transaction>> =
+        combine(filteredTransactionsFlow, categoriesCache) { filtered, categoryCache ->
+            filtered.map { transaction ->
+                val category = categoryCache[transaction.category]
+                if (category != null &&
+                    (transaction.categoryIcon.isEmpty() || transaction.categoryColor == 0xFF90A4AE)
+                ) {
+                    transaction.copy(
+                        categoryIcon = category.icon,
+                        categoryColor = category.color,
+                    )
+                } else {
+                    transaction
+                }
+            }
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+
+    // ── M1: Previous period — only recomputes when transactions or filter date/preset change ──
+    private val previousPeriodFlow: StateFlow<Pair<Double, Double>> =
         combine(
             transactionsFlow,
-            filteredTransactionsFlow,
-            searchSuggestionsFlow,
-            _filterState,
-            _selectedTransactionState,
-            categoriesCache,
-            settingsRepository.getHomeTopCardsOrder(),
-            settingsRepository.getDateFilterExpanded(),
-            settingsRepository.getShowPaymentTypeBreakdown(),
-            settingsRepository.getShowQuickInsightsCard(),
-            settingsRepository.getReduceMotion(),
-            settingsRepository.getTransactionDisplayType(),
-            _editingTopCardsOrder,
-            settingsRepository.getMealVoucherValue(),
-            settingsRepository.getSavingsGoalRate(),
-        ) { args: Array<Any?> ->
-            @Suppress("UNCHECKED_CAST")
-            val transactions = (args[0] as? List<Transaction>) ?: emptyList()
-            @Suppress("UNCHECKED_CAST")
-            val filtered = (args[1] as? List<Transaction>) ?: emptyList()
-            @Suppress("UNCHECKED_CAST")
-            val suggestions = (args[2] as? List<String>) ?: emptyList()
-            val filterState = (args[3] as? FilterState) ?: FilterState()
-            val selectedTransaction = args[4] as? Transaction
-            @Suppress("UNCHECKED_CAST")
-            val categoryCache = (args[5] as? Map<String, Category>) ?: emptyMap()
-            val topCardsOrder = HomeTopCardType.parse((args[6] as? String) ?: "")
-            val dateFilterExpanded = (args[7] as? Boolean) ?: true
-            val showPaymentTypeBreakdown = (args[8] as? Boolean) ?: false
-            val showQuickInsightsCard = (args[9] as? Boolean) ?: true
-            val reduceMotion = (args[10] as? Boolean) ?: false
-            val transactionDisplayType = (args[11] as? TransactionDisplayType) ?: TransactionDisplayType.TREND
-            @Suppress("UNCHECKED_CAST")
-            val editingTopCardsOrder = args[12] as? List<HomeTopCardType>
-            val mealVoucherValue = (args[13] as? Double) ?: DisplayConstant.DEFAULT_MEAL_VOUCHER_VALUE
-            val savingsGoalRate = (args[14] as? Float) ?: 20f
-
-            // Enrich transactions with category icon and color from cache
-            val enrichedFiltered =
-                filtered.map { transaction ->
-                    val category = categoryCache[transaction.category]
-                    if (category != null &&
-                        (transaction.categoryIcon.isEmpty() || transaction.categoryColor == 0xFF90A4AE)
-                    ) {
-                        // Update transaction with category data
-                        transaction.copy(
-                            categoryIcon = category.icon,
-                            categoryColor = category.color,
-                        )
-                    } else {
-                        transaction
-                    }
-                }
-
-            val totalIncome = enrichedFiltered.calculateTotalIncome()
-            val totalExpense = enrichedFiltered.calculateTotalExpense() // This will be negative
-            val balance = enrichedFiltered.calculateBalance() // Sum of all amounts
-
-            // Calculate previous period for delta comparison
-            val from = if (filterState.selectedPresetIndex != SavedDateFilter.CUSTOM_PRESET_INDEX)
-                           HomeState.getDateFromForPreset(filterState.selectedPresetIndex)
-                       else filterState.dateRangeFrom
-            val to   = filterState.dateRangeTo
+            _filterState.map { it.selectedPresetIndex }.distinctUntilChanged(),
+            _filterState.map { it.dateRangeFrom }.distinctUntilChanged(),
+            _filterState.map { it.dateRangeTo }.distinctUntilChanged(),
+        ) { transactions, presetIndex, storedFrom, storedTo ->
+            val from = if (presetIndex != SavedDateFilter.CUSTOM_PRESET_INDEX)
+                           HomeState.getDateFromForPreset(presetIndex)
+                       else storedFrom
+            val to   = storedTo
             val duration = to - from
             val prevFrom = maxOf(0L, from - duration)
             val prevTo   = from - 1L
@@ -313,8 +277,54 @@ class HomeViewModel(
                     filterParams = TransactionFilterParams(dateFrom = prevFrom, dateTo = prevTo),
                 ),
             ).getOrElse { emptyList() }
-            val previousPeriodIncome  = previousFiltered.calculateTotalIncome()
-            val previousPeriodExpense = previousFiltered.calculateTotalExpense()
+            previousFiltered.calculateTotalIncome() to previousFiltered.calculateTotalExpense()
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), 0.0 to 0.0)
+
+    // ── Combined UI State ──
+    override val state: StateFlow<HomeState> =
+        combine(
+            transactionsFlow,
+            enrichedFlow,
+            searchSuggestionsFlow,
+            _filterState,
+            _selectedTransactionState,
+            settingsRepository.getHomeTopCardsOrder(),
+            settingsRepository.getDateFilterExpanded(),
+            settingsRepository.getShowPaymentTypeBreakdown(),
+            settingsRepository.getShowQuickInsightsCard(),
+            settingsRepository.getReduceMotion(),
+            settingsRepository.getTransactionDisplayType(),
+            _editingTopCardsOrder,
+            settingsRepository.getMealVoucherValue(),
+            settingsRepository.getSavingsGoalRate(),
+            previousPeriodFlow,
+        ) { args: Array<Any?> ->
+            @Suppress("UNCHECKED_CAST")
+            val transactions = (args[0] as? List<Transaction>) ?: emptyList()
+            @Suppress("UNCHECKED_CAST")
+            val enrichedFiltered = (args[1] as? List<Transaction>) ?: emptyList()
+            @Suppress("UNCHECKED_CAST")
+            val suggestions = (args[2] as? List<String>) ?: emptyList()
+            val filterState = (args[3] as? FilterState) ?: FilterState()
+            val selectedTransaction = args[4] as? Transaction
+            val topCardsOrder = HomeTopCardType.parse((args[5] as? String) ?: "")
+            val dateFilterExpanded = (args[6] as? Boolean) ?: true
+            val showPaymentTypeBreakdown = (args[7] as? Boolean) ?: false
+            val showQuickInsightsCard = (args[8] as? Boolean) ?: true
+            val reduceMotion = (args[9] as? Boolean) ?: false
+            val transactionDisplayType = (args[10] as? TransactionDisplayType) ?: TransactionDisplayType.TREND
+            @Suppress("UNCHECKED_CAST")
+            val editingTopCardsOrder = args[11] as? List<HomeTopCardType>
+            val mealVoucherValue = (args[12] as? Double) ?: DisplayConstant.DEFAULT_MEAL_VOUCHER_VALUE
+            val savingsGoalRate = (args[13] as? Float) ?: 20f
+            @Suppress("UNCHECKED_CAST")
+            val prevPeriod = (args[14] as? Pair<Double, Double>) ?: (0.0 to 0.0)
+            val previousPeriodIncome = prevPeriod.first
+            val previousPeriodExpense = prevPeriod.second
+
+            val totalIncome = enrichedFiltered.calculateTotalIncome()
+            val totalExpense = enrichedFiltered.calculateTotalExpense() // This will be negative
+            val balance = enrichedFiltered.calculateBalance() // Sum of all amounts
 
             // Calculate balance by payment type (optimized with Map, excluding zeros)
             val balanceByPaymentType =

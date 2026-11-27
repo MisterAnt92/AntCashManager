@@ -467,7 +467,7 @@ class ChartsViewModel(
             if (maxExpenseCategory != null) {
                 val avgExpense =
                     maxExpenseCategory.value /
-                        kotlin.math.max(1, expenseTransactions.count { it.category == maxExpenseCategory.key })
+                        kotlin.math.max(1, expenseCountByCategory[maxExpenseCategory.key] ?: 1)
                 segmentationTracker.trackSpendingPatternDetected("category_focus", maxExpenseCategory.key, avgExpense)
             }
         }
@@ -478,7 +478,7 @@ class ChartsViewModel(
             if (maxIncomeCategory != null) {
                 val avgIncome =
                     maxIncomeCategory.value /
-                        kotlin.math.max(1, incomeTransactions.count { it.category == maxIncomeCategory.key })
+                        kotlin.math.max(1, incomeCountByCategory[maxIncomeCategory.key] ?: 1)
                 segmentationTracker.trackIncomeSourceTracking(maxIncomeCategory.key, "monthly", avgIncome)
             }
         }

@@ -34,8 +34,8 @@ import com.antcashmanager.android.ui.components.text.TransactionAmountText
 import com.antcashmanager.android.ui.mapper.recurrenceIntervalLabelRes
 import com.antcashmanager.android.ui.screen.categories.view.categoryIconMap
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
-import com.antcashmanager.android.ui.theme.ExpenseRed
-import com.antcashmanager.android.ui.theme.IncomeGreen
+import com.antcashmanager.android.ui.theme.expenseColor
+import com.antcashmanager.android.ui.theme.incomeColor
 import com.antcashmanager.android.ui.theme.LocalAnnaTheme
 import com.antcashmanager.android.util.LocalAmountsMasked
 import com.antcashmanager.android.util.isProtectedSalaryTransaction
@@ -52,6 +52,7 @@ private val dateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
 @Composable
 fun TransactionItem(
     transaction: Transaction,
+    index: Int = 0,
     onClick: (() -> Unit)? = null,
     displayType: TransactionDisplayType = TransactionDisplayType.TREND,
 ) {
@@ -64,7 +65,7 @@ fun TransactionItem(
         else -> MaterialTheme.colorScheme.errorContainer
     }
 
-    AnimatedListItem(index = transaction.id.toInt()) {
+    AnimatedListItem(index = index) {
         AnimatedCard(
             modifier =
                 Modifier
@@ -88,11 +89,9 @@ fun TransactionItem(
                                     .size(44.dp)
                                     .background(
                                         if (isIncome) {
-                                            IncomeGreen.copy(alpha = 0.25f)
+                                            incomeColor().copy(alpha = 0.25f)
                                         } else {
-                                            ExpenseRed.copy(
-                                                alpha = 0.25f,
-                                            )
+                                            expenseColor().copy(alpha = 0.25f)
                                         },
                                         shape = RoundedCornerShape(32.dp),
                                     )
@@ -102,7 +101,7 @@ fun TransactionItem(
                             Icon(
                                 imageVector = if (isIncome) Icons.AutoMirrored.Filled.TrendingUp else Icons.AutoMirrored.Filled.TrendingDown,
                                 contentDescription = null,
-                                tint = if (isIncome) IncomeGreen else ExpenseRed,
+                                tint = if (isIncome) incomeColor() else expenseColor(),
                                 modifier = Modifier.size(20.dp),
                             )
                         }

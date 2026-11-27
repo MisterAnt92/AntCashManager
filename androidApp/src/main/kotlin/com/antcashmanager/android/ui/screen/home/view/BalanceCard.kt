@@ -50,8 +50,8 @@ import com.antcashmanager.android.ui.mapper.icon
 import com.antcashmanager.android.ui.mapper.labelRes
 import com.antcashmanager.android.ui.screen.home.HomeConstant
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
-import com.antcashmanager.android.ui.theme.ExpenseRed
-import com.antcashmanager.android.ui.theme.IncomeGreen
+import com.antcashmanager.android.ui.theme.expenseColor
+import com.antcashmanager.android.ui.theme.incomeColor
 import com.antcashmanager.android.ui.theme.ThemeConstants
 import com.antcashmanager.android.util.LocalAmountsMasked
 import com.antcashmanager.android.util.LocalCurrencyFormat
@@ -68,7 +68,7 @@ fun BalanceCard(
     reduceMotion: Boolean = false,
 ) {
     val balanceStateColor by animateColorAsState(
-        targetValue = if (balance >= 0) IncomeGreen else ExpenseRed,
+        targetValue = if (balance >= 0) incomeColor() else expenseColor(),
         animationSpec = tween(HomeConstant.BALANCE_COLOR_ANIM_MS),
         label = "balance_color",
     )

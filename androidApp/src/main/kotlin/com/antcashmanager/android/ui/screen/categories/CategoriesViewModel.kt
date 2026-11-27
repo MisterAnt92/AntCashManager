@@ -18,6 +18,7 @@ import com.antcashmanager.domain.usecase.category.SetCategoryBudgetUseCase
 import com.antcashmanager.domain.usecase.category.UpdateCategoryUseCase
 import com.antcashmanager.domain.usecase.transaction.SyncTransactionCategoriesUseCase
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -36,48 +37,48 @@ class CategoriesViewModel(
 
     init {
         viewModelScope.launch {
-            getCategoryBudgetsUseCase().collect { result ->
-                result
-                    .onSuccess { budgets ->
-                        _state.update { it.copy(budgets = budgets.associateBy { b -> b.categoryId }) }
-                    }.onFailure { error ->
-                        if (error is CancellationException) throw error
-                        logError("Error loading budgets: ${error.message}", error)
-                    }
-            }
-        }
-        viewModelScope.launch {
-            getCategoriesUseCase().collect { result ->
-                result
-                    .onSuccess { cats ->
-                        val expense = cats.filter { it.type == "EXPENSE" }.sortedBy { it.sortOrder }
-                        val income = cats.filter { it.type == "INCOME" }.sortedBy { it.sortOrder }
-                        val visibleExpense = expense.filterNot { category -> category.isHidden }
-                        val visibleIncome = income.filterNot { category -> category.isHidden }
-                        _state.update {
-                            it.copy(
+            combine(
+                getCategoriesUseCase(),
+                getCategoryBudgetsUseCase(),
+            ) { catsResult, budgetsResult -> catsResult to budgetsResult }
+                .collect { (catsResult, budgetsResult) ->
+                    var updated = _state.value
+                    catsResult
+                        .onSuccess { cats ->
+                            val (expense, income) = cats.partition { it.type == "EXPENSE" }
+                            val sortedExpense = expense.sortedBy { it.sortOrder }
+                            val sortedIncome = income.sortedBy { it.sortOrder }
+                            val (defaultExp, customExp) = sortedExpense.partition { it.isDefault }
+                            val (defaultInc, customInc) = sortedIncome.partition { it.isDefault }
+                            updated = updated.copy(
                                 categories = cats,
-                                expenseCategories = visibleExpense,
-                                incomeCategories = visibleIncome,
-                                defaultExpenseCategories = expense.filter { category -> category.isDefault },
-                                customExpenseCategories = expense.filter { category -> !category.isDefault },
-                                defaultIncomeCategories = income.filter { category -> category.isDefault },
-                                customIncomeCategories = income.filter { category -> !category.isDefault },
+                                expenseCategories = sortedExpense.filterNot { it.isHidden },
+                                incomeCategories = sortedIncome.filterNot { it.isHidden },
+                                defaultExpenseCategories = defaultExp,
+                                customExpenseCategories = customExp,
+                                defaultIncomeCategories = defaultInc,
+                                customIncomeCategories = customInc,
                             )
+                            analyticsManager.logEvent(
+                                "category_type_distribution",
+                                Bundle().apply {
+                                    putInt("expense_count", sortedExpense.size)
+                                    putInt("income_count", sortedIncome.size)
+                                },
+                            )
+                        }.onFailure { error ->
+                            if (error is CancellationException) throw error
+                            logError("Error loading categories: ${error.message}", error)
                         }
-                        // Track category type distribution
-                        analyticsManager.logEvent(
-                            "category_type_distribution",
-                            Bundle().apply {
-                                putInt("expense_count", expense.size)
-                                putInt("income_count", income.size)
-                            },
-                        )
-                    }.onFailure { error ->
-                        if (error is CancellationException) throw error
-                        logError("Error loading categories: ${error.message}", error)
-                    }
-            }
+                    budgetsResult
+                        .onSuccess { budgets ->
+                            updated = updated.copy(budgets = budgets.associateBy { it.categoryId })
+                        }.onFailure { error ->
+                            if (error is CancellationException) throw error
+                            logError("Error loading budgets: ${error.message}", error)
+                        }
+                    _state.value = updated
+                }
         }
     }
 

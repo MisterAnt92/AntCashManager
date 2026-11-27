@@ -23,8 +23,8 @@ import com.antcashmanager.android.ui.components.layout.VerticalSpacer
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.components.text.MoneyText
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
-import com.antcashmanager.android.ui.theme.ExpenseRed
-import com.antcashmanager.android.ui.theme.IncomeGreen
+import com.antcashmanager.android.ui.theme.expenseColor
+import com.antcashmanager.android.ui.theme.incomeColor
 import kotlin.math.abs
 
 /**
@@ -41,8 +41,8 @@ fun SavingsRateCard(
     val isAboveGoal = savingsRate >= savingsGoalRate
     val isNegative = savingsAmount < 0
     val accentColor: Color = when {
-        isNegative    -> ExpenseRed
-        isAboveGoal   -> IncomeGreen
+        isNegative    -> expenseColor()
+        isAboveGoal   -> incomeColor()
         else          -> MaterialTheme.colorScheme.primary
     }
     val progress = (savingsRate / savingsGoalRate).toFloat().coerceIn(0f, 1f)

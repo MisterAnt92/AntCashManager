@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material3.FloatingActionButton
@@ -172,9 +173,13 @@ fun HomeListPane(
                     )
                 }
             } else {
-                items(items = state.recentTransactions, key = { it.id }) { transaction ->
+                itemsIndexed(
+                    items = state.recentTransactions,
+                    key = { _, transaction -> transaction.id },
+                ) { idx, transaction ->
                     RecentTransactionItem(
                         transaction = transaction,
+                        index = idx,
                         onClick = { onTransactionClick(transaction) },
                         displayType = state.transactionDisplayType,
                     )

@@ -10,6 +10,9 @@
  */
 package com.antcashmanager.android.ui.theme
 
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.graphics.Color
 
 // Primary palette — Vibrant Orange/Coral tones
@@ -103,6 +106,14 @@ val IncomeGreen = Color(0xFF00B341)
 val ExpenseRed = Color(0xFFFF3B30)
 val IncomeGreenDark = Color(0xFF66BB6A)
 val ExpenseRedDark = Color(0xFFFF8A80)
+
+@Composable
+@ReadOnlyComposable
+fun incomeColor(): Color = if (isSystemInDarkTheme()) IncomeGreenDark else IncomeGreen
+
+@Composable
+@ReadOnlyComposable
+fun expenseColor(): Color = if (isSystemInDarkTheme()) ExpenseRedDark else ExpenseRed
 
 // Additional gradient colors for enhanced visual appeal
 val AccentPurple = Color(0xFF7C3AED)

@@ -74,39 +74,39 @@ data class HomeState(
     val biggestExpense: Transaction? =
         filteredTransactions.filter { it.type == TransactionType.EXPENSE }.maxByOrNull { abs(it.amount) }
 
-    val incomeDeltaPercent: Double?
-        get() = if (previousPeriodIncome == 0.0) null
-                else (totalIncome - previousPeriodIncome) / abs(previousPeriodIncome) * 100.0
+    val incomeDeltaPercent: Double? =
+        if (previousPeriodIncome == 0.0) null
+        else (totalIncome - previousPeriodIncome) / abs(previousPeriodIncome) * 100.0
 
-    val expenseDeltaPercent: Double?
-        get() = if (previousPeriodExpense == 0.0) null
-                else (totalExpense - previousPeriodExpense) / abs(previousPeriodExpense) * 100.0
+    val expenseDeltaPercent: Double? =
+        if (previousPeriodExpense == 0.0) null
+        else (totalExpense - previousPeriodExpense) / abs(previousPeriodExpense) * 100.0
 
-    val incomeAbsoluteDelta: Double?
-        get() = if (previousPeriodIncome == 0.0) null else totalIncome - previousPeriodIncome
+    val incomeAbsoluteDelta: Double? =
+        if (previousPeriodIncome == 0.0) null else totalIncome - previousPeriodIncome
 
-    val expenseAbsoluteDelta: Double?
-        get() = if (previousPeriodExpense == 0.0) null else totalExpense - previousPeriodExpense
+    val expenseAbsoluteDelta: Double? =
+        if (previousPeriodExpense == 0.0) null else totalExpense - previousPeriodExpense
 
-    val savingsAmount: Double get() = totalIncome - abs(totalExpense)
+    val savingsAmount: Double = totalIncome - abs(totalExpense)
 
-    val savingsRate: Double?
-        get() = if (totalIncome == 0.0) null else savingsAmount / totalIncome * 100.0
+    val savingsRate: Double? =
+        if (totalIncome == 0.0) null else savingsAmount / totalIncome * 100.0
 
-    val incomeTrend: TrendDirection
-        get() = when {
-            incomeDeltaPercent == null                        -> TrendDirection.NEUTRAL
-            incomeDeltaPercent!! > TREND_THRESHOLD_PERCENT   -> TrendDirection.UP
-            incomeDeltaPercent!! < -TREND_THRESHOLD_PERCENT  -> TrendDirection.DOWN
+    val incomeTrend: TrendDirection =
+        when {
+            incomeDeltaPercent == null                       -> TrendDirection.NEUTRAL
+            incomeDeltaPercent > TREND_THRESHOLD_PERCENT     -> TrendDirection.UP
+            incomeDeltaPercent < -TREND_THRESHOLD_PERCENT    -> TrendDirection.DOWN
             else                                             -> TrendDirection.NEUTRAL
         }
 
-    val expenseTrend: TrendDirection
-        get() = when {
-            expenseDeltaPercent == null                        -> TrendDirection.NEUTRAL
-            expenseDeltaPercent!! > TREND_THRESHOLD_PERCENT   -> TrendDirection.UP
-            expenseDeltaPercent!! < -TREND_THRESHOLD_PERCENT  -> TrendDirection.DOWN
-            else                                              -> TrendDirection.NEUTRAL
+    val expenseTrend: TrendDirection =
+        when {
+            expenseDeltaPercent == null                      -> TrendDirection.NEUTRAL
+            expenseDeltaPercent > TREND_THRESHOLD_PERCENT    -> TrendDirection.UP
+            expenseDeltaPercent < -TREND_THRESHOLD_PERCENT   -> TrendDirection.DOWN
+            else                                             -> TrendDirection.NEUTRAL
         }
 
     /** Payment-type balances in enum order, zero entries already removed. */

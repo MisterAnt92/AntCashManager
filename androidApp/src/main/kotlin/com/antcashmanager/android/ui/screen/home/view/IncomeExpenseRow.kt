@@ -42,8 +42,8 @@ import com.antcashmanager.android.ui.components.text.MoneyText
 import com.antcashmanager.android.ui.screen.charts.TrendDirection
 import com.antcashmanager.android.ui.screen.home.HomeConstant
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
-import com.antcashmanager.android.ui.theme.ExpenseRed
-import com.antcashmanager.android.ui.theme.IncomeGreen
+import com.antcashmanager.android.ui.theme.expenseColor
+import com.antcashmanager.android.ui.theme.incomeColor
 import kotlin.math.abs
 
 @Composable
@@ -80,7 +80,7 @@ fun IncomeExpenseRow(
                                 Modifier
                                     .size(40.dp)
                                     .background(
-                                        IncomeGreen.copy(alpha = HomeConstant.ICON_BADGE_ALPHA),
+                                        incomeColor().copy(alpha = HomeConstant.ICON_BADGE_ALPHA),
                                         shape = RoundedCornerShape(HomeConstant.ICON_BADGE_CORNER_DP.dp),
                                     )
                                     .padding(8.dp),
@@ -89,7 +89,7 @@ fun IncomeExpenseRow(
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.TrendingUp,
                                 contentDescription = null,
-                                tint = IncomeGreen,
+                                tint = incomeColor(),
                                 modifier = Modifier.size(20.dp),
                             )
                         }
@@ -112,7 +112,7 @@ fun IncomeExpenseRow(
                         TrendBadge(
                             deltaPercent = incomeDeltaPercent,
                             absoluteDelta = incomeAbsoluteDelta,
-                            baseColor = IncomeGreen,
+                            baseColor = incomeColor(),
                         )
                     }
                 }
@@ -137,7 +137,7 @@ fun IncomeExpenseRow(
                                 Modifier
                                     .size(40.dp)
                                     .background(
-                                        ExpenseRed.copy(alpha = HomeConstant.ICON_BADGE_ALPHA),
+                                        expenseColor().copy(alpha = HomeConstant.ICON_BADGE_ALPHA),
                                         shape = RoundedCornerShape(HomeConstant.ICON_BADGE_CORNER_DP.dp),
                                     )
                                     .padding(8.dp),
@@ -146,7 +146,7 @@ fun IncomeExpenseRow(
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.TrendingDown,
                                 contentDescription = null,
-                                tint = ExpenseRed,
+                                tint = expenseColor(),
                                 modifier = Modifier.size(20.dp),
                             )
                         }
@@ -169,7 +169,7 @@ fun IncomeExpenseRow(
                         TrendBadge(
                             deltaPercent = expenseDeltaPercent,
                             absoluteDelta = expenseAbsoluteDelta,
-                            baseColor = ExpenseRed,
+                            baseColor = expenseColor(),
                         )
                     }
                 }
