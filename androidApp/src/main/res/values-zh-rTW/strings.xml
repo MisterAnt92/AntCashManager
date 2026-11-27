@@ -74,6 +74,7 @@
     <string name="categories_hide">隱藏分類</string>
     <string name="categories_show">顯示分類</string>
     <string name="categories_budget_set">設定預算</string>
+    <string name="categories_budget_indicator">預算：%1$s/月</string>
     <string name="categories_budget_monthly">月度限額</string>
     <string name="categories_budget_exceeded">預算超支</string>
     <string name="categories_budget_progress">%1$s / %2$s</string>
@@ -726,6 +727,9 @@
     <string name="transaction_add_tag_description">新增標籤</string>
     <string name="transaction_remove_tag_description">刪除</string>
     <string name="categories_restore_defaults">還原預設類別</string>
+    <string name="trend_badge_increased">%1$s%2$.0f%% 增加</string>
+    <string name="trend_badge_decreased">%1$s%2$.0f%% 減少</string>
+    <string name="trend_badge_stable">%1$s%2$.0f%% 穩定</string>
     <string name="empty_state_add_transaction_cta">新增交易</string>
     <string name="empty_state_clear_filters_cta">清除篩選</string>
     <string name="add_transaction_discard_dialog_title">放棄變更？</string>

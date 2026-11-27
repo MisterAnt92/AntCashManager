@@ -73,6 +73,7 @@
     <string name="categories_hide">श्रेणी छिपाएं</string>
     <string name="categories_show">श्रेणी दिखाएं</string>
     <string name="categories_budget_set">बजट सेट करें</string>
+    <string name="categories_budget_indicator">बजट: %1$s/माह</string>
     <string name="categories_budget_monthly">मासिक सीमा</string>
     <string name="categories_budget_exceeded">बजट पार हो गया</string>
     <string name="categories_budget_progress">%1$s में से %2$s</string>
@@ -733,6 +734,9 @@
     <string name="transaction_add_tag_description">टैग जोड़ें</string>
     <string name="transaction_remove_tag_description">हटाएं</string>
     <string name="categories_restore_defaults">डिफ़ॉल्ट श्रेणियाँ पुनर्स्थापित करें</string>
+    <string name="trend_badge_increased">%1$s%2$.0f%% बढ़ा</string>
+    <string name="trend_badge_decreased">%1$s%2$.0f%% घटा</string>
+    <string name="trend_badge_stable">%1$s%2$.0f%% स्थिर</string>
     <string name="empty_state_add_transaction_cta">लेनदेन जोड़ें</string>
     <string name="empty_state_clear_filters_cta">फ़िल्टर साफ़ करें</string>
     <string name="add_transaction_discard_dialog_title">बदलाव रद्द करें?</string>

@@ -115,13 +115,6 @@ fun incomeColor(): Color = if (isSystemInDarkTheme()) IncomeGreenDark else Incom
 @ReadOnlyComposable
 fun expenseColor(): Color = if (isSystemInDarkTheme()) ExpenseRedDark else ExpenseRed
 
-// Additional gradient colors for enhanced visual appeal
-val AccentPurple = Color(0xFF7C3AED)
-val AccentBlue = Color(0xFF2563EB)
-val AccentCyan = Color(0xFF06B6D4)
-val AccentYellow = Color(0xFFFCD34D)
-val AccentGreen = Color(0xFF10B981)
-
 // ── Anna theme — Green primary (income), Red secondary (expense) ──
 
 // Anna Light

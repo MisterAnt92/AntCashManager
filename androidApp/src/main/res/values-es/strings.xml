@@ -66,6 +66,7 @@
     <string name="categories_hide">Ocultar categoría</string>
     <string name="categories_show">Mostrar categoría</string>
     <string name="categories_budget_set">Establecer presupuesto</string>
+    <string name="categories_budget_indicator">Presupuesto: %1$s/mes</string>
     <string name="categories_budget_monthly">Límite mensual</string>
     <string name="categories_budget_exceeded">Presupuesto superado</string>
     <string name="categories_budget_progress">%1$s de %2$s</string>
@@ -676,6 +677,9 @@
     <string name="transaction_add_tag_description">Añadir etiqueta</string>
     <string name="transaction_remove_tag_description">Eliminar</string>
     <string name="categories_restore_defaults">Restaurar categorías predeterminadas</string>
+    <string name="trend_badge_increased">%1$s%2$.0f%% aumentado</string>
+    <string name="trend_badge_decreased">%1$s%2$.0f%% disminuido</string>
+    <string name="trend_badge_stable">%1$s%2$.0f%% estable</string>
     <string name="empty_state_add_transaction_cta">Añadir transacción</string>
     <string name="empty_state_clear_filters_cta">Limpiar filtros</string>
     <string name="add_transaction_discard_dialog_title">¿Descartar cambios?</string>

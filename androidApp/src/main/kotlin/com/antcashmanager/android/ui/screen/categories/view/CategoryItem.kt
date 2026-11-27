@@ -122,6 +122,17 @@ fun CategoryItem(
                             color = MaterialTheme.colorScheme.primary,
                         )
                     }
+                    if (budget != null && spentAmount == 0.0) {
+                        AppText(
+                            text = stringResource(
+                                R.string.categories_budget_indicator,
+                                "%.2f".format(budget.monthlyLimit),
+                            ),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.primary,
+                            fontWeight = FontWeight.SemiBold,
+                        )
+                    }
                     if (budget != null) {
                         val rawProgress = (spentAmount / budget.monthlyLimit).coerceIn(0.0, 1.0).toFloat()
                         val animatedProgress by animateFloatAsState(

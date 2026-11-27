@@ -74,6 +74,7 @@
     <string name="categories_hide">カテゴリを非表示</string>
     <string name="categories_show">カテゴリを表示</string>
     <string name="categories_budget_set">予算を設定</string>
+    <string name="categories_budget_indicator">予算: %1$s/月</string>
     <string name="categories_budget_monthly">月間上限</string>
     <string name="categories_budget_exceeded">予算超過</string>
     <string name="categories_budget_progress">%2$s 中 %1$s</string>
@@ -736,6 +737,9 @@
     <string name="transaction_add_tag_description">タグを追加</string>
     <string name="transaction_remove_tag_description">削除</string>
     <string name="categories_restore_defaults">デフォルトカテゴリを復元</string>
+    <string name="trend_badge_increased">%1$s%2$.0f%% 増加</string>
+    <string name="trend_badge_decreased">%1$s%2$.0f%% 減少</string>
+    <string name="trend_badge_stable">%1$s%2$.0f%% 安定</string>
     <string name="empty_state_add_transaction_cta">取引を追加</string>
     <string name="empty_state_clear_filters_cta">フィルターをクリア</string>
     <string name="add_transaction_discard_dialog_title">変更を破棄しますか？</string>

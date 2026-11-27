@@ -91,6 +91,7 @@
     <string name="categories_hide">Hide category</string>
     <string name="categories_show">Show category</string>
     <string name="categories_budget_set">Set budget</string>
+    <string name="categories_budget_indicator">Budget: %1$s/mo</string>
     <string name="categories_budget_monthly">Monthly limit</string>
     <string name="categories_budget_exceeded">Budget exceeded</string>
     <string name="categories_budget_progress">%1$s of %2$s</string>
@@ -740,6 +741,9 @@
     <string name="month_short_11">Nov</string>
     <string name="month_short_12">Dec</string>
     <string name="categories_restore_defaults">Restore default categories</string>
+    <string name="trend_badge_increased">%1$s%2$.0f%% increased</string>
+    <string name="trend_badge_decreased">%1$s%2$.0f%% decreased</string>
+    <string name="trend_badge_stable">%1$s%2$.0f%% stable</string>
     <string name="empty_state_add_transaction_cta">Add transaction</string>
     <string name="empty_state_clear_filters_cta">Clear filters</string>
     <string name="add_transaction_discard_dialog_title">Discard changes?</string>

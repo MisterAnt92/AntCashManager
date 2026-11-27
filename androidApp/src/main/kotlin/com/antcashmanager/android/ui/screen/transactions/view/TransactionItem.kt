@@ -1,7 +1,6 @@
 package com.antcashmanager.android.ui.screen.transactions.view
 
 import android.content.res.Configuration
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,10 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.TrendingDown
-import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.Repeat
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -31,11 +27,9 @@ import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
 import com.antcashmanager.android.ui.components.layout.SpacingSize
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.components.text.TransactionAmountText
+import com.antcashmanager.android.ui.components.transaction.TransactionIconBadge
 import com.antcashmanager.android.ui.mapper.recurrenceIntervalLabelRes
-import com.antcashmanager.android.ui.screen.categories.view.categoryIconMap
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
-import com.antcashmanager.android.ui.theme.expenseColor
-import com.antcashmanager.android.ui.theme.incomeColor
 import com.antcashmanager.android.ui.theme.LocalAnnaTheme
 import com.antcashmanager.android.util.LocalAmountsMasked
 import com.antcashmanager.android.util.isProtectedSalaryTransaction
@@ -80,71 +74,14 @@ fun TransactionItem(
                         .padding(16.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                // Icon based on display type
-                when (displayType) {
-                    TransactionDisplayType.TREND -> {
-                        Box(
-                            modifier =
-                                Modifier
-                                    .size(44.dp)
-                                    .background(
-                                        if (isIncome) {
-                                            incomeColor().copy(alpha = 0.25f)
-                                        } else {
-                                            expenseColor().copy(alpha = 0.25f)
-                                        },
-                                        shape = RoundedCornerShape(32.dp),
-                                    )
-                                    .padding(8.dp),
-                            contentAlignment = Alignment.Center,
-                        ) {
-                            Icon(
-                                imageVector = if (isIncome) Icons.AutoMirrored.Filled.TrendingUp else Icons.AutoMirrored.Filled.TrendingDown,
-                                contentDescription = null,
-                                tint = if (isIncome) incomeColor() else expenseColor(),
-                                modifier = Modifier.size(20.dp),
-                            )
-                        }
-                        HorizontalSpacer(SpacingSize.SM)
-                    }
-
-                    TransactionDisplayType.CATEGORY -> {
-                        val categoryIconVector = categoryIconMap[transaction.categoryIcon]
-                        Box(
-                            modifier =
-                                Modifier
-                                    .size(44.dp)
-                                    .background(
-                                        color =
-                                            androidx.compose.ui.graphics
-                                                .Color(transaction.categoryColor),
-                                        shape = androidx.compose.foundation.shape.CircleShape,
-                                    ),
-                            contentAlignment = Alignment.Center,
-                        ) {
-                            if (categoryIconVector != null) {
-                                Icon(
-                                    imageVector = categoryIconVector,
-                                    contentDescription = transaction.category,
-                                    tint = androidx.compose.ui.graphics.Color.White,
-                                    modifier = Modifier.size(24.dp),
-                                )
-                            } else {
-                                AppText(
-                                    text = transaction.category.take(1).uppercase(),
-                                    style = MaterialTheme.typography.titleMedium,
-                                    color = androidx.compose.ui.graphics.Color.White,
-                                    fontWeight = FontWeight.Bold,
-                                )
-                            }
-                        }
-                        HorizontalSpacer(SpacingSize.SM)
-                    }
-
-                    TransactionDisplayType.NONE -> {
-                        // No icon
-                    }
-                }
+                TransactionIconBadge(
+                    isIncome = isIncome,
+                    displayType = displayType,
+                    categoryIcon = transaction.categoryIcon,
+                    categoryColor = transaction.categoryColor,
+                    categoryName = transaction.category,
+                    categoryInitial = transaction.category.take(1).uppercase(),
+                )
 
                 // Content
                 Column(modifier = Modifier.weight(1f)) {

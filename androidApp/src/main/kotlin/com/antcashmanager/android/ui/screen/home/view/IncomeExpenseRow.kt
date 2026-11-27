@@ -195,12 +195,11 @@ private fun TrendBadge(
         TrendDirection.NEUTRAL -> Icons.AutoMirrored.Filled.TrendingFlat
     }
     val sign = if (deltaPercent >= 0) "+" else ""
-    val trendLabel = when (trend) {
-        TrendDirection.UP      -> "increased"
-        TrendDirection.DOWN    -> "decreased"
-        TrendDirection.NEUTRAL -> "stable"
+    val description = when (trend) {
+        TrendDirection.UP      -> stringResource(R.string.trend_badge_increased, sign, abs(deltaPercent))
+        TrendDirection.DOWN    -> stringResource(R.string.trend_badge_decreased, sign, abs(deltaPercent))
+        TrendDirection.NEUTRAL -> stringResource(R.string.trend_badge_stable, sign, abs(deltaPercent))
     }
-    val description = "$sign${"%.0f".format(abs(deltaPercent))}% $trendLabel"
     Column(
         modifier = Modifier
             .animateContentSize()

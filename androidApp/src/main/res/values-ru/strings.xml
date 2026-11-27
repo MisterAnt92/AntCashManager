@@ -74,6 +74,7 @@
     <string name="categories_hide">Скрыть кат��горию</string>
     <string name="categories_show">Показать категорию</string>
     <string name="categories_budget_set">Установить бюджет</string>
+    <string name="categories_budget_indicator">Бюджет: %1$s/мес.</string>
     <string name="categories_budget_monthly">Месячный лимит</string>
     <string name="categories_budget_exceeded">Бюджет превышен</string>
     <string name="categories_budget_progress">%1$s из %2$s</string>
@@ -737,6 +738,9 @@
     <string name="transaction_add_tag_description">Добавить тег</string>
     <string name="transaction_remove_tag_description">Удалить</string>
     <string name="categories_restore_defaults">Восстановить категории по умолчанию</string>
+    <string name="trend_badge_increased">%1$s%2$.0f%% выросло</string>
+    <string name="trend_badge_decreased">%1$s%2$.0f%% снизилось</string>
+    <string name="trend_badge_stable">%1$s%2$.0f%% стабильно</string>
     <string name="empty_state_add_transaction_cta">Добавить транзакцию</string>
     <string name="empty_state_clear_filters_cta">Очистить фильтры</string>
     <string name="add_transaction_discard_dialog_title">Отменить изменения?</string>

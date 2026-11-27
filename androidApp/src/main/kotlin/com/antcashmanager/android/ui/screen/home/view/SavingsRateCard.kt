@@ -49,7 +49,7 @@ fun SavingsRateCard(
 
     AnimatedCard(
         modifier = modifier.fillMaxWidth(),
-        backgroundColor = MaterialTheme.colorScheme.secondaryContainer,
+        backgroundColor = MaterialTheme.colorScheme.tertiaryContainer,
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(
@@ -61,7 +61,7 @@ fun SavingsRateCard(
                     text = stringResource(R.string.home_savings_rate),
                     style = MaterialTheme.typography.labelMedium,
                     fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.onSecondaryContainer,
+                    color = MaterialTheme.colorScheme.onTertiaryContainer,
                 )
                 AppText(
                     text = "${"%.0f".format(abs(savingsRate))}%",
@@ -79,7 +79,7 @@ fun SavingsRateCard(
                 AppText(
                     text = stringResource(R.string.home_savings_amount),
                     style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.7f),
+                    color = MaterialTheme.colorScheme.onTertiaryContainer.copy(alpha = 0.7f),
                 )
                 MoneyText(
                     amount = savingsAmount,
@@ -98,7 +98,7 @@ fun SavingsRateCard(
             AppText(
                 text = "${stringResource(R.string.home_savings_goal)}: ${"%.0f".format(savingsGoalRate)}%",
                 style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.6f),
+                color = MaterialTheme.colorScheme.onTertiaryContainer.copy(alpha = 0.6f),
             )
         }
     }
