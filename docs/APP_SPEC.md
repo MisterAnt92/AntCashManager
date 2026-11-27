@@ -73,3 +73,18 @@ Seguire questo ciclo per ogni nuova feature:
 - Navigazione type-safe via `AppRoute` + `NavigationExtensions.kt`
 - DI Koin: `dataModule` / `useCaseModule` / `presentationModule`
 - Testing: MockK only, `BaseUnitTest`, `BaseUseCaseTest`, `FakeXxxRepository`
+
+---
+
+## Navigation & UX flows
+
+- Schema draw.io completo: [`docs/navigation-flow.drawio`](navigation-flow.drawio) — aggiornare ad ogni nuova schermata
+- Bottom tabs (phone): Home · Charts (opt) · Transactions
+- Bottom tabs (tablet/foldable rail): Home · Charts (opt) · Transactions · Categories · Settings
+- Phone: Categories + Settings accessibili via LeftSidebar (hamburger menu)
+- Sub-screens (nessun top/bottom bar): AddTransaction, ReceiptScan, Display, DataManagement, Profiles
+- Tutorial: overlay Reveal spotlight (non route), gestito da TutorialViewModel in NavGraph.kt
+- TransactionDetails: dialog inline (non route separata), usato da Home e Transactions
+- Back: `safePopBackStack()` — BackHandler priority: sidebar close > exit dialog > popBackStack
+- Deep links registrati: home, transactions, categories
+- Navigazione type-safe: `AppRoute` + `NavigationExtensions.kt` — mai string literals

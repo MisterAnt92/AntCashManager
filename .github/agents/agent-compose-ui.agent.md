@@ -29,11 +29,19 @@ internal fun HomeContent(state: HomeState, onEvent: (HomeEvent) -> Unit, onAddTr
 - Navigation: only `NavigationExtensions.kt` and `AppRoute`. No string literals. Full list:
   `navigateToHome()`, `navigateToCharts()`, `navigateToTransactions()`, `navigateToCategories()`,
   `navigateToSettingsMain()`, `navigateToDisplaySettings()`, `navigateToDataManagement()`,
-  `navigateToTutorial()`, `navigateToReceiptScan()`, `navigateToAddTransaction()`,
-  `navigateToEditTransaction(transactionId: Long)`, `navigateToProfiles()`,
+  `navigateToProfiles()`, `navigateToReceiptScan()`, `navigateToAddTransaction()`,
+  `navigateToEditTransaction(transactionId: Long)`,
   `navigateToBottomTab(route)`, `navigateToSettings(route)`, `navigateToTransaction(route)`,
   `safePopBackStack()`.
+  **`navigateToTutorial()` does NOT exist** — tutorial is a Reveal overlay activated via `TutorialViewModel.emitEvent(TutorialEvent.StartTutorial)` from NavGraph.kt, not a route.
+- **Top/bottom bar**: managed globally in `NavGraph.kt`. Hidden automatically when `AppRoute.isSubScreen(route) == true`. Sub-screen composables must NOT include their own Scaffold with a top bar.
 - Header: `LocalScreenHeaderConfigCallback` + `ScreenHeaderConfig` (see HomeScreen) instead of a custom top bar.
+  ```kotlin
+  val headerCallback = LocalScreenHeaderConfigCallback.current
+  LaunchedEffect(Unit) {
+      headerCallback(ScreenHeaderConfig(title = "My Title", showSearchIcon = true, ...))
+  }
+  ```
 
 ## Component inventory — `ui/components/` (reuse, never recreate)
 
