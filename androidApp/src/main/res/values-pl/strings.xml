@@ -73,6 +73,11 @@
     <string name="categories_icon_label">Ikona</string>
     <string name="categories_hide">Ukryj kategorię</string>
     <string name="categories_show">Pokaż kategorię</string>
+    <string name="categories_budget_set">Ustaw budżet</string>
+    <string name="categories_budget_indicator">Budżet: %1$s/mies.</string>
+    <string name="categories_budget_monthly">Limit miesięczny</string>
+    <string name="categories_budget_exceeded">Przekroczono budżet</string>
+    <string name="categories_budget_progress">%1$s z %2$s</string>
     <string name="categories_hidden_section_title">Ukryte kategorie (%d)</string>
     <string name="categories_reorder">Zmień kolejność kategorii</string>
     <string name="categories_selection_hint">Dotknij kategorii, aby ją wybrać (automatycznie przechodzi dalej w rzeczywistej aplikacji)</string>
@@ -491,6 +496,9 @@
     <string name="settings_mask_amounts_subtitle_enabled">Cyfry są zastąpione gwiazdkami</string>
     <string name="settings_mask_amounts_subtitle_disabled">Cyfry są pokazywane normalnie</string>
     <string name="settings_mask_amounts_preview">Podgląd: %s</string>
+    <string name="settings_use_dynamic_color">Dynamiczne kolory</string>
+    <string name="settings_use_dynamic_color_subtitle_enabled">Używanie palety systemowej (Material You)</string>
+    <string name="settings_use_dynamic_color_subtitle_disabled">Używanie palety aplikacji</string>
     <string name="settings_transaction_icon_display_trend">Strzałki trendu</string>
     <string name="settings_transaction_icon_display_category">Kategoria</string>
     <string name="settings_transaction_icon_display_none">Brak</string>
@@ -500,22 +508,16 @@
     <string name="settings_tutorial">Samouczek</string>
     <string name="settings_show_tutorial">Pokaż samouczek</string>
     <string name="settings_show_tutorial_subtitle">Obejrzyj ponownie początkowy samouczek aplikacji</string>
-    <string name="tutorial_welcome_title">Witaj w AntCashManager! 🐜</string>
-    <string name="tutorial_welcome_desc">Zróbmy krótki spacer, aby zobaczyć, jak nasza mała mrówka pomaga Ci zarządzać pieniędzmi.</string>
-    <string name="tutorial_welcome_point_track">Śledź przychody i wydatki w kilka sekund.</string>
-    <string name="tutorial_welcome_point_insights">Sprawdzaj salda i trendy jednym rzutem oka.</string>
-    <string name="tutorial_welcome_point_categories">Organizuj wydatki dzięki inteligentnym kategoriom.</string>
-    <string name="tutorial_welcome_point_customize">Dostosuj język, motyw i formaty.</string>
-    <string name="tutorial_dashboard_title">Pulpit</string>
-    <string name="tutorial_dashboard_desc">Tutaj możesz zobaczyć swoje całkowite saldo oraz miesięczne przychody i wydatki.</string>
-    <string name="tutorial_transactions_title">Transakcje</string>
-    <string name="tutorial_transactions_desc">Zarządzaj tutaj wszystkimi swoimi ruchami finansowymi. Możesz łatwo szukać, filtrować i dodawać wpisy.</string>
+    <string name="tutorial_transactions_title">Strona główna</string>
+    <string name="tutorial_transactions_desc">Tutaj możesz przeglądać wszystkie swoje transakcje i udostępniać podsumowanie finansowe.</string>
     <string name="tutorial_charts_title">Wykresy i wglądy</string>
     <string name="tutorial_charts_desc">Wizualizuj swoje nawyki wydatkowe dzięki interaktywnym wykresom. Zobacz, gdzie idą Twoje pieniądze!</string>
+    <string name="tutorial_add_transaction_title">Dodaj transakcje</string>
+    <string name="tutorial_add_transaction_desc">Dotknij tutaj, aby szybko zarejestrować nowy przychód lub wydatek.</string>
     <string name="tutorial_categories_title">Kategorie</string>
     <string name="tutorial_categories_desc">Organizuj transakcje za pomocą własnych kategorii, ikon i kolorów.</string>
-    <string name="tutorial_settings_title">Personalizacja</string>
-    <string name="tutorial_settings_desc">Dopasuj aplikację do swoich potrzeb: waluta, formaty dat, dostępność i motywy.</string>
+    <string name="tutorial_sidebar_title">Menu i kategorie</string>
+    <string name="tutorial_sidebar_desc">Dotknij ikony menu, aby uzyskać dostęp do Kategorii, Ustawień i innych opcji z paska bocznego.</string>
     <string name="tutorial_finish_title">Wszystko gotowe!</string>
     <string name="tutorial_finish_desc">Zacznij swoją finansową podróż z AntCashManager już dziś. Miłego oszczędzania!</string>
     <string name="tutorial_next">Dalej</string>
@@ -633,6 +635,11 @@
     <!-- Chart Cards - New Visualizations -->
     <string name="chart_spending_forecast_title">Prognoza wydatków</string>
     <string name="chart_avg_monthly">Średnia miesięczna</string>
+    <string name="chart_projected_month_end">Projected month end</string>
+    <string name="home_vs_previous_period">vs. previous period</string>
+    <string name="home_savings_rate">Wskaźnik oszczędności</string>
+    <string name="home_savings_goal">Cel</string>
+    <string name="home_savings_amount">Zaoszczędzono w tym okresie</string>
     <string name="chart_period">Okres</string>
     <string name="chart_last_3_months">Ostatnie 3 miesiące</string>
     <string name="chart_quick_stats_title">Szybkie statystyki</string>
@@ -730,4 +737,14 @@
     <string name="app_icon_description">Ikona aplikacji</string>
     <string name="transaction_add_tag_description">Dodaj tag</string>
     <string name="transaction_remove_tag_description">Usuń</string>
+    <string name="categories_restore_defaults">Przywróć domyślne kategorie</string>
+    <string name="trend_badge_increased">%1$s%2$.0f%% wzrost</string>
+    <string name="trend_badge_decreased">%1$s%2$.0f%% spadek</string>
+    <string name="trend_badge_stable">%1$s%2$.0f%% stabilny</string>
+    <string name="empty_state_add_transaction_cta">Dodaj transakcję</string>
+    <string name="empty_state_clear_filters_cta">Wyczyść filtry</string>
+    <string name="add_transaction_discard_dialog_title">Odrzucić zmiany?</string>
+    <string name="add_transaction_discard_dialog_message">Masz niezapisane zmiany. Czy na pewno chcesz je odrzucić?</string>
+    <string name="add_transaction_discard_dialog_confirm">Odrzuć</string>
+    <string name="add_transaction_discard_dialog_cancel">Kontynuuj edycję</string>
 </resources>

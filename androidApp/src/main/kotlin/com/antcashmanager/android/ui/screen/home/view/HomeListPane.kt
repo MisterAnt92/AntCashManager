@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material3.FloatingActionButton
@@ -41,6 +42,10 @@ import com.antcashmanager.android.ui.screen.home.HomeConstant
 import com.antcashmanager.android.ui.screen.home.HomeState
 import com.antcashmanager.android.ui.screen.home.event.HomeEvent
 import com.antcashmanager.android.ui.screen.home.model.HomeTopCardType
+import androidx.compose.foundation.layout.Box
+import com.antcashmanager.android.navigation.LocalRevealState
+import com.antcashmanager.android.ui.screen.tutorial.TutorialKey
+import com.svenjacobs.reveal.revealable
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 
@@ -59,17 +64,22 @@ fun HomeListPane(
     onFromDateEdit: () -> Unit,
     onToDateEdit: () -> Unit,
     onTransactionClick: (TransactionUi) -> Unit,
+    onAddTransaction: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
 ) {
+    val revealState = LocalRevealState.current
     val coroutineScope = rememberCoroutineScope()
     val showScrollToTop by remember {
         derivedStateOf { listState.firstVisibleItemIndex > HomeConstant.SCROLL_TO_TOP_ITEM_THRESHOLD }
     }
 
     Scaffold(
-        modifier = modifier
-            .fillMaxSize()
-            .testTag(HOME_SCREEN_TAG),
+        modifier = if (revealState != null) {
+            modifier.fillMaxSize().testTag(HOME_SCREEN_TAG)
+                .revealable(TutorialKey.HOME_TRANSACTIONS, state = revealState)
+        } else {
+            modifier.fillMaxSize().testTag(HOME_SCREEN_TAG)
+        },
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         floatingActionButton = {
             AnimatedVisibility(
@@ -116,7 +126,19 @@ fun HomeListPane(
                     )
                 }
                 state.visibleTopCards.forEach { topCardType ->
-                    item(key = topCardType.storageKey) { TopCard(topCardType, state) }
+                    item(key = topCardType.storageKey) {
+                        TopCard(topCardType, state)
+                    }
+                }
+                val savingsRate = state.savingsRate
+                if (savingsRate != null) {
+                    item(key = "savings_rate_card") {
+                        SavingsRateCard(
+                            savingsAmount = state.savingsAmount,
+                            savingsRate = savingsRate,
+                            savingsGoalRate = state.savingsGoalRate,
+                        )
+                    }
                 }
             }
 
@@ -149,12 +171,18 @@ fun HomeListPane(
                         mascotRes = R.drawable.ic_piggy_bank,
                         title = stringResource(R.string.empty_state_no_transactions),
                         subtitle = stringResource(R.string.empty_state_no_transactions_subtitle),
+                        actionLabel = onAddTransaction?.let { stringResource(R.string.empty_state_add_transaction_cta) },
+                        onAction = onAddTransaction,
                     )
                 }
             } else {
-                items(items = state.recentTransactions, key = { it.id }) { transaction ->
+                itemsIndexed(
+                    items = state.recentTransactions,
+                    key = { _, transaction -> transaction.id },
+                ) { idx, transaction ->
                     RecentTransactionItem(
                         transaction = transaction,
+                        index = idx,
                         onClick = { onTransactionClick(transaction) },
                         displayType = state.transactionDisplayType,
                     )
@@ -181,7 +209,14 @@ private fun TopCard(
             )
 
         HomeTopCardType.INCOME_EXPENSE ->
-            IncomeExpenseRow(totalIncome = state.totalIncome, totalExpense = abs(state.totalExpense))
+            IncomeExpenseRow(
+                totalIncome = state.totalIncome,
+                totalExpense = abs(state.totalExpense),
+                incomeDeltaPercent = state.incomeDeltaPercent,
+                expenseDeltaPercent = state.expenseDeltaPercent,
+                incomeAbsoluteDelta = state.incomeAbsoluteDelta,
+                expenseAbsoluteDelta = state.expenseAbsoluteDelta,
+            )
 
         HomeTopCardType.QUICK_INSIGHTS ->
             QuickInsightsCard(

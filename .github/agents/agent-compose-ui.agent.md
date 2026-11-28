@@ -29,11 +29,19 @@ internal fun HomeContent(state: HomeState, onEvent: (HomeEvent) -> Unit, onAddTr
 - Navigation: only `NavigationExtensions.kt` and `AppRoute`. No string literals. Full list:
   `navigateToHome()`, `navigateToCharts()`, `navigateToTransactions()`, `navigateToCategories()`,
   `navigateToSettingsMain()`, `navigateToDisplaySettings()`, `navigateToDataManagement()`,
-  `navigateToTutorial()`, `navigateToReceiptScan()`, `navigateToAddTransaction()`,
-  `navigateToEditTransaction(transactionId: Long)`, `navigateToProfiles()`,
+  `navigateToProfiles()`, `navigateToReceiptScan()`, `navigateToAddTransaction()`,
+  `navigateToEditTransaction(transactionId: Long)`,
   `navigateToBottomTab(route)`, `navigateToSettings(route)`, `navigateToTransaction(route)`,
   `safePopBackStack()`.
+  **`navigateToTutorial()` does NOT exist** — tutorial is a Reveal overlay activated via `TutorialViewModel.emitEvent(TutorialEvent.StartTutorial)` from NavGraph.kt, not a route.
+- **Top/bottom bar**: managed globally in `NavGraph.kt`. Hidden automatically when `AppRoute.isSubScreen(route) == true`. Sub-screen composables must NOT include their own Scaffold with a top bar.
 - Header: `LocalScreenHeaderConfigCallback` + `ScreenHeaderConfig` (see HomeScreen) instead of a custom top bar.
+  ```kotlin
+  val headerCallback = LocalScreenHeaderConfigCallback.current
+  LaunchedEffect(Unit) {
+      headerCallback(ScreenHeaderConfig(title = "My Title", showSearchIcon = true, ...))
+  }
+  ```
 
 ## Component inventory — `ui/components/` (reuse, never recreate)
 
@@ -50,6 +58,18 @@ internal fun HomeContent(state: HomeState, onEvent: (HomeEvent) -> Unit, onAddTr
 | Dialogs | `AppHelpDialog`, `HelpDialogContent`, `AppExitConfirmationDialog`, `AnalyticsConsentDialog` |
 | Layout | `FoldableAwareLayout`, `rememberAdaptiveLayoutInfo()`, `VerticalSpacer`, `HorizontalSpacer`, `AppDivider`, `NavigationRailTablet`, `LeftSidebar` |
 | Motion | `FadeInOnAppear`, `SlideInOnAppear`, `PulsingElement`, `BouncingElement` (respect `LocalReduceMotion`) |
+
+### Screen-specific composables (non in `ui/components/`, ma riusabili come pattern)
+
+| Composable | File | Note |
+|---|---|---|
+| `IncomeExpenseRow` | `home/view/IncomeExpenseRow.kt` | Carte income/expense con `TrendBadge` opzionale (`incomeDeltaPercent`, `expenseDeltaPercent: Double?`) |
+| `TrendBadge` | `home/view/IncomeExpenseRow.kt` | Chip colorato con icona freccia e delta% — `private`, usato dentro `IncomeExpenseRow` |
+| `SpendingForecastCard` | `charts/view/ChartCards.kt` | Media 3 mesi + proiezione fine mese (attiva dal giorno 3 del mese) |
+| `QuickStatsCard` | `charts/view/ChartCards.kt` | Statistiche giornaliere (max, avg, giorni tracciati) |
+| `ChartsDetailsBottomSheet` | `charts/view/ChartsDetailsBottomSheet.kt` | Bottom sheet con breakdown categoria + `TrendDirection` reale |
+| `SavingsRateCard` | `home/view/SavingsRateCard.kt` | Risparmio del periodo + tasso% + barra progresso vs goal. Visibile quando `totalIncome > 0`. Params: `savingsAmount`, `savingsRate`, `savingsGoalRate` |
+| `BudgetEditDialog` | `categories/view/BudgetEditDialog.kt` | Dialog per impostare/aggiornare/eliminare il budget mensile di una categoria. Params: `categoryName`, `existingBudget`, `onConfirm`, `onDelete`, `onDismiss` |
 
 Regenerate: `grep -rhoE "^(internal )?fun [A-Z]\w+\(" androidApp/src/main/kotlin/com/antcashmanager/android/ui/components | sort -u`
 

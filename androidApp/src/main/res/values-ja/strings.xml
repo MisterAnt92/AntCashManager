@@ -73,6 +73,11 @@
     <string name="categories_icon_label">アイコン</string>
     <string name="categories_hide">カテゴリを非表示</string>
     <string name="categories_show">カテゴリを表示</string>
+    <string name="categories_budget_set">予算を設定</string>
+    <string name="categories_budget_indicator">予算: %1$s/月</string>
+    <string name="categories_budget_monthly">月間上限</string>
+    <string name="categories_budget_exceeded">予算超過</string>
+    <string name="categories_budget_progress">%2$s 中 %1$s</string>
     <string name="categories_hidden_section_title">非表示のカテゴリ (%d)</string>
     <string name="categories_reorder">カテゴリの順序変更</string>
     <string name="categories_selection_hint">カテゴリをタップして選択（アプリでは自動的に進みます）</string>
@@ -490,6 +495,9 @@
     <string name="settings_mask_amounts_subtitle_enabled">数字をアスタリスクでマスクします</string>
     <string name="settings_mask_amounts_subtitle_disabled">数字を通常通り表示します</string>
     <string name="settings_mask_amounts_preview">プレビュー: %s</string>
+    <string name="settings_use_dynamic_color">ダイナミックカラー</string>
+    <string name="settings_use_dynamic_color_subtitle_enabled">システムカラーパレットを使用 (Material You)</string>
+    <string name="settings_use_dynamic_color_subtitle_disabled">アプリのカラーパレットを使用</string>
     <string name="settings_transaction_icon_display_trend">トレンド矢印</string>
     <string name="settings_transaction_icon_display_category">カテゴリ</string>
     <string name="settings_transaction_icon_display_none">なし</string>
@@ -499,22 +507,16 @@
     <string name="settings_tutorial">チュートリアル</string>
     <string name="settings_show_tutorial">チュートリアルを表示</string>
     <string name="settings_show_tutorial_subtitle">初期チュートリア���をもう一度見ます</string>
-    <string name="tutorial_welcome_title">AntCashManagerへようこそ！ 🐜</string>
-    <string name="tutorial_welcome_desc">小さな蟻があなたのお金の管理をどのようにお手伝いするか、ツアーで見に行きましょう。</string>
-    <string name="tutorial_welcome_point_track">数秒で収支を記録できます。</string>
-    <string name="tutorial_welcome_point_insights">残高とトレンドが一目でわかります。</string>
-    <string name="tutorial_welcome_point_categories">スマートなカテゴリで支出を整理できます。</string>
-    <string name="tutorial_welcome_point_customize">言語、テーマ、書式をカスタマイズできます。</string>
-    <string name="tutorial_dashboard_title">ダッシュボード</string>
-    <string name="tutorial_dashboard_desc">ここでは、合計残高、月間収支を一目で確認できます。</string>
-    <string name="tutorial_transactions_title">取引</string>
-    <string name="tutorial_transactions_desc">すべての動きをここで管理します。検索、フィルター、新規追加が簡単に行えます。</string>
+    <string name="tutorial_transactions_title">ホーム</string>
+    <string name="tutorial_transactions_desc">すべての取引を確認し、財務サマリーを共有できます。</string>
     <string name="tutorial_charts_title">グラフとインサイト</string>
     <string name="tutorial_charts_desc">インタラクティブなグラフで支出の癖を可視化します。お金の行き先を確認しましょう！</string>
+    <string name="tutorial_add_transaction_title">取引を追加</string>
+    <string name="tutorial_add_transaction_desc">新しい収入や支出をすばやく記録するには、ここをタップしてください。</string>
     <string name="tutorial_categories_title">カテゴリ</string>
     <string name="tutorial_categories_desc">カスタムカテゴリ、アイコン、色を使用して取引を整理します。</string>
-    <string name="tutorial_settings_title">カスタマイズ</string>
-    <string name="tutorial_settings_desc">通貨、日付形式、アクセシビリティ、テーマなど、ニーズに合わせてアプリを調整できます。</string>
+    <string name="tutorial_sidebar_title">メニューとカテゴリ</string>
+    <string name="tutorial_sidebar_desc">メニューアイコンをタップして、サイドバーからカテゴリ、設定などにアクセスしてください。</string>
     <string name="tutorial_finish_title">準備完了です！</string>
     <string name="tutorial_finish_desc">今日からAntCashManagerで家計管理を始めましょう。節約を楽しんで！</string>
     <string name="tutorial_next">次へ</string>
@@ -632,6 +634,11 @@
     <!-- Chart Cards - New Visualizations -->
     <string name="chart_spending_forecast_title">支出予測</string>
     <string name="chart_avg_monthly">月平均</string>
+    <string name="chart_projected_month_end">Projected month end</string>
+    <string name="home_vs_previous_period">vs. previous period</string>
+    <string name="home_savings_rate">貯蓄率</string>
+    <string name="home_savings_goal">目標</string>
+    <string name="home_savings_amount">この期間の貯蓄</string>
     <string name="chart_period">期間</string>
     <string name="chart_last_3_months">直近3ヶ月</string>
     <string name="chart_quick_stats_title">クイック統計</string>
@@ -729,4 +736,14 @@
     <string name="app_icon_description">アプリアイコン</string>
     <string name="transaction_add_tag_description">タグを追加</string>
     <string name="transaction_remove_tag_description">削除</string>
+    <string name="categories_restore_defaults">デフォルトカテゴリを復元</string>
+    <string name="trend_badge_increased">%1$s%2$.0f%% 増加</string>
+    <string name="trend_badge_decreased">%1$s%2$.0f%% 減少</string>
+    <string name="trend_badge_stable">%1$s%2$.0f%% 安定</string>
+    <string name="empty_state_add_transaction_cta">取引を追加</string>
+    <string name="empty_state_clear_filters_cta">フィルターをクリア</string>
+    <string name="add_transaction_discard_dialog_title">変更を破棄しますか？</string>
+    <string name="add_transaction_discard_dialog_message">保存されていない変更があります。破棄してもよろしいですか？</string>
+    <string name="add_transaction_discard_dialog_confirm">破棄</string>
+    <string name="add_transaction_discard_dialog_cancel">編集を続ける</string>
 </resources>

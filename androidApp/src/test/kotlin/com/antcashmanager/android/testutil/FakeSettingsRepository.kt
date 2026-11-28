@@ -401,5 +401,23 @@ open class FakeSettingsRepository : SettingsRepository {
         googleDriveFolderName.value = null
         googleDriveUserEmail.value = null
         defaultPaymentType.value = "ELECTRONIC"
+        useDynamicColor.value = true
+        savingsGoalRate.value = 20f
+    }
+
+    val useDynamicColor = MutableStateFlow(true)
+
+    override fun getUseDynamicColor(): Flow<Boolean> = useDynamicColor
+
+    override suspend fun setUseDynamicColor(value: Boolean) {
+        useDynamicColor.value = value
+    }
+
+    val savingsGoalRate = MutableStateFlow(20f)
+
+    override fun getSavingsGoalRate(): Flow<Float> = savingsGoalRate
+
+    override suspend fun setSavingsGoalRate(rate: Float) {
+        savingsGoalRate.value = rate
     }
 }

@@ -18,6 +18,9 @@ Single source of rules for AI coding agents. Specialized agents in `.github/agen
 3. **Implement one file at a time.** After each file: check imports and `package` match the directory.
 4. **Verify light** — re-read only the edited region, not the whole file. Compile **once per logical group** with `compileFullDebugKotlin`, not after every edit.
 5. **Confirm** — summarize what changed and stop; wait before the next step of a multi-step task.
+   For feature UI: launch the app, verify the golden path visually, confirm edge cases.
+   Then update `docs/APP_SPEC.md`: mark `[DONE]`, bump the version header.
+   If you added UI components: update the inventory in `.github/agents/agent-compose-ui.agent.md`.
 
 ## 3. Token discipline
 
@@ -136,3 +139,15 @@ ui/screen/<feature>/
 
 - Log only events whitelisted in `analytics/`; never user content (notes, amounts, payees).
 - Never modify: `build/`, `.gradle/`, `.idea/`, `*.jks`, `google-services.json`, `local.properties`, `secrets.properties`.
+
+## 14. Navigation
+
+- **Routes**: `AppRoute` sealed class — `BottomRoute` (Home, Charts, Transactions, Categories, Settings), `SettingsRoute` (Main, Display, DataManagement, Profiles), `TransactionRoute` (Add with optional `?transactionId={id}`, ReceiptScan). Never string literals in composables.
+- **Type-safe functions**: always in `NavigationExtensions.kt` — `navigateToHome()`, `navigateToCharts()`, `navigateToTransactions()`, `navigateToCategories()`, `navigateToSettingsMain()`, `navigateToDisplaySettings()`, `navigateToDataManagement()`, `navigateToProfiles()`, `navigateToReceiptScan()`, `navigateToAddTransaction()`, `navigateToEditTransaction(id: Long)`, `safePopBackStack()`.
+- **Bottom tab navigation**: `navigateToBottomTab(route)` — popUpTo startDestination, saveState=true, restoreState=true, launchSingleTop=true.
+- **Sub-screen navigation** (Display, DataManagement, Profiles, AddTransaction, ReceiptScan): `navigateToSettings(route)` or `navigateToTransaction(route)` — launchSingleTop only, NO saveState/restoreState.
+- **`isSubScreen()`**: hides top/bottom bar for `add_transaction`, `receipt_scan`, `display`, `settings_data`, `profiles`. Add any new full-screen sub-screen here.
+- **Back**: always `safePopBackStack()` — checks `previousBackStackEntry` before pop. Never call `navController.popBackStack()` directly.
+- **Tutorial**: is a Reveal spotlight overlay — not a route. Activated via `TutorialViewModel.emitEvent(TutorialEvent.StartTutorial/ForceStartTutorial)` from `NavGraph.kt`. Never add a tutorial route.
+- **New screen checklist**: (1) add route in `AppRoute.kt`, (2) add function in `NavigationExtensions.kt`, (3) register `composable()` in `NavGraph.kt`, (4) update `isSubScreen()` / `isSettingsRoute()` if sub-screen, (5) update `docs/navigation-flow.drawio`.
+- **Visual schema**: `docs/navigation-flow.drawio` — update on every new screen added.

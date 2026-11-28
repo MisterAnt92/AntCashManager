@@ -44,6 +44,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -560,6 +561,7 @@ internal fun BarChart(
     val expenseColor = MaterialTheme.colorScheme.error
     val textColor = MaterialTheme.colorScheme.onSurface
     val gridColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
+    val labelTextSizePx = with(LocalDensity.current) { MaterialTheme.typography.labelSmall.fontSize.toPx() }
 
     val animatedProgress by animateFloatAsState(
         targetValue = 1f,
@@ -641,7 +643,7 @@ internal fun BarChart(
                     baseY + 35f,
                     Paint().apply {
                         color = textColor.toArgb()
-                        textSize = 11.sp.toPx()
+                        textSize = labelTextSizePx
                         textAlign = Paint.Align.CENTER
                         isAntiAlias = true
                         setShadowLayer(2f, 1f, 1f, Color.Black.copy(alpha = 0.1f).toArgb())
@@ -663,6 +665,7 @@ internal fun YearlyBarChart(
     val expenseColor = MaterialTheme.colorScheme.error
     val textColor = MaterialTheme.colorScheme.onSurface
     val gridColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
+    val labelTextSizePx = with(LocalDensity.current) { MaterialTheme.typography.labelMedium.fontSize.toPx() }
 
     val animatedProgress by animateFloatAsState(
         targetValue = 1f,
@@ -764,7 +767,7 @@ internal fun YearlyBarChart(
                     baseY + 40f,
                     Paint().apply {
                         color = textColor.toArgb()
-                        textSize = 13.sp.toPx()
+                        textSize = labelTextSizePx
                         textAlign = Paint.Align.CENTER
                         isAntiAlias = true
                         isFakeBoldText = true
@@ -1004,6 +1007,7 @@ internal fun ZoomableBarChart(
     val expenseColor = MaterialTheme.colorScheme.error
     val textColor = MaterialTheme.colorScheme.onSurface
     val gridColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
+    val labelTextSizePx = with(LocalDensity.current) { MaterialTheme.typography.labelSmall.fontSize.toPx() }
 
     val animatedProgress by animateFloatAsState(
         targetValue = 1f,
@@ -1174,8 +1178,8 @@ internal fun ZoomableBarChart(
 
                                 // Month label with zoom-aware sizing
                                 val scaledTextSize =
-                                    (11.sp.toPx() * min(safeScale, 1.5f))
-                                        .takeIf { it.isFinite() && it > 0f } ?: 11.sp.toPx()
+                                    (labelTextSizePx * min(safeScale, 1.5f))
+                                        .takeIf { it.isFinite() && it > 0f } ?: labelTextSizePx
 
                                 if (month.label.isNotBlank()) {
                                     try {
@@ -1259,6 +1263,7 @@ internal fun ZoomableYearlyBarChart(
     val expenseColor = MaterialTheme.colorScheme.error
     val textColor = MaterialTheme.colorScheme.onSurface
     val gridColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
+    val labelTextSizePx = with(LocalDensity.current) { MaterialTheme.typography.labelMedium.fontSize.toPx() }
 
     val animatedProgress by animateFloatAsState(
         targetValue = 1f,
@@ -1473,8 +1478,8 @@ internal fun ZoomableYearlyBarChart(
 
                                 // Year label with enhanced zoom-aware styling
                                 val scaledTextSize =
-                                    (13.sp.toPx() * min(safeScale, 2f))
-                                        .takeIf { it.isFinite() && it > 0f } ?: 13.sp.toPx()
+                                    (labelTextSizePx * min(safeScale, 2f))
+                                        .takeIf { it.isFinite() && it > 0f } ?: labelTextSizePx
 
                                 if (year.label.isNotBlank()) {
                                     try {

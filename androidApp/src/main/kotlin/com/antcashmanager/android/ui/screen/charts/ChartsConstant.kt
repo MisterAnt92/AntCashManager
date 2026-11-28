@@ -21,6 +21,7 @@ object ChartsConstant {
     const val WEEKDAY_CHART_HEIGHT_COMPACT_DP = 160
     const val WEEKDAY_CHART_HEIGHT_TABLET_DP = 220
     const val FORECAST_MONTHS_LOOKBACK = 3
+    const val TREND_THRESHOLD_PERCENT = 5.0
     const val SAVINGS_GAUGE_STROKE_DP = 14
 
     // Adaptive layout constants

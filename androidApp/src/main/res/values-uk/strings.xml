@@ -75,6 +75,11 @@
     <string name="categories_icon_label">Значок</string>
     <string name="categories_hide">Приховати категорію</string>
     <string name="categories_show">Показати категорію</string>
+    <string name="categories_budget_set">Встановити бюджет</string>
+    <string name="categories_budget_indicator">Бюджет: %1$s/міс.</string>
+    <string name="categories_budget_monthly">Місячний ліміт</string>
+    <string name="categories_budget_exceeded">Бюджет перевищено</string>
+    <string name="categories_budget_progress">%1$s з %2$s</string>
     <string name="categories_hidden_section_title">Приховані категорії (%d)</string>
     <string name="categories_reorder">Змінити порядок категорій</string>
     <string name="categories_selection_hint">Натисніть на категорію, щоб вибрати її (автоматично переходить далі у реальній програмі)</string>
@@ -493,6 +498,9 @@
     <string name="settings_mask_amounts_subtitle_enabled">Цифри приховано зірочками</string>
     <string name="settings_mask_amounts_subtitle_disabled">Цифри відображаються нормально</string>
     <string name="settings_mask_amounts_preview">Попередній перегляд: %s</string>
+    <string name="settings_use_dynamic_color">Динамічні кольори</string>
+    <string name="settings_use_dynamic_color_subtitle_enabled">Використовується системна палітра (Material You)</string>
+    <string name="settings_use_dynamic_color_subtitle_disabled">Використовується палітра застосунку</string>
     <string name="settings_transaction_icon_display_trend">Стрілки тренду</string>
     <string name="settings_transaction_icon_display_category">Категорія</string>
     <string name="settings_transaction_icon_display_none">Немає</string>
@@ -502,22 +510,16 @@
     <string name="settings_tutorial">Навчання</string>
     <string name="settings_show_tutorial">Показати навчання</string>
     <string name="settings_show_tutorial_subtitle">Переглянути початкове навчання заново</string>
-    <string name="tutorial_welcome_title">Ласкаво просимо до AntCashManager! 🐜</string>
-    <string name="tutorial_welcome_desc">Зробимо коротку екскурсію та подивимося, як наша мураха допоможе вам керувати грошима.</string>
-    <string name="tutorial_welcome_point_track">Відстежуйте доходи та видатки за секунди.</string>
-    <string name="tutorial_welcome_point_insights">Слідкуйте за балансом та трендами одним поглядом.</string>
-    <string name="tutorial_welcome_point_categories">Організовуйте витрати за допомогою розумних категорій.</string>
-    <string name="tutorial_welcome_point_customize">Налаштовуйте мову, тему та формати.</string>
-    <string name="tutorial_dashboard_title">Панель керування</string>
-    <string name="tutorial_dashboard_desc">Тут ви бачите свій загаль��ий баланс, місячні доходи та видатки.</string>
-    <string name="tutorial_transactions_title">Транзакції</string>
-    <string name="tutorial_transactions_desc">Керуйте всіма рухами коштів тут. Пошук, фільтри та додавання записів — це просто.</string>
+    <string name="tutorial_transactions_title">Головна</string>
+    <string name="tutorial_transactions_desc">Тут ви можете переглядати всі транзакції та ділитися фінансовою зведеною інформацією.</string>
     <string name="tutorial_charts_title">Графіки та аналітика</string>
     <string name="tutorial_charts_desc">Візуалізуйте свої звички за допомогою інтерактивних графіків. Подивіться, куди йдуть ваші гроші!</string>
+    <string name="tutorial_add_transaction_title">Додати транзакцію</string>
+    <string name="tutorial_add_transaction_desc">Натисніть тут, щоб швидко зафіксувати новий дохід або витрату.</string>
     <string name="tutorial_categories_title">Категорії</string>
     <string name="tutorial_categories_desc">Організовуйте транзакції за допомогою власних категорій, значків та кольорів.</string>
-    <string name="tutorial_settings_title">Налаштування</string>
-    <string name="tutorial_settings_desc">Адаптуйте додаток під свої потреби: валюта, формати дат, спеціальні можливості та теми.</string>
+    <string name="tutorial_sidebar_title">Меню та категорії</string>
+    <string name="tutorial_sidebar_desc">Торкніться іконки меню, щоб отримати доступ до Категорій, Налаштувань та іншого з бічної панелі.</string>
     <string name="tutorial_finish_title">Все готово!</string>
     <string name="tutorial_finish_desc">Почніть свій фінансовий шлях з AntCashManager вже сьогодні. Вдалих накопичень!</string>
     <string name="tutorial_next">Далі</string>
@@ -635,6 +637,11 @@
     <!-- Chart Cards - New Visualizations -->
     <string name="chart_spending_forecast_title">Прогноз витрат</string>
     <string name="chart_avg_monthly">Середнє за місяць</string>
+    <string name="chart_projected_month_end">Projected month end</string>
+    <string name="home_vs_previous_period">vs. previous period</string>
+    <string name="home_savings_rate">Норма заощаджень</string>
+    <string name="home_savings_goal">Ціль</string>
+    <string name="home_savings_amount">Заощаджено за період</string>
     <string name="chart_period">Період</string>
     <string name="chart_last_3_months">Останні 3 місяці</string>
     <string name="chart_quick_stats_title">Швидка статистика</string>
@@ -732,4 +739,14 @@
     <string name="app_icon_description">Значок програми</string>
     <string name="transaction_add_tag_description">Додати тег</string>
     <string name="transaction_remove_tag_description">Видалити</string>
+    <string name="categories_restore_defaults">Відновити типові категорії</string>
+    <string name="trend_badge_increased">%1$s%2$.0f%% зросло</string>
+    <string name="trend_badge_decreased">%1$s%2$.0f%% знизилось</string>
+    <string name="trend_badge_stable">%1$s%2$.0f%% стабільно</string>
+    <string name="empty_state_add_transaction_cta">Додати транзакцію</string>
+    <string name="empty_state_clear_filters_cta">Очистити фільтри</string>
+    <string name="add_transaction_discard_dialog_title">Відмінити зміни?</string>
+    <string name="add_transaction_discard_dialog_message">У вас є незбережені зміни. Ви впевнені, що хочете їх відмінити?</string>
+    <string name="add_transaction_discard_dialog_confirm">Відмінити</string>
+    <string name="add_transaction_discard_dialog_cancel">Продовжити редагування</string>
 </resources>

@@ -50,8 +50,8 @@ android {
         applicationId = "com.sformica.ant_cashmanager"
         minSdk = 26
         targetSdk = 37
-        versionCode = 34
-        versionName = "1.9.1"
+        versionCode = 35
+        versionName = "1.9.2"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -210,6 +210,8 @@ dependencies {
     // Foldable device support
     implementation(libs.androidx.window)
     implementation(libs.androidx.window.core)
+    // In-context tutorial reveal overlay
+    implementation(libs.reveal.core)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 

@@ -18,7 +18,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -50,8 +50,8 @@ import com.antcashmanager.android.ui.mapper.icon
 import com.antcashmanager.android.ui.mapper.labelRes
 import com.antcashmanager.android.ui.screen.home.HomeConstant
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
-import com.antcashmanager.android.ui.theme.ExpenseRed
-import com.antcashmanager.android.ui.theme.IncomeGreen
+import com.antcashmanager.android.ui.theme.expenseColor
+import com.antcashmanager.android.ui.theme.incomeColor
 import com.antcashmanager.android.ui.theme.ThemeConstants
 import com.antcashmanager.android.util.LocalAmountsMasked
 import com.antcashmanager.android.util.LocalCurrencyFormat
@@ -68,7 +68,7 @@ fun BalanceCard(
     reduceMotion: Boolean = false,
 ) {
     val balanceStateColor by animateColorAsState(
-        targetValue = if (balance >= 0) IncomeGreen else ExpenseRed,
+        targetValue = if (balance >= 0) incomeColor() else expenseColor(),
         animationSpec = tween(HomeConstant.BALANCE_COLOR_ANIM_MS),
         label = "balance_color",
     )
@@ -258,7 +258,7 @@ private fun PaymentTypeItem(
             modifier =
                 Modifier
                     .padding(horizontal = 12.dp, vertical = 10.dp)
-                    .width(100.dp),
+                    .wrapContentWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Icon(

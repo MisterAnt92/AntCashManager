@@ -90,6 +90,11 @@
     <string name="categories_icon_label">Icon</string>
     <string name="categories_hide">Hide category</string>
     <string name="categories_show">Show category</string>
+    <string name="categories_budget_set">Set budget</string>
+    <string name="categories_budget_indicator">Budget: %1$s/mo</string>
+    <string name="categories_budget_monthly">Monthly limit</string>
+    <string name="categories_budget_exceeded">Budget exceeded</string>
+    <string name="categories_budget_progress">%1$s of %2$s</string>
     <string name="categories_hidden_section_title">Hidden categories (%d)</string>
     <string name="categories_reorder">Reorder categories</string>
     <string name="categories_selection_hint">Tap a category to select it (auto-advances in real app)</string>
@@ -514,6 +519,9 @@
     <string name="settings_mask_amounts_subtitle_enabled">Digits are masked with asterisks</string>
     <string name="settings_mask_amounts_subtitle_disabled">Digits are shown normally</string>
     <string name="settings_mask_amounts_preview">Preview: %s</string>
+    <string name="settings_use_dynamic_color">Dynamic colors</string>
+    <string name="settings_use_dynamic_color_subtitle_enabled">Using system color palette (Material You)</string>
+    <string name="settings_use_dynamic_color_subtitle_disabled">Using app color palette</string>
     <string name="settings_transaction_icon_display_trend">Trend Arrows</string>
     <string name="settings_transaction_icon_display_category">Category</string>
     <string name="settings_transaction_icon_display_none">None</string>
@@ -523,22 +531,16 @@
     <string name="settings_tutorial">Tutorial</string>
     <string name="settings_show_tutorial">Show Tutorial</string>
     <string name="settings_show_tutorial_subtitle">Re-watch the initial app tutorial</string>
-    <string name="tutorial_welcome_title">Welcome to AntCashManager! 🐜</string>
-    <string name="tutorial_welcome_desc">Let\'s take a quick tour to see how our little ant helps you manage your money.</string>
-    <string name="tutorial_welcome_point_track">Track income and expenses in seconds.</string>
-    <string name="tutorial_welcome_point_insights">See balances and trends at a glance.</string>
-    <string name="tutorial_welcome_point_categories">Organize spending with smart categories.</string>
-    <string name="tutorial_welcome_point_customize">Customize language, theme, and formats.</string>
-    <string name="tutorial_dashboard_title">Dashboard</string>
-    <string name="tutorial_dashboard_desc">Here you can see your total balance, monthly income and expenses at a glance.</string>
-    <string name="tutorial_transactions_title">Transactions</string>
-    <string name="tutorial_transactions_desc">Manage all your movements here. You can search, filter, and add new entries easily.</string>
+    <string name="tutorial_transactions_title">Home</string>
+    <string name="tutorial_transactions_desc">Here you can view all your transactions and share your financial summary.</string>
     <string name="tutorial_charts_title">Charts &amp; Insights</string>
     <string name="tutorial_charts_desc">Visualize your spending habits with interactive charts. See where your money goes!</string>
+    <string name="tutorial_add_transaction_title">Add Transactions</string>
+    <string name="tutorial_add_transaction_desc">Tap here to quickly record a new income or expense.</string>
     <string name="tutorial_categories_title">Categories</string>
     <string name="tutorial_categories_desc">Organize your transactions with custom categories, icons, and colors.</string>
-    <string name="tutorial_settings_title">Customization</string>
-    <string name="tutorial_settings_desc">Tailor the app to your needs: currency, date formats, accessibility, and themes.</string>
+    <string name="tutorial_sidebar_title">Menu &amp; Categories</string>
+    <string name="tutorial_sidebar_desc">Tap the menu icon to access Categories, Settings, and more from the sidebar.</string>
     <string name="tutorial_finish_title">You\'re all set!</string>
     <string name="tutorial_finish_desc">Start your financial journey with AntCashManager today. Happy saving!</string>
     <string name="tutorial_next">Next</string>
@@ -656,6 +658,11 @@
     <!-- Chart Cards - New Visualizations -->
     <string name="chart_spending_forecast_title">Spending Forecast</string>
     <string name="chart_avg_monthly">Monthly Average</string>
+    <string name="chart_projected_month_end">Projected month end</string>
+    <string name="home_vs_previous_period">vs. previous period</string>
+    <string name="home_savings_rate">Savings rate</string>
+    <string name="home_savings_goal">Goal</string>
+    <string name="home_savings_amount">Saved this period</string>
     <string name="chart_period">Period</string>
     <string name="chart_last_3_months">Last 3 months</string>
     <string name="chart_quick_stats_title">Quick Stats</string>
@@ -733,4 +740,14 @@
     <string name="month_short_10">Oct</string>
     <string name="month_short_11">Nov</string>
     <string name="month_short_12">Dec</string>
+    <string name="categories_restore_defaults">Restore default categories</string>
+    <string name="trend_badge_increased">%1$s%2$.0f%% increased</string>
+    <string name="trend_badge_decreased">%1$s%2$.0f%% decreased</string>
+    <string name="trend_badge_stable">%1$s%2$.0f%% stable</string>
+    <string name="empty_state_add_transaction_cta">Add transaction</string>
+    <string name="empty_state_clear_filters_cta">Clear filters</string>
+    <string name="add_transaction_discard_dialog_title">Discard changes?</string>
+    <string name="add_transaction_discard_dialog_message">You have unsaved changes. Are you sure you want to discard them?</string>
+    <string name="add_transaction_discard_dialog_confirm">Discard</string>
+    <string name="add_transaction_discard_dialog_cancel">Keep editing</string>
 </resources>

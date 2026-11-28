@@ -35,6 +35,11 @@ public class FilterTransactionsUseCase(
         // Early return for empty list
         if (transactions.isEmpty()) return emptyList()
 
+        // Hoist query ops outside the per-element loop
+        val rawQuery = filterParams.searchQuery.trim()
+        val normalizedQuery = rawQuery.replace(',', '.')
+        val numericQuery = if (rawQuery.isBlank()) null else normalizedQuery.toDoubleOrNull()
+
         // Use sequence for lazy evaluation - avoids intermediate list allocations
         return transactions
             .asSequence()
@@ -43,14 +48,10 @@ public class FilterTransactionsUseCase(
                 transaction.timestamp in filterParams.dateFrom..filterParams.dateTo
             }.filter { transaction ->
                 // Search query filter (case-insensitive)
-                val rawQuery = filterParams.searchQuery.trim()
                 if (rawQuery.isBlank()) {
                     true
                 } else {
-                    val normalizedQuery = rawQuery.replace(',', '.')
-                    val numericQuery = normalizedQuery.toDoubleOrNull()
                     val absAmount = abs(transaction.amount)
-
                     transaction.title.contains(rawQuery, ignoreCase = true) ||
                         transaction.amount.toString().contains(normalizedQuery) ||
                         absAmount.toString().contains(normalizedQuery) ||

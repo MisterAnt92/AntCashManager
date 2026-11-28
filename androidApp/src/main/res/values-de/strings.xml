@@ -77,6 +77,11 @@
     <string name="categories_icon_label">Symbol</string>
     <string name="categories_hide">Kategorie ausblenden</string>
     <string name="categories_show">Kategorie einblenden</string>
+    <string name="categories_budget_set">Budget festlegen</string>
+    <string name="categories_budget_indicator">Budget: %1$s/Monat</string>
+    <string name="categories_budget_monthly">Monatslimit</string>
+    <string name="categories_budget_exceeded">Budget überschritten</string>
+    <string name="categories_budget_progress">%1$s von %2$s</string>
     <string name="categories_hidden_section_title">Ausgeblendete Kategorien (%d)</string>
     <string name="categories_reorder">Kategorien neu anordnen</string>
 
@@ -485,6 +490,9 @@
     <string name="settings_mask_amounts_subtitle_enabled">Ziffern werden mit Sternchen maskiert</string>
     <string name="settings_mask_amounts_subtitle_disabled">Ziffern werden normal angezeigt</string>
     <string name="settings_mask_amounts_preview">Vorschau: %s</string>
+    <string name="settings_use_dynamic_color">Dynamische Farben</string>
+    <string name="settings_use_dynamic_color_subtitle_enabled">Systemfarbpalette wird verwendet (Material You)</string>
+    <string name="settings_use_dynamic_color_subtitle_disabled">App-Farbpalette wird verwendet</string>
     <string name="settings_transaction_icon_display_trend">Trendsymbole</string>
     <string name="settings_transaction_icon_display_category">Kategorie</string>
     <string name="settings_transaction_icon_display_none">Keine</string>
@@ -585,22 +593,16 @@
     <string name="settings_tutorial">Anleitung</string>
     <string name="settings_show_tutorial">Anleitung anzeigen</string>
     <string name="settings_show_tutorial_subtitle">Ursprüngliches App-Tutorial erneut ansehen</string>
-    <string name="tutorial_welcome_title">Willkommen bei AntCashManager! 🐜</string>
-    <string name="tutorial_welcome_desc">Lassen Sie uns einen kurzen Rundgang machen, um zu sehen, wie unsere kleine Ameise Ihnen bei der Verwaltung Ihres Geldes hilft.</string>
-    <string name="tutorial_welcome_point_track">Erfassen Sie Einnahmen und Ausgaben in Sekunden.</string>
-    <string name="tutorial_welcome_point_insights">Sehen Sie Saldo und Trends auf einen Blick.</string>
-    <string name="tutorial_welcome_point_categories">Ordnen Sie Ausgaben mit smarten Kategorien.</string>
-    <string name="tutorial_welcome_point_customize">Passen Sie Sprache, Design und Formate an.</string>
-    <string name="tutorial_dashboard_title">Übersicht</string>
-    <string name="tutorial_dashboard_desc">Hier können Sie auf einen Blick Ihren Gesamtsaldo, monatliche Einnahmen und Ausgaben sehen.</string>
-    <string name="tutorial_transactions_title">Transaktionen</string>
-    <string name="tutorial_transactions_desc">Verwalten Sie alle Ihre Transaktionen hier. Sie können problemlos suchen, filtern und neue Einträge hinzufügen.</string>
+    <string name="tutorial_transactions_title">Start</string>
+    <string name="tutorial_transactions_desc">Hier können Sie alle Transaktionen anzeigen und die Finanzübersicht teilen.</string>
     <string name="tutorial_charts_title">Diagramme und Insights</string>
     <string name="tutorial_charts_desc">Visualisieren Sie Ihre Ausgabengewohnheiten mit interaktiven Diagrammen. Sehen Sie, wo Ihr Geld fließt!</string>
+    <string name="tutorial_add_transaction_title">Transaktion hinzufügen</string>
+    <string name="tutorial_add_transaction_desc">Tippen Sie hier, um schnell eine neue Einnahme oder Ausgabe zu erfassen.</string>
     <string name="tutorial_categories_title">Kategorien</string>
     <string name="tutorial_categories_desc">Organisieren Sie Ihre Transaktionen mit benutzerdefinierten Kategorien, Symbolen und Farben.</string>
-    <string name="tutorial_settings_title">Anpassung</string>
-    <string name="tutorial_settings_desc">Passen Sie die App an Ihre Bedürfnisse an: Währung, Datumsformate, Barrierefreiheit und Designs.</string>
+    <string name="tutorial_sidebar_title">Menü &amp; Kategorien</string>
+    <string name="tutorial_sidebar_desc">Tippen Sie auf das Menüsymbol, um über die Seitenleiste auf Kategorien, Einstellungen und mehr zuzugreifen.</string>
     <string name="tutorial_finish_title">Sie sind bereit!</string>
     <string name="tutorial_finish_desc">Beginnen Sie heute Ihre finanzielle Reise mit AntCashManager. Viel Spaß beim Sparen!</string>
     <string name="tutorial_next">Weiter</string>
@@ -628,6 +630,11 @@
     <!-- Chart Cards - New Visualizations -->
     <string name="chart_spending_forecast_title">Ausgabenprognose</string>
     <string name="chart_avg_monthly">Monatlicher Durchschnitt</string>
+    <string name="chart_projected_month_end">Projected month end</string>
+    <string name="home_vs_previous_period">vs. previous period</string>
+    <string name="home_savings_rate">Sparquote</string>
+    <string name="home_savings_goal">Ziel</string>
+    <string name="home_savings_amount">Gespart in diesem Zeitraum</string>
     <string name="chart_period">Zeitraum</string>
     <string name="chart_last_3_months">Letzte 3 Monate</string>
     <string name="chart_quick_stats_title">Schnellstatistiken</string>
@@ -718,4 +725,14 @@
     <string name="app_icon_description">App-Symbol</string>
     <string name="transaction_add_tag_description">Tag hinzufügen</string>
     <string name="transaction_remove_tag_description">Entfernen</string>
+    <string name="categories_restore_defaults">Standardkategorien wiederherstellen</string>
+    <string name="trend_badge_increased">%1$s%2$.0f%% gestiegen</string>
+    <string name="trend_badge_decreased">%1$s%2$.0f%% gesunken</string>
+    <string name="trend_badge_stable">%1$s%2$.0f%% stabil</string>
+    <string name="empty_state_add_transaction_cta">Transaktion hinzufügen</string>
+    <string name="empty_state_clear_filters_cta">Filter löschen</string>
+    <string name="add_transaction_discard_dialog_title">Änderungen verwerfen?</string>
+    <string name="add_transaction_discard_dialog_message">Sie haben ungespeicherte Änderungen. Möchten Sie diese verwerfen?</string>
+    <string name="add_transaction_discard_dialog_confirm">Verwerfen</string>
+    <string name="add_transaction_discard_dialog_cancel">Weiter bearbeiten</string>
 </resources>

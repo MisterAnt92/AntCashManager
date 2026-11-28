@@ -290,4 +290,42 @@ class ChartsViewModelTest : BaseUnitTest() {
 
             collectJob.cancel()
         }
+
+    @Test
+    fun chartData_shouldHavePreviousPeriodValues_whenTransactionsExistInBothPeriods() =
+        runViewModelTest {
+            val now = System.currentTimeMillis()
+            val prevExpense = Transaction(
+                id = 10,
+                title = "PrevFood",
+                amount = -50.0,
+                timestamp = now - 86_400_000L * 10, // 10 days ago
+                category = "Food",
+                type = TransactionType.EXPENSE,
+                paymentType = PaymentType.CASH,
+            )
+            val currExpense = Transaction(
+                id = 11,
+                title = "CurrFood",
+                amount = -80.0,
+                timestamp = now - 86_400_000L * 2, // 2 days ago
+                category = "Food",
+                type = TransactionType.EXPENSE,
+                paymentType = PaymentType.CASH,
+            )
+            fakeTransactionRepo.transactions.value = listOf(prevExpense, currExpense)
+
+            val collectJob = launchInBackground { viewModel.chartData.collect { } }
+
+            // 7-day window: prev period = [now-14d, now-7d], curr = [now-7d, now]
+            val from = now - 86_400_000L * 7
+            viewModel.setDateRange(from, now)
+            advanceUntilIdle()
+
+            val data = viewModel.chartData.value
+            assertEquals(80.0, data.totalExpense, 0.01)
+            assertEquals(50.0, data.previousPeriodExpense, 0.01)
+
+            collectJob.cancel()
+        }
 }

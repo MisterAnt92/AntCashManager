@@ -44,5 +44,5 @@ data class SettingsState(
     val analyticsConsent: Boolean? = null,
     // Error handling & loading
     val errorState: ErrorState = ErrorState(),
-    val isLoading: Boolean = false,
+    override val isLoading: Boolean = false,
 ) : UIState()

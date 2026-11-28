@@ -6,8 +6,6 @@ import com.antcashmanager.android.BaseComposeUnitTest
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import org.junit.Ignore
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
 
 /**
  * Unit tests per AppCategoryCard component.
@@ -19,7 +17,6 @@ import org.robolectric.RobolectricTestRunner
  */
 
 @Ignore("Compose UI test - requires androidTest")
-@RunWith(RobolectricTestRunner::class)
 class AppCategoryCardTest : BaseComposeUnitTest() {
     @Test
     fun categoryCard_shouldDisplayCategoryName() {

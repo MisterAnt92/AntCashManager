@@ -1,7 +1,6 @@
 package com.antcashmanager.android.ui.screen.home.view
 
 import android.content.res.Configuration
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,18 +8,13 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.TrendingDown
-import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.Repeat
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -33,13 +27,11 @@ import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
 import com.antcashmanager.android.ui.components.layout.SpacingSize
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.components.text.TransactionAmountText
+import com.antcashmanager.android.ui.components.transaction.TransactionIconBadge
 import com.antcashmanager.android.ui.mapper.TransactionUi
 import com.antcashmanager.android.ui.mapper.toUi
-import com.antcashmanager.android.ui.screen.categories.view.categoryIconMap
 import com.antcashmanager.android.ui.screen.home.HomeConstant
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
-import com.antcashmanager.android.ui.theme.ExpenseRed
-import com.antcashmanager.android.ui.theme.IncomeGreen
 import com.antcashmanager.android.ui.theme.LocalAnnaTheme
 import com.antcashmanager.android.util.LocalAmountsMasked
 import com.antcashmanager.android.util.translateCategory
@@ -50,6 +42,7 @@ import com.antcashmanager.domain.model.TransactionType
 @Composable
 fun RecentTransactionItem(
     transaction: TransactionUi,
+    index: Int = 0,
     onClick: () -> Unit = {},
     modifier: Modifier = Modifier,
     displayType: TransactionDisplayType = TransactionDisplayType.TREND,
@@ -63,7 +56,7 @@ fun RecentTransactionItem(
         else -> MaterialTheme.colorScheme.errorContainer
     }
 
-    AnimatedListItem(index = transaction.id.toInt()) {
+    AnimatedListItem(index = index) {
         AnimatedCard(
             modifier =
                 modifier
@@ -78,69 +71,14 @@ fun RecentTransactionItem(
                         .padding(16.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                // Icon based on display type
-                when (displayType) {
-                    TransactionDisplayType.TREND -> {
-                        // Icon with background
-                        Box(
-                            modifier =
-                                Modifier
-                                    .size(44.dp)
-                                    .background(
-                                        (if (isIncome) IncomeGreen else ExpenseRed).copy(alpha = HomeConstant.ICON_BADGE_ALPHA),
-                                        shape = RoundedCornerShape(HomeConstant.ICON_BADGE_CORNER_DP.dp),
-                                    )
-                                    .padding(8.dp),
-                            contentAlignment = Alignment.Center,
-                        ) {
-                            Icon(
-                                imageVector = if (isIncome) Icons.AutoMirrored.Filled.TrendingUp else Icons.AutoMirrored.Filled.TrendingDown,
-                                contentDescription = null,
-                                tint = if (isIncome) IncomeGreen else ExpenseRed,
-                                modifier = Modifier.size(20.dp),
-                            )
-                        }
-                        HorizontalSpacer(SpacingSize.SM)
-                    }
-
-                    TransactionDisplayType.CATEGORY -> {
-                        // Category badge with icon from category data
-                        val categoryIconVector = categoryIconMap[transaction.transaction.categoryIcon]
-                        Box(
-                            modifier =
-                                Modifier
-                                    .size(44.dp)
-                                    .background(
-                                        color = Color(transaction.transaction.categoryColor),
-                                        shape = CircleShape,
-                                    ),
-                            contentAlignment = Alignment.Center,
-                        ) {
-                            if (categoryIconVector != null) {
-                                // Show category icon
-                                Icon(
-                                    imageVector = categoryIconVector,
-                                    contentDescription = transaction.transaction.category,
-                                    tint = Color.White,
-                                    modifier = Modifier.size(24.dp),
-                                )
-                            } else {
-                                // Fallback: show first letter of category name
-                                AppText(
-                                    text = transaction.initial,
-                                    style = MaterialTheme.typography.titleMedium,
-                                    color = Color.White,
-                                    fontWeight = FontWeight.Bold,
-                                )
-                            }
-                        }
-                        HorizontalSpacer(SpacingSize.SM)
-                    }
-
-                    TransactionDisplayType.NONE -> {
-                        // No icon - no spacer needed
-                    }
-                }
+                TransactionIconBadge(
+                    isIncome = isIncome,
+                    displayType = displayType,
+                    categoryIcon = transaction.transaction.categoryIcon,
+                    categoryColor = transaction.transaction.categoryColor,
+                    categoryName = transaction.transaction.category,
+                    categoryInitial = transaction.initial,
+                )
 
                 Column(modifier = Modifier.weight(1f)) {
                     AppText(

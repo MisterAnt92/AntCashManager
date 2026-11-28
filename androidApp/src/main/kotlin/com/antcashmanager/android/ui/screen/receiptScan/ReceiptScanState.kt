@@ -20,7 +20,7 @@ data class ReceiptScanState(
     val selectedCategory: Category? = null,
     val selectedPaymentType: PaymentType = PaymentType.ELECTRONIC,
     val categories: List<Category> = emptyList(),
-    val isLoading: Boolean = false,
+    override val isLoading: Boolean = false,
     val error: String? = null,
     val isTransactionSaved: Boolean = false,
     val showCategoryDialog: Boolean = false,

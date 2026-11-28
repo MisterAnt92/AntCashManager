@@ -32,23 +32,8 @@ public class CategoryRepositoryImpl(
     override suspend fun getCategoryByName(name: String): Category? =
         categoryDao.getCategoryByName(pid, name)?.toDomain()
 
-    override suspend fun insertCategory(category: Category): Long {
-        if (!category.isDefault) {
-            val existingDefaults =
-                categoryDao.getDefaultCategoriesForProfile(pid).associateBy {
-                    "${it.type}_${it.name}"
-                }
-            ALL_DEFAULT_CATEGORIES.forEach { defaultCategory ->
-                val key = "${defaultCategory.type}_${defaultCategory.name}"
-                if (!existingDefaults.containsKey(key)) {
-                    categoryDao.insertCategory(
-                        defaultCategory.toEntity().copy(profileId = pid),
-                    )
-                }
-            }
-        }
-        return categoryDao.insertCategory(category.toEntity().copy(profileId = pid))
-    }
+    override suspend fun insertCategory(category: Category): Long =
+        categoryDao.insertCategory(category.toEntity().copy(profileId = pid))
 
     override suspend fun updateCategory(category: Category): Unit =
         categoryDao.updateCategory(category.toEntity())
