@@ -2,12 +2,14 @@ package com.antcashmanager.android.ui.components.layout
 
 import android.content.res.Configuration
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -18,6 +20,8 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.Image
@@ -89,23 +93,20 @@ fun LeftSidebar(
                 onProfileClick = onProfileClick,
             )
 
-            // ── Navigation Items — riempie lo spazio disponibile ──
-            Column(
+            // ── Navigation Items — scrollabile su schermi piccoli ──
+            LazyColumn(
                 modifier = Modifier
                     .weight(1f)
-                    .fillMaxWidth()
-                    .padding(horizontal = 0.dp, vertical = 8.dp),
-                verticalArrangement = Arrangement.SpaceEvenly,
+                    .fillMaxWidth(),
+                contentPadding = PaddingValues(vertical = 8.dp),
             ) {
-                visibleNavItems.forEach { item ->
+                items(visibleNavItems) { item ->
                     SidebarMenuItem(
                         item = item,
                         isSelected = selectedRoute == item.route,
                         onClick = { onNavigate(item.route) },
                     )
                 }
-                // Slot vuoti non cliccabili: occupano spazio tra l'ultimo item e il footer
-                repeat(2) { SidebarEmptySlot() }
             }
 
             // ── Footer — sempre ancorato in fondo ──
@@ -274,7 +275,7 @@ private fun ProfileSidebarHeader(
  */
 
 /**
- * Voce di menu della sidebar con pill highlight animata.
+ * Voce di menu della sidebar con trattino verticale sinistro e formichina come indicatori di selezione.
  */
 @Composable
 private fun SidebarMenuItem(
@@ -282,49 +283,63 @@ private fun SidebarMenuItem(
     isSelected: Boolean,
     onClick: () -> Unit,
 ) {
-    val backgroundColor = animateColorAsState(
-        targetValue = if (isSelected) MaterialTheme.colorScheme.primaryContainer
-        else Color.Transparent,
-        label = "menuItemBgColor",
+    val barColor = animateColorAsState(
+        targetValue = if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent,
+        animationSpec = tween(durationMillis = 150),
+        label = "menuItemBarColor",
     )
-
     val contentColor = animateColorAsState(
         targetValue = if (isSelected) MaterialTheme.colorScheme.primary
         else MaterialTheme.colorScheme.onSurface,
+        animationSpec = tween(durationMillis = 150),
         label = "menuItemContentColor",
     )
 
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 8.dp)
             .height(52.dp)
-            .clip(RoundedCornerShape(12.dp))
-            .background(color = backgroundColor.value)
             .clickable(
                 enabled = true,
                 onClick = onClick,
                 interactionSource = remember { MutableInteractionSource() },
             )
-            .padding(horizontal = 14.dp),
-        horizontalArrangement = Arrangement.spacedBy(14.dp),
+            .padding(end = 14.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
+        // Trattino verticale sinistro
+        Box(
+            modifier = Modifier
+                .width(4.dp)
+                .height(24.dp)
+                .background(
+                    color = barColor.value,
+                    shape = RoundedCornerShape(topEnd = 4.dp, bottomEnd = 4.dp),
+                ),
+        )
+        Spacer(modifier = Modifier.width(14.dp))
         Icon(
             imageVector = item.icon,
             contentDescription = stringResource(item.titleResId),
             modifier = Modifier.size(22.dp),
             tint = contentColor.value,
         )
+        Spacer(modifier = Modifier.width(14.dp))
         AppText(
             text = stringResource(item.titleResId),
             style = MaterialTheme.typography.bodyMedium,
             fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
             color = contentColor.value,
         )
-        // Ant mascot indicator (preserved, hidden):
-        // if (isSelected) { Spacer(Modifier.weight(1f))
-        //   Icon(painter=painterResource(R.drawable.ic_ant_mascot), Modifier.size(20.dp)) }
+        Spacer(modifier = Modifier.weight(1f))
+        if (isSelected) {
+            Icon(
+                painter = painterResource(R.drawable.ic_ant_mascot),
+                contentDescription = null,
+                modifier = Modifier.size(20.dp),
+                tint = contentColor.value,
+            )
+        }
     }
 }
 

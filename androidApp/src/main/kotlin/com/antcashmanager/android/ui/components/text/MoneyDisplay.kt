@@ -17,6 +17,8 @@ import androidx.compose.ui.unit.sp
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.ui.theme.ExpenseRed
 import com.antcashmanager.android.ui.theme.IncomeGreen
+import com.antcashmanager.android.ui.theme.expenseColor
+import com.antcashmanager.android.ui.theme.incomeColor
 import com.antcashmanager.android.util.LocalAmountsMasked
 import com.antcashmanager.android.util.LocalCurrencyFormat
 import com.antcashmanager.android.util.formatAmountWithNegative
@@ -129,7 +131,7 @@ fun TransactionAmountText(
     fontSize: Int = 14,
     masked: Boolean = LocalAmountsMasked.current,
 ) {
-    val color = if (amount >= 0) IncomeGreen else ExpenseRed
+    val color = if (amount >= 0) incomeColor() else expenseColor()
 
     MoneyText(
         amount = amount,

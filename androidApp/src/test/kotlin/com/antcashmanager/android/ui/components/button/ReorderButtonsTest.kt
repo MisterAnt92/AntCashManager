@@ -9,8 +9,6 @@ import androidx.compose.ui.test.performClick
 import com.antcashmanager.android.BaseComposeUnitTest
 import org.junit.Ignore
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
 
 /**
  * Unit tests per [ReorderButtons] component.
@@ -21,7 +19,6 @@ import org.robolectric.RobolectricTestRunner
  * - Tint dinamico (non testabile direttamente, ma verifichiamo enabled state che lo controlla)
  */
 @Ignore("Compose UI test - requires androidTest")
-@RunWith(RobolectricTestRunner::class)
 class ReorderButtonsTest : BaseComposeUnitTest() {
     private val testUpDescription = "Test Move Up"
     private val testDownDescription = "Test Move Down"

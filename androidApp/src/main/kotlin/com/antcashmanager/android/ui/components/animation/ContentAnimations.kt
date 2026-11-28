@@ -22,6 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
+import com.antcashmanager.android.ui.theme.LocalReduceMotion
 
 @Composable
 fun AnimatedCounter(
@@ -51,6 +52,11 @@ fun AnimatedListItem(
     index: Int = 0,
     content: @Composable () -> Unit,
 ) {
+    val reduceMotion = LocalReduceMotion.current
+    if (reduceMotion) {
+        content()
+        return
+    }
     AnimatedVisibility(
         visible = true,
         enter =
@@ -70,10 +76,13 @@ fun FadeInOnAppear(
     durationMillis: Int = 500,
     content: @Composable () -> Unit,
 ) {
-    val alpha = remember { Animatable(0f) }
+    val reduceMotion = LocalReduceMotion.current
+    val alpha = remember { Animatable(if (reduceMotion) 1f else 0f) }
 
     LaunchedEffect(Unit) {
-        alpha.animateTo(1f, animationSpec = tween(durationMillis, easing = FastOutSlowInEasing))
+        if (!reduceMotion) {
+            alpha.animateTo(1f, animationSpec = tween(durationMillis, easing = FastOutSlowInEasing))
+        }
     }
 
     Box(modifier = modifier.alpha(alpha.value)) {
@@ -87,6 +96,11 @@ fun SlideInOnAppear(
     durationMillis: Int = 400,
     content: @Composable () -> Unit,
 ) {
+    val reduceMotion = LocalReduceMotion.current
+    if (reduceMotion) {
+        content()
+        return
+    }
     AnimatedVisibility(
         visible = true,
         enter =

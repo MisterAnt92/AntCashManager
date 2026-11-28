@@ -345,6 +345,12 @@ class AddTransactionViewModel(
                 }
 
             is AddTransactionEvent.ConfirmDeleteEvent -> deleteTransaction()
+
+            is AddTransactionEvent.ShowDiscardConfirmDialogEvent ->
+                _state.update { it.copy(showDiscardConfirmDialog = true) }
+
+            is AddTransactionEvent.DismissDiscardConfirmDialogEvent ->
+                _state.update { it.copy(showDiscardConfirmDialog = false) }
         }
     }
 

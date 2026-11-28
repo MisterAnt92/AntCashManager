@@ -30,6 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
+import com.antcashmanager.android.ui.theme.LocalReduceMotion
 
 @Composable
 fun AnimatedCard(
@@ -39,12 +40,15 @@ fun AnimatedCard(
     borderRadius: Int = 12,
     content: @Composable () -> Unit,
 ) {
-    val scale = remember { Animatable(0.8f) }
-    val alpha = remember { Animatable(0f) }
+    val reduceMotion = LocalReduceMotion.current
+    val scale = remember { Animatable(if (reduceMotion) 1f else 0.8f) }
+    val alpha = remember { Animatable(if (reduceMotion) 1f else 0f) }
 
     LaunchedEffect(Unit) {
-        scale.animateTo(1f, animationSpec = tween(300, easing = FastOutSlowInEasing))
-        alpha.animateTo(1f, animationSpec = tween(300, easing = FastOutSlowInEasing))
+        if (!reduceMotion) {
+            scale.animateTo(1f, animationSpec = tween(300, easing = FastOutSlowInEasing))
+            alpha.animateTo(1f, animationSpec = tween(300, easing = FastOutSlowInEasing))
+        }
     }
 
     Card(

@@ -73,6 +73,11 @@
     <string name="categories_icon_label">아이콘</string>
     <string name="categories_hide">카테고리 숨기기</string>
     <string name="categories_show">카테고리 표시</string>
+    <string name="categories_budget_set">예산 설정</string>
+    <string name="categories_budget_indicator">예산: %1$s/월</string>
+    <string name="categories_budget_monthly">월간 한도</string>
+    <string name="categories_budget_exceeded">예산 초과</string>
+    <string name="categories_budget_progress">%2$s 중 %1$s</string>
     <string name="categories_hidden_section_title">숨겨진 카테고리 (%d)</string>
     <string name="categories_reorder">카테고리 순서 변경</string>
     <string name="categories_selection_hint">카테고리를 탭하여 선택 (실제 앱에서는 자동 진행됨)</string>
@@ -490,6 +495,9 @@
     <string name="settings_mask_amounts_subtitle_enabled">숫자가 별표로 마스킹됨</string>
     <string name="settings_mask_amounts_subtitle_disabled">숫자가 정상적으로 표시됨</string>
     <string name="settings_mask_amounts_preview">미리보기: %s</string>
+    <string name="settings_use_dynamic_color">다이나믹 컬러</string>
+    <string name="settings_use_dynamic_color_subtitle_enabled">시스템 색상 팔레트 사용 (Material You)</string>
+    <string name="settings_use_dynamic_color_subtitle_disabled">앱 색상 팔레트 사용</string>
     <string name="settings_transaction_icon_display_trend">추세 화살표</string>
     <string name="settings_transaction_icon_display_category">카테고리</string>
     <string name="settings_transaction_icon_display_none">없음</string>
@@ -499,22 +507,16 @@
     <string name="settings_tutorial">튜토리얼</string>
     <string name="settings_show_tutorial">튜토리얼 보기</string>
     <string name="settings_show_tutorial_subtitle">초기 앱 튜토리얼 다시 보기</string>
-    <string name="tutorial_welcome_title">AntCashManager에 오신 것을 환영합니다! 🐜</string>
-    <string name="tutorial_welcome_desc">작은 개미가 여러분의 돈 관리를 어떻게 돕는지 투어를 통해 확인해 보세요.</string>
-    <string name="tutorial_welcome_point_track">수입과 지출을 몇 초 만에 기록하세요.</string>
-    <string name="tutorial_welcome_point_insights">잔액과 추세를 한눈에 확인하세요.</string>
-    <string name="tutorial_welcome_point_categories">스마트 카테고리로 지출을 정리하세요.</string>
-    <string name="tutorial_welcome_point_customize">언어, 테마, 형식을 사용자 정의하세요.</string>
-    <string name="tutorial_dashboard_title">대시보드</string>
-    <string name="tutorial_dashboard_desc">여기에서 총 잔액, 월간 수입 및 ��출을 한눈에 볼 수 있습니다.</string>
-    <string name="tutorial_transactions_title">거래 내역</string>
-    <string name="tutorial_transactions_desc">모든 내역을 여기에서 관리하세요. 검색, 필터링 및 새 항목 추가가 쉽습니다.</string>
+    <string name="tutorial_transactions_title">홈</string>
+    <string name="tutorial_transactions_desc">여기에서 모든 거래 내역을 확인하고 재무 요약을 공유할 수 있습니다.</string>
     <string name="tutorial_charts_title">차트 및 인사이트</string>
     <string name="tutorial_charts_desc">대화형 차트로 지출 습관을 시각화하세요. 돈이 어디로 가는지 확인하세요!</string>
+    <string name="tutorial_add_transaction_title">거래 추가</string>
+    <string name="tutorial_add_transaction_desc">새 수입이나 지출을 빠르게 기록하려면 여기를 탭하세요.</string>
     <string name="tutorial_categories_title">카테고리</string>
     <string name="tutorial_categories_desc">맞춤형 카테고리, 아이콘, 색상으로 거래를 정리하세요.</string>
-    <string name="tutorial_settings_title">개인화</string>
-    <string name="tutorial_settings_desc">통화, 날짜 형식, 접근성, 테마 등 앱을 필요에 맞게 조정하세요.</string>
+    <string name="tutorial_sidebar_title">메뉴 및 카테고리</string>
+    <string name="tutorial_sidebar_desc">메뉴 아이콘을 탭하여 사이드바에서 카테고리, 설정 등에 접근하세요.</string>
     <string name="tutorial_finish_title">준비가 끝났습니다!</string>
     <string name="tutorial_finish_desc">오늘부터 AntCashManager와 함께 재정 여정을 시작하세요. 즐거운 저축 되세요!</string>
     <string name="tutorial_next">다음</string>
@@ -632,6 +634,11 @@
     <!-- Chart Cards - New Visualizations -->
     <string name="chart_spending_forecast_title">지출 예측</string>
     <string name="chart_avg_monthly">월평균</string>
+    <string name="chart_projected_month_end">Projected month end</string>
+    <string name="home_vs_previous_period">vs. previous period</string>
+    <string name="home_savings_rate">저축률</string>
+    <string name="home_savings_goal">목표</string>
+    <string name="home_savings_amount">이 기간의 저축</string>
     <string name="chart_period">기간</string>
     <string name="chart_last_3_months">최근 3개월</string>
     <string name="chart_quick_stats_title">빠른 통계</string>
@@ -729,4 +736,14 @@
     <string name="app_icon_description">앱 아이콘</string>
     <string name="transaction_add_tag_description">태그 추가</string>
     <string name="transaction_remove_tag_description">제거</string>
+    <string name="categories_restore_defaults">기본 카테고리 복원</string>
+    <string name="trend_badge_increased">%1$s%2$.0f%% 증가</string>
+    <string name="trend_badge_decreased">%1$s%2$.0f%% 감소</string>
+    <string name="trend_badge_stable">%1$s%2$.0f%% 안정</string>
+    <string name="empty_state_add_transaction_cta">거래 추가</string>
+    <string name="empty_state_clear_filters_cta">필터 지우기</string>
+    <string name="add_transaction_discard_dialog_title">변경 사항을 삭제하시겠습니까?</string>
+    <string name="add_transaction_discard_dialog_message">저장되지 않은 변경 사항이 있습니다. 삭제하시겠습니까?</string>
+    <string name="add_transaction_discard_dialog_confirm">삭제</string>
+    <string name="add_transaction_discard_dialog_cancel">계속 편집</string>
 </resources>

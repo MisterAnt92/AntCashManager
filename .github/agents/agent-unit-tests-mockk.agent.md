@@ -30,7 +30,7 @@ Mai scrivere a mano `Dispatchers.setMain`, `StandardTestDispatcher()`, `runTest(
 - **Fake** (`testutil/Fake*Repository`) consigliato nei test UseCase quando serve stato condiviso, Flow con emissioni multiple, o `errorToThrow`. Rimangono validi, non sono deprecati per questo scope.
 - Classi pure (formatter, parser): nessun mock, testa l'output.
 
-## ViewModel — guida via `onEvent`
+## ViewModel — guida via `emitEvent`
 
 ```kotlin
 class SettingsViewModelTest : BaseUnitTest() {

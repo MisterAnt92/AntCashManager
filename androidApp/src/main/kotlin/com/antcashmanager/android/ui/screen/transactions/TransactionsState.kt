@@ -16,7 +16,7 @@ data class TransactionsState(
     val transactions: List<Transaction> = emptyList(),
     val filteredTransactions: List<Transaction> = emptyList(),
     val categories: List<Category> = emptyList(),
-    val isLoading: Boolean = false,
+    override val isLoading: Boolean = false,
     val error: String? = null,
     val selectedPresetIndex: Int = TransactionsConstant.DEFAULT_PRESET_INDEX,
     val dateRangeFrom: Long = System.currentTimeMillis() - TransactionsConstant.ONE_WEEK_MS,

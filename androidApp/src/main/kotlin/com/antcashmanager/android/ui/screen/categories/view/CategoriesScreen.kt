@@ -105,7 +105,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.antcashmanager.android.R
 import com.antcashmanager.android.navigation.LocalScreenHeaderConfigCallback
 import com.antcashmanager.android.navigation.ScreenHeaderConfig
-import com.antcashmanager.android.ui.base.LocalMultiPaneCoordinator
 import com.antcashmanager.android.ui.components.layout.FoldableAwareLayout
 import com.antcashmanager.android.ui.components.layout.LocalDisplayFeatures
 import com.antcashmanager.android.ui.components.layout.SpacingSize
@@ -335,7 +334,6 @@ internal fun CategoriesContent(
     // Foldable device support
     val displayFeatures = LocalDisplayFeatures.current
     val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo(displayFeatures = displayFeatures)
-    val multiPaneCoordinator = LocalMultiPaneCoordinator.current
     val foldingFeature = adaptiveLayoutInfo.foldingFeature
 
     val tabs =
@@ -355,6 +353,14 @@ internal fun CategoriesContent(
                 hasOrderOption = false,
             ),
         )
+    }
+
+    if (state.isLoading) {
+        CategoriesSkeletonLoader(
+            horizontalPadding = adaptiveLayoutInfo.horizontalPadding,
+            modifier = modifier,
+        )
+        return
     }
 
     // Error state overlay (FASE 5: Error Feedback UX)
@@ -431,6 +437,8 @@ internal fun CategoriesContent(
                         title = stringResource(R.string.categories_empty),
                         subtitle = stringResource(R.string.categories_empty_subtitle),
                         modifier = Modifier.fillMaxSize(),
+                        actionLabel = stringResource(R.string.categories_restore_defaults),
+                        onAction = { onEvent(CategoryEvent.RestoreDefaultCategoriesEvent) },
                     )
                 } else if (isGridLayout) {
                     // FASE 2: Tablet 3-column grid for expanded screens without fold
@@ -446,7 +454,7 @@ internal fun CategoriesContent(
                                 count = currentDefaultCategories.size,
                                 onReorder = {
                                     onEvent(CategoryEvent.LogReorderOpenedEvent)
-                                    reorderDialogCategories = currentDefaultCategories
+                                    reorderDialogCategories = currentDefaultCategories.filterNot { it.isHidden }
                                     showReorderDialog = true
                                 },
                             )
@@ -464,6 +472,9 @@ internal fun CategoriesContent(
                                     }
                                 },
                                 onToggleHidden = { onSetCategoryHidden(category, !category.isHidden) },
+                                budget = state.budgets[category.id],
+                                spentAmount = state.categoryExpenseTotals[category.id] ?: 0.0,
+                                onSetBudget = { onEvent(CategoryEvent.OpenBudgetDialogEvent(category.id)) },
                             )
                         }
                         item(key = "custom_section_header", span = { GridItemSpan(maxLineSpan) }) {
@@ -472,7 +483,7 @@ internal fun CategoriesContent(
                                 count = currentCustomCategories.size,
                                 onReorder = {
                                     onEvent(CategoryEvent.LogReorderOpenedEvent)
-                                    reorderDialogCategories = currentCustomCategories
+                                    reorderDialogCategories = currentCustomCategories.filterNot { it.isHidden }
                                     showReorderDialog = true
                                 },
                             )
@@ -486,7 +497,18 @@ internal fun CategoriesContent(
                                 },
                                 onDelete = { categoryToDelete = category },
                                 onToggleHidden = { onSetCategoryHidden(category, !category.isHidden) },
+                                budget = state.budgets[category.id],
+                                spentAmount = state.categoryExpenseTotals[category.id] ?: 0.0,
+                                onSetBudget = { onEvent(CategoryEvent.OpenBudgetDialogEvent(category.id)) },
                             )
+                        }
+                        item(span = { GridItemSpan(maxLineSpan) }) {
+                            TextButton(
+                                onClick = { onEvent(CategoryEvent.RestoreDefaultCategoriesEvent) },
+                                modifier = Modifier.fillMaxWidth(),
+                            ) {
+                                AppText(stringResource(R.string.categories_restore_defaults))
+                            }
                         }
                         item(span = { GridItemSpan(maxLineSpan) }) { VerticalSpacer(SpacingSize.XXXL) }
                     }
@@ -498,7 +520,7 @@ internal fun CategoriesContent(
                                 count = currentDefaultCategories.size,
                                 onReorder = {
                                     onEvent(CategoryEvent.LogReorderOpenedEvent)
-                                    reorderDialogCategories = currentDefaultCategories
+                                    reorderDialogCategories = currentDefaultCategories.filterNot { it.isHidden }
                                     showReorderDialog = true
                                 },
                             )
@@ -516,6 +538,9 @@ internal fun CategoriesContent(
                                     }
                                 },
                                 onToggleHidden = { onSetCategoryHidden(category, !category.isHidden) },
+                                budget = state.budgets[category.id],
+                                spentAmount = state.categoryExpenseTotals[category.id] ?: 0.0,
+                                onSetBudget = { onEvent(CategoryEvent.OpenBudgetDialogEvent(category.id)) },
                             )
                         }
                         item(key = "custom_section_header") {
@@ -524,7 +549,7 @@ internal fun CategoriesContent(
                                 count = currentCustomCategories.size,
                                 onReorder = {
                                     onEvent(CategoryEvent.LogReorderOpenedEvent)
-                                    reorderDialogCategories = currentCustomCategories
+                                    reorderDialogCategories = currentCustomCategories.filterNot { it.isHidden }
                                     showReorderDialog = true
                                 },
                             )
@@ -538,7 +563,18 @@ internal fun CategoriesContent(
                                 },
                                 onDelete = { categoryToDelete = category },
                                 onToggleHidden = { onSetCategoryHidden(category, !category.isHidden) },
+                                budget = state.budgets[category.id],
+                                spentAmount = state.categoryExpenseTotals[category.id] ?: 0.0,
+                                onSetBudget = { onEvent(CategoryEvent.OpenBudgetDialogEvent(category.id)) },
                             )
+                        }
+                        item {
+                            TextButton(
+                                onClick = { onEvent(CategoryEvent.RestoreDefaultCategoriesEvent) },
+                                modifier = Modifier.fillMaxWidth(),
+                            ) {
+                                AppText(stringResource(R.string.categories_restore_defaults))
+                            }
                         }
                         item { VerticalSpacer(SpacingSize.XXXL) }
                     }
@@ -547,55 +583,7 @@ internal fun CategoriesContent(
         }
     }
 
-    // FASE 1: Composable for category details pane
-    @Composable
-    fun CategoryDetailsPane(category: Category) {
-        Column(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            AppText(
-                text = "Details",
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
-            )
-
-            AppText(
-                text = translateCategory(category.name),
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold,
-            )
-
-            AppText(
-                text = category.type,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-
-            Box(
-                modifier =
-                    Modifier
-                        .size(48.dp)
-                        .clip(CircleShape)
-                        .background(Color(category.color)),
-                contentAlignment = Alignment.Center,
-            ) {
-                categoryIconMap[category.icon]?.let { icon ->
-                    Icon(
-                        imageVector = icon,
-                        contentDescription = null,
-                        tint = Color.White,
-                        modifier = Modifier.size(24.dp),
-                    )
-                }
-            }
-        }
-    }
-
-    // FASE 1: Main layout logic - split-pane or single-pane
+    // Main layout logic - split-pane or single-pane
     if (adaptiveLayoutInfo.hasFold && foldingFeature != null) {
         FoldableAwareLayout(
             foldingFeature = foldingFeature,
@@ -625,7 +613,6 @@ internal fun CategoriesContent(
 
     if (showAddDialog || categoryToEdit != null) {
         AddCategoryDialog(
-            currentType = currentType,
             categoryToEdit = categoryToEdit,
             onConfirm = { name, icon, color, isHidden ->
                 if (categoryToEdit != null) {
@@ -659,6 +646,25 @@ internal fun CategoriesContent(
                 showReorderDialog = false
             },
         )
+    }
+
+    // BudgetEditDialog — driven by state.editingBudgetCategoryId
+    val editingBudgetCategoryId = state.editingBudgetCategoryId
+    if (editingBudgetCategoryId != null) {
+        val budgetCategory = state.categories.find { it.id == editingBudgetCategoryId }
+        if (budgetCategory != null) {
+            BudgetEditDialog(
+                categoryName = translateCategory(budgetCategory.name),
+                existingBudget = state.budgets[editingBudgetCategoryId],
+                onConfirm = { limit ->
+                    onEvent(CategoryEvent.SetBudgetEvent(editingBudgetCategoryId, limit))
+                },
+                onDelete = if (state.budgets.containsKey(editingBudgetCategoryId)) {
+                    { onEvent(CategoryEvent.DeleteBudgetEvent(editingBudgetCategoryId)) }
+                } else null,
+                onDismiss = { onEvent(CategoryEvent.OpenBudgetDialogEvent(null)) },
+            )
+        }
     }
 
     categoryToDelete?.let { category ->
@@ -835,7 +841,6 @@ private fun CategoriesContentDarkPreview() {
 private fun AddCategoryDialogPreview() {
     AntCashManagerTheme(dynamicColor = false) {
         AddCategoryDialog(
-            currentType = "EXPENSE",
             onConfirm = { _, _, _, _ -> },
             onDismiss = {},
         )

@@ -27,16 +27,16 @@ import com.antcashmanager.android.ui.components.animation.AntEasterEggAnimation
 import com.antcashmanager.android.ui.components.layout.FoldableAwareLayout
 import com.antcashmanager.android.ui.components.layout.LocalDisplayFeatures
 import com.antcashmanager.android.ui.components.layout.rememberAdaptiveLayoutInfo
-import com.antcashmanager.android.ui.components.overlay.TutorialOverlay
 import com.antcashmanager.android.ui.components.state.AntErrorState
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.components.transaction.TransactionDetailsPane
+import com.antcashmanager.android.navigation.navigateToAddTransaction
 import com.antcashmanager.android.ui.screen.home.event.HomeEvent
 import com.antcashmanager.android.ui.screen.home.transactionDetail.TransactionDetailsDialog
 
 import com.antcashmanager.android.ui.screen.home.view.HomeListPane
+import com.antcashmanager.android.ui.screen.home.view.HomeSkeletonLoader
 import com.antcashmanager.android.ui.screen.home.view.HomeTopCardsOrderDialog
-import com.antcashmanager.android.ui.screen.home.view.LoadingState
 import org.koin.androidx.compose.koinViewModel
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -95,12 +95,6 @@ internal fun HomeContent(
                 onOrderClick = { onEvent(HomeEvent.StartTopCardsReorderEvent) },
             ),
         )
-    }
-
-    // Tutorial full-screen (non durante il caricamento iniziale, per evitare flickering)
-    if (!state.isTutorialCompleted && !state.isLoading) {
-        TutorialOverlay(onDismiss = { onEvent(HomeEvent.SetIsTutorialCompletedEvent(true)) })
-        return
     }
 
     // Error state overlay (FASE 5: Error Feedback UX)
@@ -169,12 +163,13 @@ internal fun HomeContent(
                 )
                 onEvent(HomeEvent.ShowTransactionDetailsEvent(item.transaction))
             },
+            onAddTransaction = { navController.navigateToAddTransaction() },
             modifier = modifier,
         )
     }
 
     when {
-        state.isLoading -> LoadingState()
+        state.isLoading -> HomeSkeletonLoader(horizontalPadding = adaptiveLayoutInfo.horizontalPadding)
         adaptiveLayoutInfo.hasFold && foldingFeature != null ->
             FoldableAwareLayout(
                 foldingFeature = foldingFeature,

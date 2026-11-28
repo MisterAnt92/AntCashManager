@@ -1,19 +1,25 @@
 package com.antcashmanager.android.ui.screen.transactions.addImport
 
 import android.os.Bundle
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import co.touchlab.kermit.Logger
+import com.antcashmanager.android.R
 import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.ui.screen.transactions.addImport.event.AddTransactionEvent
 import com.antcashmanager.android.ui.screen.transactions.addImport.view.CategorySelectionStep
@@ -83,6 +89,32 @@ internal fun AddTransactionContent(
     analyticsManager: AnalyticsManager? = null,
     modifier: Modifier = Modifier,
 ) {
+    BackHandler(enabled = state.hasUnsavedChanges) {
+        onEvent(AddTransactionEvent.ShowDiscardConfirmDialogEvent)
+    }
+
+    if (state.showDiscardConfirmDialog) {
+        AlertDialog(
+            onDismissRequest = { onEvent(AddTransactionEvent.DismissDiscardConfirmDialogEvent) },
+            title = { Text(stringResource(R.string.add_transaction_discard_dialog_title)) },
+            text = { Text(stringResource(R.string.add_transaction_discard_dialog_message)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    onEvent(AddTransactionEvent.DismissDiscardConfirmDialogEvent)
+                    analyticsManager?.logEvent("transaction_form_cancelled")
+                    navController?.popBackStack()
+                }) {
+                    Text(stringResource(R.string.add_transaction_discard_dialog_confirm))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { onEvent(AddTransactionEvent.DismissDiscardConfirmDialogEvent) }) {
+                    Text(stringResource(R.string.add_transaction_discard_dialog_cancel))
+                }
+            },
+        )
+    }
+
     when {
         state.isLoading -> {
             Box(
@@ -110,8 +142,12 @@ internal fun AddTransactionContent(
                 state = state,
                 onEvent = onEvent,
                 onNavigateBack = {
-                    analyticsManager?.logEvent("transaction_form_cancelled")
-                    navController?.popBackStack()
+                    if (state.hasUnsavedChanges) {
+                        onEvent(AddTransactionEvent.ShowDiscardConfirmDialogEvent)
+                    } else {
+                        analyticsManager?.logEvent("transaction_form_cancelled")
+                        navController?.popBackStack()
+                    }
                 },
             )
         }

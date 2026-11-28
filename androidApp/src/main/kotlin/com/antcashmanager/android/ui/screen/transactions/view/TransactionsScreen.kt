@@ -21,7 +21,9 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -60,6 +62,7 @@ import co.touchlab.kermit.Logger
 import com.antcashmanager.android.R
 import com.antcashmanager.android.navigation.AppRoute
 import com.antcashmanager.android.navigation.LocalScreenHeaderConfigCallback
+import com.antcashmanager.android.navigation.navigateToAddTransaction
 import com.antcashmanager.android.navigation.ScreenHeaderConfig
 import com.antcashmanager.android.ui.base.LocalMultiPaneCoordinator
 import com.antcashmanager.android.ui.components.animation.SkeletonLoader
@@ -309,14 +312,26 @@ internal fun TransactionsContent(params: TransactionsContentParams) {
                                     title = stringResource(R.string.empty_state_no_transactions),
                                     subtitle = stringResource(R.string.empty_state_no_transactions_subtitle),
                                     modifier = Modifier.fillMaxWidth(),
+                                    actionLabel = if (state.hasActiveFilters)
+                                        stringResource(R.string.empty_state_clear_filters_cta)
+                                    else
+                                        stringResource(R.string.empty_state_add_transaction_cta),
+                                    onAction = if (state.hasActiveFilters)
+                                        { { onEvent(TransactionsEvent.ClearAllFiltersEvent) } }
+                                    else
+                                        { { navController?.navigateToAddTransaction() } },
                                 )
                             }
                         }
 
                         else -> {
-                            items(state.filteredTransactions, key = { it.id }) { transaction ->
+                            itemsIndexed(
+                                items = state.filteredTransactions,
+                                key = { _, transaction -> transaction.id },
+                            ) { idx, transaction ->
                                 TransactionItem(
                                     transaction = transaction,
+                                    index = idx,
                                     onClick = {
                                         multiPaneCoordinator?.selectTransaction(
                                             transaction = transaction,
@@ -525,16 +540,28 @@ internal fun TransactionsContent(params: TransactionsContentParams) {
                                     title = stringResource(R.string.empty_state_no_transactions),
                                     subtitle = stringResource(R.string.empty_state_no_transactions_subtitle),
                                     modifier = Modifier.fillMaxWidth(),
+                                    actionLabel = if (state.hasActiveFilters)
+                                        stringResource(R.string.empty_state_clear_filters_cta)
+                                    else
+                                        stringResource(R.string.empty_state_add_transaction_cta),
+                                    onAction = if (state.hasActiveFilters)
+                                        { { onEvent(TransactionsEvent.ClearAllFiltersEvent) } }
+                                    else
+                                        { { navController?.navigateToAddTransaction() } },
                                 )
                             }
                         }
 
                         else -> {
-                            items(state.filteredTransactions, key = { it.id }) { transaction ->
+                            itemsIndexed(
+                                items = state.filteredTransactions,
+                                key = { _, transaction -> transaction.id },
+                            ) { idx, transaction ->
                                 TransactionItem(
                                     transaction = transaction,
+                                    index = idx,
                                     onClick = {
-                                        onEvent(TransactionsEvent.LogItemClickedEvent(transaction, state.filteredTransactions.indexOf(transaction)))
+                                        onEvent(TransactionsEvent.LogItemClickedEvent(transaction, idx))
                                         // Notify multi-pane coordinator for foldable split-view sync
                                         multiPaneCoordinator?.selectTransaction(
                                             transaction = transaction,

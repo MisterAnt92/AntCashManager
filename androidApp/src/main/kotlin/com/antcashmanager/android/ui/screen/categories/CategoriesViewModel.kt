@@ -7,12 +7,18 @@ import com.antcashmanager.android.analytics.AnalyticsConstants.Params
 import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.ui.base.AndroidBaseViewModel
 import com.antcashmanager.domain.model.Category
+import com.antcashmanager.domain.model.CategoryBudget
+import com.antcashmanager.domain.usecase.category.DeleteCategoryBudgetUseCase
 import com.antcashmanager.domain.usecase.category.DeleteCategoryUseCase
+import com.antcashmanager.domain.usecase.category.GetCategoryBudgetsUseCase
 import com.antcashmanager.domain.usecase.category.GetCategoriesUseCase
 import com.antcashmanager.domain.usecase.category.InsertCategoryUseCase
+import com.antcashmanager.domain.usecase.category.RestoreDefaultCategoriesUseCase
+import com.antcashmanager.domain.usecase.category.SetCategoryBudgetUseCase
 import com.antcashmanager.domain.usecase.category.UpdateCategoryUseCase
 import com.antcashmanager.domain.usecase.transaction.SyncTransactionCategoriesUseCase
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -21,45 +27,58 @@ class CategoriesViewModel(
     private val insertCategoryUseCase: InsertCategoryUseCase,
     private val updateCategoryUseCase: UpdateCategoryUseCase,
     private val deleteCategoryUseCase: DeleteCategoryUseCase,
+    private val restoreDefaultCategoriesUseCase: RestoreDefaultCategoriesUseCase,
     private val syncTransactionCategoriesUseCase: SyncTransactionCategoriesUseCase,
     private val analyticsManager: AnalyticsManager,
+    private val getCategoryBudgetsUseCase: GetCategoryBudgetsUseCase,
+    private val setCategoryBudgetUseCase: SetCategoryBudgetUseCase,
+    private val deleteCategoryBudgetUseCase: DeleteCategoryBudgetUseCase,
 ) : AndroidBaseViewModel<CategoryEvent, CategoriesState>(CategoriesState()) {
 
     init {
         viewModelScope.launch {
-            getCategoriesUseCase().collect { result ->
-                result
-                    .onSuccess { cats ->
-                        val expense = cats.filter { it.type == "EXPENSE" }.sortedBy { it.sortOrder }
-                        val income = cats.filter { it.type == "INCOME" }.sortedBy { it.sortOrder }
-                        val visibleExpense = expense.filterNot { category -> category.isHidden }
-                        val visibleIncome = income.filterNot { category -> category.isHidden }
-                        _state.update {
-                            it.copy(
+            combine(
+                getCategoriesUseCase(),
+                getCategoryBudgetsUseCase(),
+            ) { catsResult, budgetsResult -> catsResult to budgetsResult }
+                .collect { (catsResult, budgetsResult) ->
+                    var updated = _state.value
+                    catsResult
+                        .onSuccess { cats ->
+                            val (expense, income) = cats.partition { it.type == "EXPENSE" }
+                            val sortedExpense = expense.sortedBy { it.sortOrder }
+                            val sortedIncome = income.sortedBy { it.sortOrder }
+                            val (defaultExp, customExp) = sortedExpense.partition { it.isDefault }
+                            val (defaultInc, customInc) = sortedIncome.partition { it.isDefault }
+                            updated = updated.copy(
                                 categories = cats,
-                                expenseCategories = visibleExpense,
-                                incomeCategories = visibleIncome,
-                                defaultExpenseCategories = expense.filter { category -> category.isDefault },
-                                customExpenseCategories = expense.filter { category -> !category.isDefault },
-                                defaultIncomeCategories = income.filter { category -> category.isDefault },
-                                customIncomeCategories = income.filter { category -> !category.isDefault },
-                                hiddenExpenseCategories = expense.filter { category -> category.isHidden },
-                                hiddenIncomeCategories = income.filter { category -> category.isHidden },
+                                expenseCategories = sortedExpense.filterNot { it.isHidden },
+                                incomeCategories = sortedIncome.filterNot { it.isHidden },
+                                defaultExpenseCategories = defaultExp,
+                                customExpenseCategories = customExp,
+                                defaultIncomeCategories = defaultInc,
+                                customIncomeCategories = customInc,
                             )
+                            analyticsManager.logEvent(
+                                "category_type_distribution",
+                                Bundle().apply {
+                                    putInt("expense_count", sortedExpense.size)
+                                    putInt("income_count", sortedIncome.size)
+                                },
+                            )
+                        }.onFailure { error ->
+                            if (error is CancellationException) throw error
+                            logError("Error loading categories: ${error.message}", error)
                         }
-                        // Track category type distribution
-                        analyticsManager.logEvent(
-                            "category_type_distribution",
-                            Bundle().apply {
-                                putInt("expense_count", expense.size)
-                                putInt("income_count", income.size)
-                            },
-                        )
-                    }.onFailure { error ->
-                        if (error is CancellationException) throw error
-                        logError("Error loading categories: ${error.message}", error)
-                    }
-            }
+                    budgetsResult
+                        .onSuccess { budgets ->
+                            updated = updated.copy(budgets = budgets.associateBy { it.categoryId })
+                        }.onFailure { error ->
+                            if (error is CancellationException) throw error
+                            logError("Error loading budgets: ${error.message}", error)
+                        }
+                    _state.value = updated.copy(isLoading = false)
+                }
         }
     }
 
@@ -71,10 +90,13 @@ class CategoriesViewModel(
             is CategoryEvent.DeleteCategoryEvent -> deleteCategory(event.category)
             is CategoryEvent.SetCategoryHiddenEvent -> setCategoryHidden(event.category, event.hidden)
             is CategoryEvent.ReorderCategoriesEvent -> reorderCategories(event.reordered)
-            is CategoryEvent.RetryLastOperationEvent -> logInfo("Retry requested")
+            is CategoryEvent.RestoreDefaultCategoriesEvent -> restoreDefaultCategories()
             is CategoryEvent.LogItemClickedEvent -> logCategoryItemClicked(event.categoryName, event.index)
             is CategoryEvent.LogReorderOpenedEvent -> analyticsManager.logEvent(Events.CATEGORIES_REORDER_OPENED)
             is CategoryEvent.SelectTabEvent -> _state.update { it.copy(selectedTabIndex = event.index) }
+            is CategoryEvent.OpenBudgetDialogEvent -> _state.update { it.copy(editingBudgetCategoryId = event.categoryId) }
+            is CategoryEvent.SetBudgetEvent -> setBudget(event.categoryId, event.monthlyLimit)
+            is CategoryEvent.DeleteBudgetEvent -> deleteBudget(event.categoryId)
         }
     }
 
@@ -157,6 +179,15 @@ class CategoriesViewModel(
         }
     }
 
+    private fun restoreDefaultCategories() {
+        logInfo("Restoring default categories")
+        viewModelScope.launch {
+            restoreDefaultCategoriesUseCase().handleError { errorState ->
+                _state.update { it.copy(errorState = errorState) }
+            }
+        }
+    }
+
     /**
      * Nasconde/mostra di nuovo una categoria senza cancellarla. A differenza di [updateCategory],
      * non propaga nulla alle transazioni esistenti: nome/icona/colore non cambiano, quindi la
@@ -167,6 +198,10 @@ class CategoriesViewModel(
         category: Category,
         hidden: Boolean,
     ) {
+        if (category.isDefault) {
+            logWarn("Attempted to hide default category '${category.name}' - ignored")
+            return
+        }
         analyticsManager.logEvent(if (hidden) Events.CATEGORY_HIDDEN else Events.CATEGORY_SHOWN)
         logDebug("Setting category '${category.name}' hidden=$hidden")
         viewModelScope.launch {
@@ -193,6 +228,26 @@ class CategoriesViewModel(
                         _state.update { it.copy(errorState = errorState) }
                     }
                 }
+            }
+        }
+    }
+
+    private fun setBudget(categoryId: Long, monthlyLimit: Double) {
+        if (monthlyLimit <= 0.0) return
+        logDebug("Setting budget for category $categoryId: $monthlyLimit")
+        viewModelScope.launch {
+            setCategoryBudgetUseCase(CategoryBudget(categoryId, monthlyLimit)).handleError { errorState ->
+                _state.update { it.copy(errorState = errorState) }
+            }
+            _state.update { it.copy(editingBudgetCategoryId = null) }
+        }
+    }
+
+    private fun deleteBudget(categoryId: Long) {
+        logDebug("Deleting budget for category $categoryId")
+        viewModelScope.launch {
+            deleteCategoryBudgetUseCase(categoryId).handleError { errorState ->
+                _state.update { it.copy(errorState = errorState) }
             }
         }
     }

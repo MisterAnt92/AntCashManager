@@ -40,6 +40,7 @@ import com.antcashmanager.android.ui.components.layout.SpacingSize
 import com.antcashmanager.android.ui.components.layout.VerticalSpacer
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
+import com.antcashmanager.android.ui.theme.LocalReduceMotion
 import kotlinx.coroutines.delay
 
 @Composable
@@ -100,11 +101,12 @@ fun AntSplashScreen(
 
 @Composable
 fun BouncingAnt(modifier: Modifier = Modifier) {
+    val reduceMotion = LocalReduceMotion.current
     val infiniteTransition = rememberInfiniteTransition(label = "AntBounce")
 
     val scale by infiniteTransition.animateFloat(
         initialValue = 1f,
-        targetValue = 1.1f,
+        targetValue = if (reduceMotion) 1f else 1.1f,
         animationSpec =
             infiniteRepeatable(
                 animation = tween(600, easing = FastOutSlowInEasing),
@@ -115,7 +117,7 @@ fun BouncingAnt(modifier: Modifier = Modifier) {
 
     val translationY by infiniteTransition.animateFloat(
         initialValue = 0f,
-        targetValue = -20f,
+        targetValue = if (reduceMotion) 0f else -20f,
         animationSpec =
             infiniteRepeatable(
                 animation = tween(600, easing = FastOutSlowInEasing),

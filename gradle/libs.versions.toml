@@ -38,6 +38,7 @@ securityCrypto = "1.1.0-alpha06"
 testOrchestrator = "1.4.2"
 ktlint = "14.2.0"
 kover = "0.9.1"
+reveal = "5.2.3"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -95,6 +96,7 @@ google-http-client = { group = "com.google.http-client", name = "google-http-cli
 google-oauth-client = { group = "com.google.oauth-client", name = "google-oauth-client", version.ref = "googleOAuthClient" }
 androidx-security-crypto = { group = "androidx.security", name = "security-crypto", version.ref = "securityCrypto" }
 androidx-test-orchestrator = { group = "androidx.test", name = "orchestrator", version.ref = "testOrchestrator" }
+reveal-core = { group = "com.svenjacobs.reveal", name = "reveal-core", version.ref = "reveal" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

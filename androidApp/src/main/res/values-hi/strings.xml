@@ -72,6 +72,11 @@
     <string name="categories_icon_label">आइकन</string>
     <string name="categories_hide">श्रेणी छिपाएं</string>
     <string name="categories_show">श्रेणी दिखाएं</string>
+    <string name="categories_budget_set">बजट सेट करें</string>
+    <string name="categories_budget_indicator">बजट: %1$s/माह</string>
+    <string name="categories_budget_monthly">मासिक सीमा</string>
+    <string name="categories_budget_exceeded">बजट पार हो गया</string>
+    <string name="categories_budget_progress">%1$s में से %2$s</string>
     <string name="categories_hidden_section_title">छिपी हुई श्रेणियां (%d)</string>
     <string name="categories_reorder">श्रेणियों को पुनर्व्यवस्थित करें</string>
     <string name="categories_selection_hint">चुनने के लिए श्रेणी पर टैप करें (वास्तविक ऐप में स्वतः आगे बढ़ता है)</string>
@@ -487,6 +492,9 @@
     <string name="settings_mask_amounts_subtitle_enabled">अंकों को तारांकन चिह्नों से ढका गया है</string>
     <string name="settings_mask_amounts_subtitle_disabled">अंक सामान्य रूप से दिखाए गए हैं</string>
     <string name="settings_mask_amounts_preview">पूर्वावलोकन: %s</string>
+    <string name="settings_use_dynamic_color">डायनामिक रंग</string>
+    <string name="settings_use_dynamic_color_subtitle_enabled">सिस्टम रंग पैलेट का उपयोग (Material You)</string>
+    <string name="settings_use_dynamic_color_subtitle_disabled">ऐप रंग पैलेट का उपयोग</string>
     <string name="settings_transaction_icon_display_trend">ट्रेंड तीर</string>
     <string name="settings_transaction_icon_display_category">श्रेणी</string>
     <string name="settings_transaction_icon_display_none">कोई नहीं</string>
@@ -496,22 +504,16 @@
     <string name="settings_tutorial">ट्यूटोरियल</string>
     <string name="settings_show_tutorial">ट्यूटोरियल दिखाएं</string>
     <string name="settings_show_tutorial_subtitle">प्रारंभिक ऐप ट्यूटोरियल को फिर से देखें</string>
-    <string name="tutorial_welcome_title">AntCashManager में आपका स्वागत है! 🐜</string>
-    <string name="tutorial_welcome_desc">आइए यह देखने के लिए एक त्वरित दौरा करें कि हमारी नन्ही चींटी आपके पैसे का प्रबंधन करने में आपकी कैसे मदद करती है।</string>
-    <string name="tutorial_welcome_point_track">सेकंड में आय और खर्च ट्रैक करें।</string>
-    <string name="tutorial_welcome_point_insights">एक नज़र में शेष और ट्रेंड देखें।</string>
-    <string name="tutorial_welcome_point_categories">स्मार्ट श्रेणियों के साथ खर्च व्यवस्थित करें।</string>
-    <string name="tutorial_welcome_point_customize">भाषा, थीम और प्रारूप कस्टमाइज़ करें।</string>
-    <string name="tutorial_dashboard_title">डैशबोर्ड</string>
-    <string name="tutorial_dashboard_desc">यहाँ आप एक नज़र में अपना कुल शेष, मासिक आय और खर्च देख सकते हैं।</string>
-    <string name="tutorial_transactions_title">लेनदेन</string>
-    <string name="tutorial_transactions_desc">अपनी सभी गतिविधियों को यहाँ प्रबंधित करें। आप आसानी से खोज, फ़िल्टर और नई प्रविष्टियाँ जोड़ सकते हैं।</string>
+    <string name="tutorial_transactions_title">होम</string>
+    <string name="tutorial_transactions_desc">यहाँ आप अपनी सभी लेनदेन देख सकते हैं और वित्तीय सारांश साझा कर सकते हैं।</string>
     <string name="tutorial_charts_title">चार्ट और अंतर्दृष्टि</string>
     <string name="tutorial_charts_desc">इंटरैक्टिव चार्ट के साथ अपनी खर्च करने की आदतों की कल्पना करें। देखें आपका पैसा कहाँ जाता है!</string>
+    <string name="tutorial_add_transaction_title">लेनदेन जोड़ें</string>
+    <string name="tutorial_add_transaction_desc">नई आय या व्यय जल्दी दर्ज करने के लिए यहाँ टैप करें।</string>
     <string name="tutorial_categories_title">श्रेणियां</string>
     <string name="tutorial_categories_desc">कस्टम श्रेणियों, आइकन और रंगों के साथ अपने लेनदेन व्यवस्थित करें।</string>
-    <string name="tutorial_settings_title">अनुकूलन</string>
-    <string name="tutorial_settings_desc">ऐप को अपनी आवश्यकताओं के अनुरूप बनाएं: मुद्रा, तिथि प्रारूप, पहुँच योग्यता और थीम।</string>
+    <string name="tutorial_sidebar_title">मेनू और श्रेणियां</string>
+    <string name="tutorial_sidebar_desc">साइडबार से श्रेणियां, सेटिंग और अन्य सुविधाओं तक पहुंचने के लिए मेनू आइकन पर टैप करें।</string>
     <string name="tutorial_finish_title">आप पूरी तरह तैयार हैं!</string>
     <string name="tutorial_finish_desc">आज ही AntCashManager के साथ अपनी वित्तीय यात्रा शुरू करें। खुश बचत!</string>
     <string name="tutorial_next">अगला</string>
@@ -629,6 +631,11 @@
     <!-- Chart Cards - New Visualizations -->
     <string name="chart_spending_forecast_title">खर्च का पूर्वानुमान</string>
     <string name="chart_avg_monthly">मासिक औसत</string>
+    <string name="chart_projected_month_end">Projected month end</string>
+    <string name="home_vs_previous_period">vs. previous period</string>
+    <string name="home_savings_rate">बचत दर</string>
+    <string name="home_savings_goal">लक्ष्य</string>
+    <string name="home_savings_amount">इस अवधि में बचत</string>
     <string name="chart_period">अवधि</string>
     <string name="chart_last_3_months">पिछले 3 महीने</string>
     <string name="chart_quick_stats_title">त्वरित आँकड़े</string>
@@ -726,4 +733,14 @@
     <string name="app_icon_description">ऐप आइकन</string>
     <string name="transaction_add_tag_description">टैग जोड़ें</string>
     <string name="transaction_remove_tag_description">हटाएं</string>
+    <string name="categories_restore_defaults">डिफ़ॉल्ट श्रेणियाँ पुनर्स्थापित करें</string>
+    <string name="trend_badge_increased">%1$s%2$.0f%% बढ़ा</string>
+    <string name="trend_badge_decreased">%1$s%2$.0f%% घटा</string>
+    <string name="trend_badge_stable">%1$s%2$.0f%% स्थिर</string>
+    <string name="empty_state_add_transaction_cta">लेनदेन जोड़ें</string>
+    <string name="empty_state_clear_filters_cta">फ़िल्टर साफ़ करें</string>
+    <string name="add_transaction_discard_dialog_title">बदलाव रद्द करें?</string>
+    <string name="add_transaction_discard_dialog_message">आपके पास सहेजे नहीं गए बदलाव हैं। क्या आप उन्हें रद्द करना चाहते हैं?</string>
+    <string name="add_transaction_discard_dialog_confirm">रद्द करें</string>
+    <string name="add_transaction_discard_dialog_cancel">संपादन जारी रखें</string>
 </resources>

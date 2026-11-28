@@ -36,8 +36,8 @@ import com.antcashmanager.android.ui.components.layout.SpacingSize
 import com.antcashmanager.android.ui.components.layout.VerticalSpacer
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
-import com.antcashmanager.android.ui.theme.ExpenseRed
-import com.antcashmanager.android.ui.theme.IncomeGreen
+import com.antcashmanager.android.ui.theme.expenseColor
+import com.antcashmanager.android.ui.theme.incomeColor
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.TransactionType
@@ -129,12 +129,12 @@ fun FilterCard(
                                 imageVector = Icons.Default.ArrowDownward,
                                 contentDescription = null,
                                 modifier = Modifier.size(16.dp),
-                                tint = IncomeGreen,
+                                tint = incomeColor(),
                             )
                         },
                         colors =
                             FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = IncomeGreen.copy(alpha = 0.2f),
+                                selectedContainerColor = incomeColor().copy(alpha = 0.2f),
                             ),
                     )
                     FilterChip(
@@ -159,12 +159,12 @@ fun FilterCard(
                                 imageVector = Icons.Default.ArrowUpward,
                                 contentDescription = null,
                                 modifier = Modifier.size(16.dp),
-                                tint = ExpenseRed,
+                                tint = expenseColor(),
                             )
                         },
                         colors =
                             FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = ExpenseRed.copy(alpha = 0.2f),
+                                selectedContainerColor = expenseColor().copy(alpha = 0.2f),
                             ),
                     )
                 }

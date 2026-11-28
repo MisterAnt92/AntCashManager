@@ -33,6 +33,7 @@ import com.antcashmanager.android.ui.components.layout.LocalDisplayFeatures
 import com.antcashmanager.android.ui.theme.AppThemeProvider
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
+import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.usecase.settings.GetLanguageUseCase
 import com.antcashmanager.domain.usecase.settings.GetThemeUseCase
 import kotlinx.coroutines.flow.combine
@@ -44,6 +45,7 @@ import java.util.Locale
 class MainActivity : ComponentActivity() {
     private val getLanguageUseCase: GetLanguageUseCase by inject()
     private val getThemeUseCase: GetThemeUseCase by inject()
+    private val settingsRepository: SettingsRepository by inject()
     private val sessionTracker: SessionTracker by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -87,12 +89,13 @@ class MainActivity : ComponentActivity() {
                 val settingsState by combine(
                     getLanguageUseCase(),
                     getThemeUseCase(),
-                ) { langResult, themeResult ->
+                    settingsRepository.getUseDynamicColor(),
+                ) { langResult, themeResult, useDynamicColor ->
                     val language = langResult.getOrElse { AppLanguage.SYSTEM }
                     val theme = themeResult.getOrElse { AppTheme.SYSTEM }
-                    SettingsSnapshot(language, theme)
+                    SettingsSnapshot(language, theme, useDynamicColor)
                 }.collectAsStateWithLifecycle(
-                    initialValue = SettingsSnapshot(AppLanguage.SYSTEM, AppTheme.SYSTEM),
+                    initialValue = SettingsSnapshot(AppLanguage.SYSTEM, AppTheme.SYSTEM, true),
                 )
 
                 Logger.d(tag = "MainActivity") {
@@ -129,7 +132,7 @@ class MainActivity : ComponentActivity() {
                 }
 
                 WithAppLocale(language = settingsState.language) {
-                    AppThemeProvider(currentTheme = settingsState.theme) {
+                    AppThemeProvider(currentTheme = settingsState.theme, dynamicColor = settingsState.useDynamicColor) {
                         WithDisplayFeatures(displayFeatures = displayFeatures) {
                             WithMultiPaneCoordinator(coordinator = multiPaneCoordinator) {
                                 AntCashManagerNavHost()
@@ -157,6 +160,7 @@ class MainActivity : ComponentActivity() {
 data class SettingsSnapshot(
     val language: AppLanguage,
     val theme: AppTheme,
+    val useDynamicColor: Boolean = true,
 )
 
 @Composable

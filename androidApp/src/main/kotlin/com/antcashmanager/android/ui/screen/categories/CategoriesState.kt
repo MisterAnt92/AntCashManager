@@ -3,14 +3,13 @@ package com.antcashmanager.android.ui.screen.categories
 import com.antcashmanager.architecture.ErrorState
 import com.antcashmanager.architecture.UIState
 import com.antcashmanager.domain.model.Category
+import com.antcashmanager.domain.model.CategoryBudget
 
 /**
  * Stato UI per la schermata delle categorie.
  *
  * [expenseCategories]/[incomeCategories] contengono solo le categorie visibili, ordinate per
- * [Category.sortOrder]. Le categorie nascoste sono esposte separatamente in
- * [hiddenExpenseCategories]/[hiddenIncomeCategories] per la sezione dedicata "categorie
- * nascoste" nella UI.
+ * [Category.sortOrder].
  *
  * UDF Pattern:
  * - state: CategoriesState (this)
@@ -18,6 +17,7 @@ import com.antcashmanager.domain.model.Category
  * - viewModel: CategoriesViewModel (onEvent handler)
  */
 data class CategoriesState(
+    override val isLoading: Boolean = true,
     val categories: List<Category> = emptyList(),
     val expenseCategories: List<Category> = emptyList(),
     val incomeCategories: List<Category> = emptyList(),
@@ -25,10 +25,12 @@ data class CategoriesState(
     val customExpenseCategories: List<Category> = emptyList(),
     val defaultIncomeCategories: List<Category> = emptyList(),
     val customIncomeCategories: List<Category> = emptyList(),
-    val hiddenExpenseCategories: List<Category> = emptyList(),
-    val hiddenIncomeCategories: List<Category> = emptyList(),
     val selectedTabIndex: Int = 0,
-    val isLoading: Boolean = false,
-    val error: String? = null,
     val errorState: ErrorState = ErrorState(),
+    /** Budget keyed by categoryId. */
+    val budgets: Map<Long, CategoryBudget> = emptyMap(),
+    /** Category id currently being edited in BudgetEditDialog, null = dialog closed. */
+    val editingBudgetCategoryId: Long? = null,
+    /** Absolute expense total (positive) per category for the current period. */
+    val categoryExpenseTotals: Map<Long, Double> = emptyMap(),
 ) : UIState()

@@ -35,7 +35,6 @@ import androidx.glance.layout.width
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
-import androidx.glance.unit.ColorProvider
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.R
 import com.antcashmanager.android.util.formatAmountWithSign
@@ -141,14 +140,14 @@ private fun RecentTransactionsContent(
                 TextStyle(
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
-                    color = ColorProvider(palette.primaryText),
+                    color = palette.primaryText.toColorProvider(),
                 ),
         )
         Spacer(modifier = GlanceModifier.height(8.dp))
         if (transactions.isEmpty()) {
             Text(
                 text = context.getString(R.string.empty_state_no_transactions),
-                style = TextStyle(fontSize = 12.sp, color = ColorProvider(palette.secondaryText)),
+                style = TextStyle(fontSize = 12.sp, color = palette.secondaryText.toColorProvider()),
             )
         } else {
             LazyColumn(modifier = GlanceModifier.fillMaxSize()) {
@@ -192,12 +191,12 @@ private fun TransactionRow(
                         )
                     },
                 maxLines = 1,
-                style = TextStyle(fontSize = 13.sp, color = ColorProvider(palette.primaryText)),
+                style = TextStyle(fontSize = 13.sp, color = palette.primaryText.toColorProvider()),
             )
             Text(
                 text = translateCategoryPlain(context, transaction.category),
                 maxLines = 1,
-                style = TextStyle(fontSize = 11.sp, color = ColorProvider(palette.secondaryText)),
+                style = TextStyle(fontSize = 11.sp, color = palette.secondaryText.toColorProvider()),
             )
         }
         Text(
@@ -207,7 +206,7 @@ private fun TransactionRow(
                 TextStyle(
                     fontSize = 13.sp,
                     fontWeight = FontWeight.Medium,
-                    color = ColorProvider(amountColor),
+                    color = amountColor.toColorProvider(),
                 ),
         )
     }

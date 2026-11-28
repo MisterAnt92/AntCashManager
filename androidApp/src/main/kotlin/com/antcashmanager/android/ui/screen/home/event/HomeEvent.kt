@@ -41,11 +41,6 @@ sealed class HomeEvent : UIEvent() {
 
     data object ConfirmTopCardsOrderEvent : HomeEvent()
 
-    // Settings events
-    data class SetIsTutorialCompletedEvent(
-        val completed: Boolean,
-    ) : HomeEvent()
-
     data class SetDateFilterExpandedEvent(
         val expanded: Boolean,
     ) : HomeEvent()

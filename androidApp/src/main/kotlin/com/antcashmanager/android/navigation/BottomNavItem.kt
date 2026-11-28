@@ -2,7 +2,6 @@ package com.antcashmanager.android.navigation
 
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Help
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Category
@@ -55,9 +54,4 @@ sealed class BottomNavItem(
         icon = Icons.Default.Settings,
     )
 
-    data object Tutorial : BottomNavItem(
-        route = AppRoute.BottomRoute.Tutorial.route,
-        titleResId = R.string.settings_tutorial,
-        icon = Icons.AutoMirrored.Filled.Help,
-    )
 }

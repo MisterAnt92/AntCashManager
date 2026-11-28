@@ -4,6 +4,6 @@ import com.antcashmanager.architecture.ErrorState
 import com.antcashmanager.architecture.UIState
 
 data class TransactionDetailsState(
-    val isLoading: Boolean = false,
+    override val isLoading: Boolean = false,
     val errorState: ErrorState = ErrorState(),
 ) : UIState()

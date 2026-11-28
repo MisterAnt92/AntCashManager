@@ -1,6 +1,7 @@
 package com.antcashmanager.android.ui.widget
 
 import androidx.compose.ui.graphics.Color
+import androidx.glance.unit.ColorProvider
 import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.CurrencyFormat
@@ -71,3 +72,5 @@ internal suspend fun loadWidgetPalette(settingsRepository: SettingsRepository): 
         trackBackground = if (isDark) Color(0xFF4A4A4A) else Color(0xFFE0E0E0),
     )
 }
+
+internal fun Color.toColorProvider(): ColorProvider = ColorProvider(color = this)

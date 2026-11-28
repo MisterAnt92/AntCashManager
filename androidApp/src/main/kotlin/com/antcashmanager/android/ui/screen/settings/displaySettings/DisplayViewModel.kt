@@ -70,6 +70,7 @@ class DisplayViewModel(
             settingsRepository.getTransactionsTransactionDisplayType(),
             settingsRepository.getWidgetBackgroundColor(),
             settingsRepository.getWidgetOpacity(),
+            settingsRepository.getUseDynamicColor(),
         ) { args ->
             @Suppress("UNCHECKED_CAST")
             val values = args as Array<Any?>
@@ -97,6 +98,7 @@ class DisplayViewModel(
                 transactionsTransactionDisplayType = (values[12] as? TransactionDisplayType) ?: DisplayConstant.DEFAULT_TRANSACTION_DISPLAY_TYPE,
                 widgetBackgroundColor = (values[13] as? Long) ?: DisplayConstant.DEFAULT_WIDGET_BACKGROUND_COLOR,
                 widgetOpacity = (values[14] as? Int) ?: DisplayConstant.DEFAULT_WIDGET_OPACITY,
+                useDynamicColor = (values[15] as? Boolean) ?: DisplayConstant.DEFAULT_USE_DYNAMIC_COLOR,
             )
         }.stateIn(
             viewModelScope,
@@ -208,6 +210,12 @@ class DisplayViewModel(
             SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
             DisplayConstant.DEFAULT_WIDGET_OPACITY,
         )
+    val useDynamicColor: StateFlow<Boolean> =
+        state.map { it.useDynamicColor }.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
+            DisplayConstant.DEFAULT_USE_DYNAMIC_COLOR,
+        )
 
     override fun handleEvent(event: DisplayEvent) {
         logDebug("Event: $event")
@@ -233,6 +241,7 @@ class DisplayViewModel(
 
             is DisplayEvent.SetWidgetBackgroundColorEvent -> setWidgetBackgroundColor(event.color)
             is DisplayEvent.SetWidgetOpacityEvent -> setWidgetOpacity(event.opacity)
+            is DisplayEvent.SetUseDynamicColorEvent -> setUseDynamicColor(event.value)
             is DisplayEvent.RetryLastOperationEvent -> logInfo("Retry requested")
         }
     }
@@ -422,6 +431,12 @@ class DisplayViewModel(
                 settingsRepository.setWidgetOpacity(opacity.coerceIn(0, 100))
                 widgetUpdateNotifier.notifyTransactionsChanged()
             },
+        )
+
+    private fun setUseDynamicColor(value: Boolean) =
+        updatePreference(
+            logMsg = "Setting use dynamic color: $value",
+            action = { settingsRepository.setUseDynamicColor(value) },
         )
 
     /**

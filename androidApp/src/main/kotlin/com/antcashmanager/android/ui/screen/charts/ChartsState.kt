@@ -18,4 +18,5 @@ data class ChartsState(
     val chartData: ChartData = ChartData(),
     // Error handling (FASE 5: Error Feedback UX)
     val errorState: ErrorState = ErrorState(),
+    override val isLoading: Boolean = false,
 ) : UIState()

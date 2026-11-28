@@ -17,6 +17,7 @@ import androidx.compose.material.icons.filled.Contrast
 import androidx.compose.material.icons.filled.Feedback
 import androidx.compose.material.icons.filled.FormatSize
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.MotionPhotosOff
 import androidx.compose.material.icons.filled.Palette
@@ -324,6 +325,14 @@ internal fun SettingsContent(
                     },
                 )
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                AppCard(
+                    title = stringResource(R.string.settings_show_tutorial),
+                    subtitle = stringResource(R.string.settings_show_tutorial_subtitle),
+                    leadingIcon = Icons.Default.PlayArrow,
+                    iconBackgroundColor = MaterialTheme.colorScheme.primaryContainer,
+                    iconTint = MaterialTheme.colorScheme.onPrimaryContainer,
+                    onClick = { onEvent(SettingEvent.SetTutorialCompletedEvent(false)) },
+                )
                 AppCard(
                     title = stringResource(R.string.settings_send_feedback),
                     subtitle = stringResource(R.string.settings_send_feedback_subtitle),

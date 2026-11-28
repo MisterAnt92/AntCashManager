@@ -36,7 +36,7 @@ sealed class CategoryEvent : UIEvent() {
         val reordered: List<Category>,
     ) : CategoryEvent()
 
-    data object RetryLastOperationEvent : CategoryEvent()
+    data object RestoreDefaultCategoriesEvent : CategoryEvent()
 
     data class LogItemClickedEvent(
         val categoryName: String,
@@ -46,4 +46,13 @@ sealed class CategoryEvent : UIEvent() {
     data object LogReorderOpenedEvent : CategoryEvent()
 
     data class SelectTabEvent(val index: Int) : CategoryEvent()
+
+    /** Open (categoryId != null) or close (null) the BudgetEditDialog. */
+    data class OpenBudgetDialogEvent(val categoryId: Long?) : CategoryEvent()
+
+    /** Persist a new or updated budget (monthlyLimit > 0). */
+    data class SetBudgetEvent(val categoryId: Long, val monthlyLimit: Double) : CategoryEvent()
+
+    /** Remove an existing budget for the given category. */
+    data class DeleteBudgetEvent(val categoryId: Long) : CategoryEvent()
 }

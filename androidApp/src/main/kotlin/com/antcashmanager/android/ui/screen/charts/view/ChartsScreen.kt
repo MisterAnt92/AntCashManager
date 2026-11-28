@@ -78,6 +78,7 @@ import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.charts.ChartData
 import com.antcashmanager.android.ui.screen.charts.ChartEvent
 import com.antcashmanager.android.ui.screen.charts.ChartsConstant
+import com.antcashmanager.android.ui.screen.charts.TrendDirection
 import com.antcashmanager.android.ui.screen.charts.ChartsViewModel
 import com.antcashmanager.android.ui.screen.charts.MonthlyAmount
 import com.antcashmanager.android.ui.screen.charts.RangePreset
@@ -117,6 +118,8 @@ fun ChartsScreen() {
     val chartsCardOrder by viewModel.chartsCardOrder.collectAsStateWithLifecycle()
     val errorState by viewModel.state.map { it.errorState }
         .collectAsStateWithLifecycle(initialValue = ErrorState())
+    val isLoading by viewModel.state.map { it.isLoading }
+        .collectAsStateWithLifecycle(initialValue = true)
 
     ChartsContent(
         chartData = chartData,
@@ -125,6 +128,7 @@ fun ChartsScreen() {
         zoomEnabled = chartsZoomEnabled,
         chartsCardOrderRaw = chartsCardOrder,
         errorState = errorState,
+        isLoading = isLoading,
         onDateRangeChanged = { from, to -> viewModel.emitEvent(ChartEvent.SetDateRangeEvent(from, to)) },
         onPresetSelected = { preset -> viewModel.emitEvent(ChartEvent.SetPresetRangeEvent(preset)) },
         onEvent = viewModel::emitEvent,
@@ -140,10 +144,16 @@ internal fun ChartsContent(
     zoomEnabled: Boolean = false,
     chartsCardOrderRaw: String,
     errorState: ErrorState = ErrorState(),
+    isLoading: Boolean = false,
     onDateRangeChanged: (Long, Long) -> Unit = { _, _ -> },
     onPresetSelected: (RangePreset) -> Unit = {},
     onEvent: (ChartEvent) -> Unit = {},
 ) {
+    if (isLoading) {
+        ChartsSkeletonLoader()
+        return
+    }
+
     // Error state overlay (FASE 5: Error Feedback UX)
     if (errorState.isError) {
         AntErrorState(
